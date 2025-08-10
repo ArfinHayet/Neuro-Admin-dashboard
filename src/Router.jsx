@@ -16,6 +16,9 @@ import PatientDetails from "./Pages/Patients/PatientDetails";
 import AiSummary from "./Pages/Assessments/AI Summary/AiSummary";
 import ClinicianProfile from "./Pages/Clinicians/ClinicianProfile";
 import Finances from "./Pages/Finances/Finances";
+import SubmittedInitialList from "./Pages/Submitted Assessments/SubmittedInitialsList";
+import InitialsDetails from "./Pages/Submitted Assessments/InitialsDetails";
+
 
 export const router = createBrowserRouter([
   {
@@ -45,11 +48,22 @@ export const router = createBrowserRouter([
         element: <User />,
       },
       {
-        path: "/initial-assessment",
+        path: "/submitted-assessments/initial",
+        element: <SubmittedInitialList />,
+      },
+      {
+        path: "/submitted-assessments/initial/:assessmentId",
+        element: <InitialsDetails />,
+      },
+      {
+        path: "/submitted-assessments/on-demand",
+      },
+      {
+        path: "/assessment-questions/initial",
         element: <InitialAssessment />,
       },
       {
-        path: "/on-demand-assessment",
+        path: "/assessment-questions/on-demand",
         element: <OnDemandAssessment />,
       },
       {
@@ -94,7 +108,6 @@ export const router = createBrowserRouter([
         path: "/finances",
         element: <Finances />,
       },
-      
     ],
   },
 ]);

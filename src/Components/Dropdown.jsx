@@ -29,7 +29,7 @@ const Dropdown = ({ title, icon, routes, isOpen, onToggle, index }) => {
                 to={route.path}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-[#ececec] px-2  py-1 rounded-2xl text-sm font-medium  text-[#0A6876]"
+                    ? "bg-[#ededed] px-2  py-1 rounded-2xl text-sm font-medium  text-[#0A6876]"
                     : "text-[#959595] px-2  py-1 text-sm font-medium"
                 }
               >

@@ -55,6 +55,21 @@ export const navItem = [
     routes: [],
   },
   {
+    title: "Submitted Assessments",
+    icon: p5,
+    routes: [
+      {
+        label: "Initial Assessment",
+        path: "/submitted-assessments/initial",
+      },
+      {
+        label: "On-demand Assessment",
+        path: "/submitted-assessments/on-demand",
+      },
+    ],
+  },
+
+  {
     title: "Patients",
     icon: MdOutlinePeopleAlt,
     path: "/patients",
@@ -66,21 +81,18 @@ export const navItem = [
     path: "/clinicians",
     routes: [],
   },
+
   {
     title: "Assessment Questions",
     icon: p5,
     routes: [
       {
         label: "Initial Assessment",
-        path: "/initial-assessment",
+        path: "/assessment-questions/initial",
       },
       {
         label: "On-demand Assessment",
-        path: "/on-demand-assessment",
-      },
-      {
-        label: "Ai-summary",
-        path: "/ai-summary",
+        path: "/assessment-questions/on-demand",
       },
     ],
   },

@@ -117,7 +117,7 @@ export const dummyblogs = [
 ];
 
 
-// Users array
+// Your existing users and children arrays (unchanged)
 export const users = [
   {
     id: 1,
@@ -163,14 +163,13 @@ export const users = [
   },
 ];
 
-// Children array
 export const children = [
   {
     id: "c1",
     userId: 1, // linked to John Doe
     name: "Child One",
     age: 8,
-    diagnosis: "ADHD",
+    diagnosis: "Child Autism",
   },
   {
     id: "c2",
@@ -195,57 +194,104 @@ export const children = [
   },
 ];
 
-// Assessments array
+// Added assessments array
 export const assessments = [
   {
-    id: "a1",
+    id: 101,
+    userId: 1,
     childId: "c1",
-    name: "Initial Screening",
-    dateTaken: "2025-06-01",
-    type: "Initial",
-    status: "Completed",
+    name: "Initial Assessment ",
+    dateTaken: "2025-08-01",
+    type: "initial",
+    answers: [
+      { question: "Does the child have trouble focusing?", answer: "Yes" },
+      { question: "Is the child hyperactive?", answer: "No" },
+      { question: "Does the child get easily distracted?", answer: "Yes" },
+    ],
   },
   {
-    id: "a2",
-    childId: "c1",
-    name: "Follow-up Check",
-    dateTaken: "2025-07-10",
-    type: "On Demand",
-    status: "Pending",
-  },
-  {
-    id: "a3",
+    id: 102,
+    userId: 1,
     childId: "c2",
-    name: "Initial Screening",
-    dateTaken: "2025-05-20",
-    type: "Initial",
-    status: "Completed",
+    name: "Initial Assessment ",
+    dateTaken: "2025-08-03",
+    type: "initial",
+    answers: [
+  { questionId: 1, answer: "Yes" },
+  { questionId: 2, answer: "No" },
+  { questionId: 3, answer: "Yes" },
+  { questionId: 4, answer: "Yes" },
+  { questionId: 5, answer: "No" },
+  { questionId: 6, answer: "Yes" },
+  { questionId: 7, answer: "No" },
+  { questionId: 8, answer: "Yes" },
+  { questionId: 9, answer: "No" },
+  { questionId: 10, answer: "Yes" },
+],
   },
   {
-    id: "a4",
+    id: 103,
+    userId: 2,
     childId: "c3",
-    name: "Dyslexia Assessment",
-    dateTaken: "2025-07-05",
-    type: "On Demand",
-    status: "Completed",
+    name: "Initial Assessment ",
+    dateTaken: "2025-08-05",
+    type: "initial",
+    answers: [
+  { questionId: 1, answer: "Yes" },
+  { questionId: 2, answer: "No" },
+  { questionId: 3, answer: "Yes" },
+  { questionId: 4, answer: "Yes" },
+  { questionId: 5, answer: "No" },
+  { questionId: 6, answer: "Yes" },
+  { questionId: 7, answer: "No" },
+  { questionId: 8, answer: "Yes" },
+  { questionId: 9, answer: "No" },
+  { questionId: 10, answer: "Yes" },
+],
+  },
+  {
+    id: 104,
+    userId: 2,
+    childId: "c4",
+    name: "Initial Assessment - Dyslexia",
+    dateTaken: "2025-08-06",
+    type: "initial",
+    answers: [
+  { questionId: 1, answer: "Yes" },
+  { questionId: 2, answer: "No" },
+  { questionId: 3, answer: "Yes" },
+  { questionId: 4, answer: "Yes" },
+  { questionId: 5, answer: "No" },
+  { questionId: 6, answer: "Yes" },
+  { questionId: 7, answer: "No" },
+  { questionId: 8, answer: "Yes" },
+  { questionId: 9, answer: "No" },
+  { questionId: 10, answer: "Yes" },
+
+    ],
+  },
+  {
+    id: 105,
+    userId: 3,
+    childId: "c4",
+    name: "On Demand Assessment ",
+    dateTaken: "2025-08-07",
+    type: "on-demand",
+    answers: [
+  { questionId: 1, answer: "Yes" },
+  { questionId: 2, answer: "No" },
+  { questionId: 3, answer: "Yes" },
+  { questionId: 4, answer: "Yes" },
+  { questionId: 5, answer: "No" },
+  { questionId: 6, answer: "Yes" },
+  { questionId: 7, answer: "No" },
+  { questionId: 8, answer: "Yes" },
+  { questionId: 9, answer: "No" },
+  { questionId: 10, answer: "Yes" },
+    ],
   },
 ];
 
-// Clinician feedbacks array
-export const clinicianFeedbacks = [
-  {
-    id: "f1",
-    assessmentId: "a2",
-    clinician: "Dr. Smith",
-    feedback: "Waiting for review",
-  },
-  {
-    id: "f2",
-    assessmentId: "a4",
-    clinician: "Dr. Lee",
-    feedback: "Patient shows improvement",
-  },
-];
 
 // Clinician approval requests
 export const clinicianRequests = [

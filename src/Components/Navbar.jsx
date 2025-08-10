@@ -4,8 +4,8 @@ import { useContext } from "react";
 //import p2 from "../../public/png/profile.png";
 import { AuthContext } from "./AuthProvider/AuthProvider";
 import { Navigate } from "react-router-dom";
-import m1 from "../../public/png/message.png";
-import n1 from "../../public/png/notification.png";
+//import m1 from "../../public/png/message.png";
+//import n1 from "../../public/png/notification.png";
 import p3 from "../../public/png/heading.png"
 
 const Navbar = () => {
@@ -43,10 +43,10 @@ const Navbar = () => {
               {userData?.userData?.designation}
             </p>
           </div>
-          <div className="flex gap-4 justify-center items-center me-3">
+         {/* <div className="flex gap-4 justify-center items-center me-3">
             <img src={m1} height={20} width={20} className="h-[22px]" />
             <img src={n1} height={20} width={20} className="h-[24px]" />
-          </div>
+          </div>*/}
           <div tabIndex={0} role="button" className="btn btn-sm  btn-circle">
             <div className="rounded-full p-2 text-xs border border-gray-400">
               <p>{toInitials(`${userData?.userData?.name}`)}</p>

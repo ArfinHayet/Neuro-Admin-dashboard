@@ -5,7 +5,6 @@ import ClinicianStats from '../../Components/Clinicians/ClinicanStats';
 const ClinicianProfile = () => {
   return (
     <div>
-        <ClinicianStats />
         <CliniciansProfile />
     </div>
   )

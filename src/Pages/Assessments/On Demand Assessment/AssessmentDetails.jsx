@@ -3,22 +3,50 @@ import { useParams } from "react-router-dom";
 import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Assessments/QuestionArrangement";
  import { initialQuestions } from "../../../Components/utils/Data";
+import QuestionModal from "../../../Components/Common/QuestionModal";
+
 
 const AssessmentDetails = () => {
-  const [questions, setQuestions] = useState(
+   const [questions, setQuestions] = useState(
      initialQuestions.map((q, idx) => ({
        ...q,
        order: idx + 1,
        answerType: "yesno", // default
      }))
    );
+   const [isModalOpen, setIsModalOpen] = useState(false);
+
+   const [editingQuestion, setEditingQuestion] = useState(null);
+
+  const handleSave = (newQ) => {
+    if (editingQuestion) {
+      // Update existing
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === editingQuestion.id ? { ...q, ...newQ } : q))
+      );
+      setEditingQuestion(null);
+    } else {
+      // Add new
+      setQuestions((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          order: prev.length + 1,
+          ...newQ,
+        },
+      ]);
+    }
+  };
+
+  const handleDelete = (id) => {
+    setQuestions((prev) => prev.filter((q) => q.id !== id));
+  };
+
+  const handleEdit = (question) => {
+    setEditingQuestion(question);
+    setIsModalOpen(true);
+  };
  
-   const handleQuestionChange = (id, field, value) => {
-     const updated = questions.map((q) =>
-       q.id === id ? { ...q, [field]: value } : q
-     );
-     setQuestions(updated);
-   }; 
    
    const { id } = useParams();
   const assessment = onDemandAssessments.find(
@@ -32,15 +60,23 @@ const AssessmentDetails = () => {
   
   return (
     <section className="p-6 bg-[#F6F7F9] rounded-xl h-[90vh] overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-4">{assessment.title}</h2>
+      <div className="flex justify-between items-center ">
+        <h2 className="text-2xl font-medium ">{assessment.title}</h2>
+        <button
+          className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Add Question
+        </button>
+      </div>
       <p className="mb-2 text-gray-700 text-sm">
         <strong></strong> {assessment.description}
       </p>
       <p className="mb-4 text-gray-700 text-sm">
-        <strong></strong> {assessment.time} minutes
+        <strong></strong> {assessment.time}
       </p>
 
-      <h3 className="text-xl font-medium mb-2">Questions</h3>
+      <h3 className="font-medium my-3">Question List</h3>
       <table className="w-full text-sm text-left text-gray-700">
         <thead className="bg-white">
           <tr>
@@ -52,18 +88,30 @@ const AssessmentDetails = () => {
           </tr>
         </thead>
         <tbody>
-          {questions
-            .sort((a, b) => a.order - b.order)
-            .map((q, i) => (
-              <QuestionArrangement
-                key={q.id}
-                index={i}
-                question={q}
-                onChange={handleQuestionChange}
-              />
-            ))}
+           {questions.map((q, i) => (
+            <QuestionArrangement
+              key={q.id}
+              index={i}
+              question={q}
+              onChange={(id, field, value) => {
+                setQuestions((prev) =>
+                  prev.map((ques) =>
+                    ques.id === id ? { ...ques, [field]: value } : ques
+                  )
+                );
+              }}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
         </tbody>
       </table>
+         <QuestionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        defaultType="ondemand"
+      />
     </section>
   );
 };

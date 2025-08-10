@@ -1,6 +1,10 @@
-import React from "react";
+import React  from "react";
+import { MdDeleteOutline, MdOutlineDelete } from "react-icons/md";
+import { FaRegEdit } from "react-icons/fa";
+import QuestionModal from "../Common/QuestionModal";
 
-const QuestionArrangement = ({ question, index, onChange }) => {
+const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) => {
+  
   const handleOrderChange = (e) => {
     onChange(question.id, "order", parseInt(e.target.value));
   };
@@ -34,8 +38,17 @@ const QuestionArrangement = ({ question, index, onChange }) => {
         </select>
       </td>
       <td className="p-2 space-x-2">
-        <button className="text-blue-600">Edit</button>
-        <button className="text-red-600">Delete</button>
+        <button
+          className=""
+          onClick={() =>{
+             onEdit(question);
+          } }
+        >
+          <FaRegEdit size={22}/>
+        </button>
+        <button className="" onClick={() => onDelete(question.id)}>
+          <MdOutlineDelete size={24} />
+        </button>
       </td>
     </tr>
   );
