@@ -1,0 +1,24 @@
+import { Outlet } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import Sidebar from "../Components/Sidebar";
+
+const Layout = () => {
+  return (
+    <div className="min-h-screen ">
+      <div className="fixed h-[5vh] top-0 w-full z-10">
+        <Navbar />
+      </div>
+
+      <div className="flex h-screen">
+        <div className="fixed top-0 left-0 h-full w-[17%]">
+          <Sidebar />
+        </div>
+        <div className="flex-1 px-4 mt-[9vh]  ml-[16%] ">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;

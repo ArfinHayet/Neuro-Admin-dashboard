@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "Name": "Tech Solutions",
+    "Location": "New York, USA",
+    "POCN": "John Doe",
+    "POCM": "+1-555-1234",
+    "Email": "john.doe@techsolutions.com"
+  },
+  {
+    "id": 2,
+    "Name": "Global Supplies",
+    "Location": "London, UK",
+    "POCN": "Jane Smith",
+    "POCM": "+44-7890-5678",
+    "Email": "jane.smith@globalsupplies.co.uk"
+  },
+  {
+    "id": 3,
+    "Name": "Innovatech",
+    "Location": "Berlin, Germany",
+    "POCN": "Max Müller",
+    "POCM": "+49-170-1234567",
+    "Email": "max.mueller@innovatech.de"
+  },
+  {
+    "id": 4,
+    "Name": "Oceanic Imports",
+    "Location": "Sydney, Australia",
+    "POCN": "Liam Wong",
+    "POCM": "+61-400-678-345",
+    "Email": "liam.wong@oceanicimports.au"
+  },
+  {
+    "id": 5,
+    "Name": "Asia Pacific Traders",
+    "Location": "Tokyo, Japan",
+    "POCN": "Sakura Tanaka",
+    "POCM": "+81-90-1234-5678",
+    "Email": "sakura.tanaka@aptraders.jp"
+  },
+  {
+    "id": 6,
+    "Name": "NorthStar Electronics",
+    "Location": "Toronto, Canada",
+    "POCN": "Alex Johnson",
+    "POCM": "+1-416-555-7890",
+    "Email": "alex.johnson@northstarelectronics.ca"
+  },
+  {
+    "id": 7,
+    "Name": "EuroParts",
+    "Location": "Paris, France",
+    "POCN": "Chloe Dupont",
+    "POCM": "+33-6-7890-1234",
+    "Email": "chloe.dupont@europarts.fr"
+  },
+  {
+    "id": 8,
+    "Name": "LatAm Manufacturing",
+    "Location": "São Paulo, Brazil",
+    "POCN": "Carlos Mendes",
+    "POCM": "+55-11-9988-7654",
+    "Email": "carlos.mendes@latammanufacturing.com"
+  },
+  {
+    "id": 9,
+    "Name": "Middle East Traders",
+    "Location": "Dubai, UAE",
+    "POCN": "Aisha Al-Hassan",
+    "POCM": "+971-50-123-4567",
+    "Email": "aisha.alhassan@me-traders.ae"
+  },
+  {
+    "id": 10,
+    "Name": "Nordic Supplies",
+    "Location": "Stockholm, Sweden",
+    "POCN": "Erik Svensson",
+    "POCM": "+46-70-123-4567",
+    "Email": "erik.svensson@nordicsupplies.se"
+  }
+]
