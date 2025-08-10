@@ -13,7 +13,6 @@ import AssessmentDetails from "./Pages/Assessments/On Demand Assessment/Assessme
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Reports from "./Pages/Reports/Reports";
 import PatientDetails from "./Pages/Patients/PatientDetails";
-import AiSummary from "./Pages/Assessments/AI Summary/AiSummary";
 import ClinicianProfile from "./Pages/Clinicians/ClinicianProfile";
 import Finances from "./Pages/Finances/Finances";
 import SubmittedInitialList from "./Pages/Submitted Assessments/SubmittedInitialsList";
@@ -78,10 +77,6 @@ export const router = createBrowserRouter([
       {
         path: "/ondemandassessment/:id",
         element: <AssessmentDetails />,
-      },
-      {
-        path: "/ai-summary",
-        element: <AiSummary />,
       },
       {
         path: "/dashboard",

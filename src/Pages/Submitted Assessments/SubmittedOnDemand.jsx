@@ -8,7 +8,7 @@ const SubmittedOnDemand = () => {
   const onDemandAssessments = assessments.filter((a) => a.type === "on-demand");
 
     const onView = (id) => {
-navigate(`/on-demand-assessment/${id}`);
+navigate(`/submitted-assessments/on-demand/${id}`);
   };
 
 
