@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
-import p1 from "../../../../public/png/logo.png";
+//import p1 from "../../../../public/png/logo.png";
+import p1 from "../../../../public/png/heading.png";
 import { MdRemoveRedEye } from "react-icons/md";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AuthContext } from "../../../Components/AuthProvider/AuthProvider";
@@ -42,7 +43,7 @@ const Login = () => {
 
       setLoading(false);
       setUserData(userData);
-      navigate("/");
+      navigate("/dashboard");
       // window.location.href = "/dashboard";
     }
   };
@@ -53,8 +54,9 @@ const Login = () => {
         className="w-[381px] max-w-sm h-[530px] bg-white border rounded-xl px-[38px] pt-9 pb-8 mb-4"
         onSubmit={handleLogInUser}
       >
-        <img className=" h-[46px]" src={p1} alt="Logo" />
-        <h1 className="font-bold text-lg mb-2 mt-6 text-[#3B3B3B]">
+       <div className="flex items-center justify-center"><img className=" h-[40px] " src={p1} alt="Logo" />
+        </div> 
+        <h1 className="font-semibold text-lg mb-2 mt-6 text-[#3B3B3B]">
           User Login
         </h1>
         <hr className=" mb-9 px-9" />
@@ -106,7 +108,6 @@ const Login = () => {
 
         <div>
           
-
           <button className="bg-gradient-to-r from-[#088395] to-[#0A6876] px-4 text-white rounded-lg text-xs w-full  font-medium  py-[2px]  h-[35px]">
             Login
           </button>

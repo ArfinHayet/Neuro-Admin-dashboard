@@ -40,7 +40,7 @@ const Stats = () => {
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className=" font-semibold ">
+        <h3 className=" font-medium ">
           New Clinicians
         </h3>
         <p className="text-2xl font-bold">{newCliniciansLast30Days}</p>

@@ -1,8 +1,8 @@
 export const isAuthenticated = () => {
-  const accessToken = localStorage.getItem("accessToken");
+ const accessToken = localStorage.getItem("accessToken");
 
-  // const role = localStorage.getItem("role");
-  return accessToken;
+// const role = localStorage.getItem("role");
+ return accessToken;
 };
 
 
@@ -15,3 +15,5 @@ export const isAuthenticated = () => {
 // };
 
 // export default {isAuthenticated}
+
+

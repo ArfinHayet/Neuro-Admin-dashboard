@@ -18,16 +18,20 @@ import ClinicianProfile from "./Pages/Clinicians/ClinicianProfile";
 import Finances from "./Pages/Finances/Finances";
 import SubmittedInitialList from "./Pages/Submitted Assessments/SubmittedInitialsList";
 import InitialsDetails from "./Pages/Submitted Assessments/InitialsDetails";
-
+import OnDemandDetails from "./Pages/Submitted Assessments/OnDemandDetails";
+import SubmittedOnDemand from "./Pages/Submitted Assessments/SubmittedOnDemand";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
   },
+   
   {
     path: "/",
-    element: <Layout />,
+    element:   <Layout />
+ ,
     //     errorElement: <ErrorPage />,
     children: [
       // {
@@ -57,6 +61,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/submitted-assessments/on-demand",
+        element: <SubmittedOnDemand />,
+      },
+      {
+        path: "/submitted-assessments/on-demand/:assessmentId",
+        element: <OnDemandDetails />,
       },
       {
         path: "/assessment-questions/initial",
