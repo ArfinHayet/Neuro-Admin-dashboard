@@ -19,7 +19,7 @@ const SubmittedOnDemandList = ({ assessments, users, children, categories, onVie
   return (
     <table className="w-full border-collapse border border-gray-300 text-center bg-white text-sm">
       <thead>
-        <tr className="bg-gray-100">
+        <tr className="bg-gray-200">
           <th className="border border-gray-300 p-2">User Name</th>
           <th className="border border-gray-300 p-2">Child Name</th>
           <th className="border border-gray-300 p-2">Date Taken</th>

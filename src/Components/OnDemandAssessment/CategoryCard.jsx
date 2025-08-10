@@ -5,7 +5,7 @@ const CategoryCard = ({ category, onEdit, onSelect }) => {
   return (
     <section >
       <div
-        className="rounded-xl p-6 cursor-pointer hover:shadow-md flex flex-col justify-between gap-2 h-[280px]"
+        className="bg-[#eeeeee] rounded-xl p-6 cursor-pointer hover:shadow-md flex flex-col justify-between gap-2 h-[280px]"
         style={{ backgroundColor: category.bgColor }}
       >
         <img
@@ -26,6 +26,7 @@ const CategoryCard = ({ category, onEdit, onSelect }) => {
           >
             Edit
           </button>*/}
+          
           <button
             onClick={() => onSelect(category)}
             className="bg-[#114654] text-white text-xs py-2 px-3 rounded-full  "

@@ -34,7 +34,7 @@ const OnDemandAssessment = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center ">
         <h1 className="text-2xl font-medium ">On-Demand Assessments</h1>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full"
@@ -46,6 +46,9 @@ const OnDemandAssessment = () => {
           Add New Category
         </button>
       </div>
+      <p className="text-sm mb-6">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {onDemandAssessments.map((category) => (

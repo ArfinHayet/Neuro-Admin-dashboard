@@ -14,7 +14,11 @@ navigate(`/on-demand-assessment/${id}`);
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-2xl font-medium mb-4">Submitted On-Demand Assessments</h1>
+      <h1 className="text-2xl font-medium ">Submitted On-Demand Assessments</h1>
+       <p className="text-sm mb-6">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      </p>
+
       <p className="mb-4">Total submitted: {onDemandAssessments.length}</p>
 
       <SubmittedOnDemandList

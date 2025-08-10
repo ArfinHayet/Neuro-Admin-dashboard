@@ -46,14 +46,14 @@ const UsersList = () => {
                   </span>
                 )}
               </td>
-              <td className="pl-10 py-3  text-sm font-medium text-center">
-                <button
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+               <div className="flex justify-center"> <button
                   onClick={() => navigate(`/patients/${user.id}`)}
                   className="flex items-center bg-primary px-3 py-1 text-white rounded-full text-sm hover:bg-primary-dark"
                   aria-label={`View profile of ${user.name}`}
                 >
                   View profile
-                </button>
+                </button></div>
               </td>
             </tr>
           ))}

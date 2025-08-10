@@ -13,7 +13,12 @@ const SubmittedInitialList = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 ">
-      <h1 className="text-2xl font-medium mb-4">Submitted Initial Assessments</h1>
+      <h1 className="text-2xl font-medium ">
+        Submitted Initial Assessments
+      </h1>
+      <p className="text-sm mb-6">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      </p>
       <p className="mb-4">Total submitted: {initialAssessments.length}</p>
 
       <SubmittedInitials

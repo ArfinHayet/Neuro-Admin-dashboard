@@ -2,6 +2,9 @@ import React  from "react";
 import { MdDeleteOutline, MdOutlineDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import QuestionModal from "../Common/QuestionModal";
+import { AiFillEdit } from "react-icons/ai";
+import { MdDelete } from "react-icons/md";
+
 
 const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) => {
   
@@ -44,10 +47,10 @@ const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) =>
              onEdit(question);
           } }
         >
-          <FaRegEdit size={22}/>
+          <AiFillEdit className="text-gray-500" size={20}/>
         </button>
         <button className="" onClick={() => onDelete(question.id)}>
-          <MdOutlineDelete size={24} />
+          <MdDelete className="text-gray-500" size={20}/>
         </button>
       </td>
     </tr>

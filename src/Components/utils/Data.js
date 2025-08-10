@@ -22,7 +22,6 @@ export const onDemandAssessments = [
     description: "Assess characteristics related to autism spectrum.",
     time: "15 min",
     image: "/public/png/autism.svg",
-    bgColor: "#E4E4E4",
     questions: [
       { id: 1, question: "Does the child avoid eye contact?" },
       {
@@ -54,7 +53,6 @@ export const onDemandAssessments = [
     description: "Evaluate how the child processes sensory inputs.",
     time: "12 min",
     image: "/public/png/sensory.svg",
-    bgColor: "#E4E4E4",
     questions: [
       { id: 1, question: "Is the child overly sensitive to sounds?" },
       { id: 2, question: "Does the child dislike certain textures?" },
@@ -87,7 +85,6 @@ export const onDemandAssessments = [
     description: "Assess the child’s social skills and interaction.",
     time: "10 min",
     image: "/public/png/social.svg",
-    bgColor: "#E4E4E4",
     questions: [
       { id: 1, question: "Does the child initiate conversations?" },
       { id: 2, question: "Does the child understand social cues?" },
@@ -113,7 +110,6 @@ export const onDemandAssessments = [
     description: "Evaluate child’s behavioral patterns and challenges.",
     time: "14 min",
     image: "/public/png/behavioral.svg",
-    bgColor: "#E4E4E4",
     questions: [
       { id: 1, question: "Does the child have frequent mood swings?" },
       { id: 2, question: "Does the child show aggressive behavior?" },
