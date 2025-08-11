@@ -4,16 +4,14 @@
 import p4 from "../../../public/png/settings.svg";
 import p5 from "../../../public/png/assessment.svg";
 
-
 import {
-  MdDashboard,
   MdOutlinePeopleAlt,
   MdPerson,
   MdAssessment,
   MdArticle,
   MdBarChart,
 } from "react-icons/md";
-import { RiMoneyPoundBoxLine } from "react-icons/ri";
+import { RiMoneyPoundBoxLine , RiDashboardLine} from "react-icons/ri";
 
 
 export const navItem = [
@@ -50,7 +48,7 @@ export const navItem = [
 
   {
     title: "Dashboard",
-    icon: MdDashboard,
+    icon: RiDashboardLine,
     path: "/dashboard",
     routes: [],
   },
@@ -102,12 +100,12 @@ export const navItem = [
     path: "/blogs",
     routes: [],
   },
-  {
+  /*{
     title: "Reports",
     icon: MdBarChart,
     path: "/reports",
     routes: [],
-  },
+  },*/
   {
     title: "Finances",
     icon: RiMoneyPoundBoxLine,

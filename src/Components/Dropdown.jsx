@@ -8,7 +8,7 @@ const Dropdown = ({ title, icon, routes, isOpen, onToggle, index }) => {
         className="flex items-center justify-between py-2 cursor-pointer w-full"
         onClick={() => onToggle(index)}
       >
-        <div className="flex gap-3 px-4">
+        <div className="flex gap-3 ps-4 items-center">
           <img
             src={icon}
             height={300}
@@ -29,8 +29,8 @@ const Dropdown = ({ title, icon, routes, isOpen, onToggle, index }) => {
                 to={route.path}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-[#ededed] px-2  py-1 rounded-2xl text-sm font-medium  text-[#0A6876]"
-                    : "text-[#959595] px-2  py-1 text-sm font-medium"
+                    ? "bg-[#ededed] ps-3  py-1 rounded-2xl text-sm font-medium  text-[#0A6876]"
+                    : "text-[#959595] ps-3  py-1 text-sm font-medium"
                 }
               >
                 {route.label}

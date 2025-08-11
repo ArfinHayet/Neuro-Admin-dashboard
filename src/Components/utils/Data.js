@@ -149,6 +149,9 @@ export const clinicians = [
     totalEarnings: 12300,
     pendingAmount: 1500,
     joinedDate: "2025-07-29",
+    specialities: ["Cognitive Therapy", "Child Psychology"],
+    bio: "Experienced clinical psychologist focused on child and adolescent mental health.",
+    registrationInfo: "Registered with XYZ Medical Board",
   },
   {
     id: 2,
@@ -161,8 +164,32 @@ export const clinicians = [
     totalEarnings: 7600,
     pendingAmount: 1500,
     joinedDate: "2025-07-28",
+    specialities: ["Behavioral Therapy"],
+    bio: "Therapist with 10 years of experience in behavioral therapy.",
+    registrationInfo: "Registered with ABC Medical Board",
   },
 ];
+
+export const clinicianAssessments = {
+  1: [
+    { id: 1, assessmentName: "Speech Assessment", patientName: "Alice", dateTaken: "2025-07-25" },
+    { id: 2, assessmentName: "Motor Skills Assessment", patientName: "Bob", dateTaken: "2025-07-30" },
+  ],
+  2: [
+    { id: 3, assessmentName: "Cognitive Skills", patientName: "Charlie", dateTaken: "2025-07-26" },
+  ],
+};
+
+export const clinicianLeaves = {
+  1: [
+    { id: 101, start: "2025-09-01", end: "2025-09-05", reason: "Family emergency", status: "Pending" },
+    { id: 201, start: "2025-08-15", end: "2025-08-20", reason: "Medical Emergency", status: "Pending" },
+    { id: 202, start: "2025-09-10", end: "2025-09-12", reason: "N/A", status: "Approved" },
+  ],
+  2: [],
+};
+
+
 
 //blog
 
@@ -326,38 +353,38 @@ export const clinicianRequests = [
   },
 ];
 
-// Leave requests from clinicians
-export const leaveRequests = [
-  {
-    id: 1,
-    clinicianName: "Dr. Sarah Smith",
-    fromDate: "2025-08-15",
-    toDate: "2025-08-20",
-    reason: "Medical Leave",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    clinicianName: "Dr. John Doe",
-    fromDate: "2025-08-10",
-    toDate: "2025-08-12",
-    reason: "Family Event",
-    status: "Approved",
-  },
+
+export const assessmentCategories = [
+  { id: 1, name: "Speech Assessment", price: 50, enabled: true },
+  { id: 2, name: "Motor Skills Assessment", price: 60, enabled: false },
+  { id: 3, name: "Child Autism Diagnosis", price: 80, enabled: true },
+  { id: 4, name: "Child Sensory Processing", price: 60, enabled: false },
+  { id: 5, name: "Language Development", price: 60, enabled: false },
+  { id: 6, name: "Behavioral Assessment", price: 60, enabled: false },
 ];
 
-// Upcoming leaves schedule
-export const upcomingLeaves = [
+export const clinicianList = [
+  { id: 1, name: "Dr. Smith", commission: 25 },
+  { id: 2, name: "Dr. Johnson", commission: 20 },
+];
+
+export const defaultCommissionRate = 20;
+
+export const transactionLogs = [
   {
     id: 1,
-    clinicianName: "Dr. Sarah Smith",
-    fromDate: "2025-08-15",
-    toDate: "2025-08-20",
+    date: "2025-08-05",
+    clinician: "Dr. Smith",
+    amount: 100,
+    clinicianShare: 80,
+    platformShare: 20,
   },
   {
     id: 2,
-    clinicianName: "Dr. Lisa Wong",
-    fromDate: "2025-08-25",
-    toDate: "2025-08-28",
+    date: "2025-08-07",
+    clinician: "Dr. Johnson",
+    amount: 200,
+    clinicianShare: 160,
+    platformShare: 40,
   },
 ];
