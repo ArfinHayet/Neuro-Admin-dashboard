@@ -100,14 +100,14 @@ const ClinicianProfile = () => {
   return (
     <section className="mt-6 space-y-8">
       <section>
-        <h3 className="text-lg font-semibold mb-2">Ongoing Assessments</h3>
+        <h3 className="text-lg font-medium mb-2">Ongoing Assessments</h3>
         <div className="bg-white p-4 rounded-lg">
           <DataTable table={assessmentTable} />
         </div>
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold mb-2">Leave Management</h3>
+        <h3 className="text-lg font-medium mb-2">Leave Management</h3>
         <div className="bg-white p-4 rounded-lg">
           <DataTable table={leaveTable} />
         </div>

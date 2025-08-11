@@ -14,37 +14,40 @@ const ClinicianProfile = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 pb-20">
-       <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6">
         <img
           src={clinician.image}
           alt={clinician.name}
           className="w-24 h-24 rounded-full"
         />
         <div>
-          <h2 className="text-xl font-bold mb-1">{clinician.name}</h2>
-          <p className="text-sm text-gray-600 ">{clinician.title}</p>
-          <p className="text-sm text-gray-500">
-            Joined on {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
-          </p>
-          {clinician.specialities && (
-            <p className="text-sm text-gray-700 mt-2">
-              <strong>Specialities </strong> {clinician.specialities.join(", ")}
-            </p>
-          )}
+          <h2 className="text-xl font-semibold mb-1">{clinician.name}</h2>
+          <p className="text-sm text-gray-600 mb-1">{clinician.title}</p>
           {clinician.bio && (
-            <p className="text-sm text-gray-700 mt-2 max-w-xl">{clinician.bio}</p>
-          )}
-          {clinician.registrationInfo && (
-            <p className="text-sm text-gray-700 mt-2">
-              <strong>Registration Info </strong> {clinician.registrationInfo}
-            </p>
+            <p className="text-sm text-gray-700  max-w-xl">{clinician.bio}</p>
           )}
         </div>
       </div>
-
+      <div className="mt-4 bg-white p-4 rounded-lg w-[35vw]">
+       
+        <p className="text-sm text-gray-500">
+          Joined on  {"  "}
+          {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
+        </p>
+        {clinician.specialities && (
+          <p className="text-sm text-gray-700 mt-2">
+            <strong>Specialities </strong> {clinician.specialities.join(", ")}
+          </p>
+        )}
+        {clinician.registrationInfo && (
+          <p className="text-sm text-gray-700 mt-2">
+            <strong>Registration Info </strong> {clinician.registrationInfo}
+          </p>
+        )}
+      </div>
       <CliniciansProfile clinician={clinician} />
     </section>
-  )
+  );
 }
 
 export default ClinicianProfile;
