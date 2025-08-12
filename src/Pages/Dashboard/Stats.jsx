@@ -1,7 +1,7 @@
 
 import React from "react";
-import { users } from "../utils/Data";
-import { clinicians } from "../utils/Data"; 
+import { users } from "../../Components/utils/Data";
+import { clinicians } from "../../Components/utils/Data"; 
 
 const Stats = () => {
 

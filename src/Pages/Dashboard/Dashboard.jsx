@@ -1,5 +1,5 @@
 import React from 'react'
-import Stats from '../../Components/Dashboard/Stats'
+import Stats from './Stats'
 
 const Dashboard = () => {
   return (
