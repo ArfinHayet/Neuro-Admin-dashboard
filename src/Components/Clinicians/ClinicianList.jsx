@@ -1,77 +1,85 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoEyeOutline } from "react-icons/io5";
+import {
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+} from "@tanstack/react-table";
+import DataTable from "../Common/DataTable";
 
 const ClinicianList = ({ clinicians }) => {
   const navigate = useNavigate();
+  const columnHelper = createColumnHelper();
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("name", {
+        header: "Clinician",
+        cell: ({ row }) => {
+          const clinician = row.original;
+          return (
+            <div className="flex items-start">
+              <img
+                src={clinician.image}
+                alt={clinician.name}
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="ml-4 text-left">
+                <div className="font-medium text-gray-900 text-base">
+                  {clinician.name}
+                </div>
+                <div className="text-xs text-gray-500">{clinician.title}</div>
+              </div>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: ({ getValue }) => {
+          const status = getValue();
+          return (
+            <span
+              className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${
+                status === "active"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {status}
+            </span>
+          );
+        },
+      }),
+      columnHelper.accessor("casesTaken", {
+        header: "Cases Taken",
+        cell: ({ getValue }) => `${getValue()} Cases`,
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <button
+            onClick={() => navigate(`/clinicians/${row.original.id}`)}
+            className="text-sm bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-dark"
+          >
+            View profile
+          </button>
+        ),
+      }),
+    ],
+    [navigate]
+  );
+
+  const table = useReactTable({
+    data: clinicians,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <div className="bg-white rounded-lg px-2 w-[80vw] overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 text-center">
-        <thead className="py-2 ">
-          <tr>
-            <th scope="col" className="pl-12 py-3 text-left  font-medium ">
-              Clinician
-            </th>
-            <th scope="col" className="px-6 py-3   font-medium  ">
-              Status
-            </th>
-            <th scope="col" className="px-6 py-3   font-medium   ">
-              Cases Taken
-            </th>
-            <th scope="col" className="px-6 py-3  font-medium  ">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {clinicians.map((clinician) => (
-            <tr key={clinician.id} className="">
-              <td className="px-6 py-4 ">
-                <div className="flex items-start">
-                  <div className=" h-10 w-10">
-                    <img
-                      src={clinician.image}
-                      alt={clinician.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </div>
-                  <div className="ml-4 text-left">
-                    <div className=" font-medium text-gray-900">
-                      {clinician.name}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {clinician.title}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span
-                  className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${
-                    clinician.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {clinician.status}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {clinician.casesTaken} Cases
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  onClick={() => navigate(`/clinicians/${clinician.id}`)}
-                  className="text-sm bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-dark"
-                >
-                  View profile
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <DataTable table={table} />
     </div>
   );
 };

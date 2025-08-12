@@ -70,15 +70,13 @@ const AssessmentPricing = () => {
   });
 
   return (
-    <section className="bg-white p-5 ">
+    <section className="bg-white ">
       <h2 className="text-lg font-semibold mb-1 text-primary">Assessment Pricing</h2>
       <p className="text-sm text-gray-600 mb-6">
         Set the price per category and toggle categories for On-Demand Assessments.
       </p>
 
-     <div className="rounded-lg border-2 border-gray-100 p-2">
         <DataTable table={table} />
-        </div> 
 
       <div className="mt-6 flex justify-end">
         <button

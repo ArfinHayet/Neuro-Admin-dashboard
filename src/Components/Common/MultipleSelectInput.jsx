@@ -181,7 +181,7 @@ const MultipleSelectInput = ({
         name={name}
         className="w-full text-sm font-normal p-2 text-darkBlack2 border border-[#EAEAEA] outline-none rounded-lg dark:bg-darkBlack2 dark:text-white bg-white"
       >
-        <option className="text-lightGray" disabled selected>
+        <option className="text-lightGray" disabled value="">
           {select}
         </option>
         {options?.map((option) => (

@@ -2,16 +2,13 @@
 // import p2 from "../../public/png/Group 54.svg";
 // import p3 from "../../public/png/Group 53.svg";
 import p4 from "../../../public/png/settings.svg";
-import p5 from "../../../public/png/assessment.svg";
+import p5 from "../../../public/png/assessments.svg";
+import p6 from "../../../public/png/users.svg";
+import p7 from "../../../public/png/clinicians.svg";
+import p1 from "../../../public/png/dashboard.svg";
+import p2 from "../../../public/png/article.svg";
+import p3 from "../../../public/png/pound.svg";
 
-import {
-  MdOutlinePeopleAlt,
-  MdPerson,
-  MdAssessment,
-  MdArticle,
-  MdBarChart,
-} from "react-icons/md";
-import { RiMoneyPoundBoxLine , RiDashboardLine} from "react-icons/ri";
 
 
 export const navItem = [
@@ -48,7 +45,7 @@ export const navItem = [
 
   {
     title: "Dashboard",
-    icon: RiDashboardLine,
+    icon: p1,
     path: "/dashboard",
     routes: [],
   },
@@ -69,15 +66,24 @@ export const navItem = [
 
   {
     title: "Patients",
-    icon: MdOutlinePeopleAlt,
+    icon: p6,
     path: "/patients",
     routes: [],
   },
   {
     title: "Clinicians",
-    icon: MdPerson,
+    icon: p7,
     path: "/clinicians",
-    routes: [],
+    routes: [
+      {
+        label: "Clinician List",
+        path: "/clinicians",
+      },
+      {
+        label: "Clinician Onboarding",
+        path: "/clinician-onboarding",
+      },
+    ],
   },
 
   {
@@ -96,7 +102,7 @@ export const navItem = [
   },
   {
     title: "Blogs",
-    icon: MdArticle,
+    icon: p2,
     path: "/blogs",
     routes: [],
   },
@@ -108,7 +114,7 @@ export const navItem = [
   },*/
   {
     title: "Finances",
-    icon: RiMoneyPoundBoxLine,
+    icon: p3,
     path: "/finances",
     routes: [],
   },
@@ -123,4 +129,3 @@ export const navItem = [
     ],
   },
 ];
-

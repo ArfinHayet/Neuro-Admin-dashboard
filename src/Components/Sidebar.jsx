@@ -10,12 +10,12 @@ const Sidebar = () => {
     setOpenDropdownIndex((prev) => (prev === index ? null : index));
 
   const today = new Date();
-  const dayName = today.toLocaleDateString("en-GB", { weekday: "long" }); 
+  const dayName = today.toLocaleDateString("en-GB", { weekday: "long" });
   const date = today.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
-  }); 
-  const year = today.getFullYear(); 
+  });
+  const year = today.getFullYear();
 
   return (
     <div className="h-screen pt-20 ps-0 pe-2 bg-white w-full ">
@@ -58,7 +58,11 @@ const Sidebar = () => {
                   }`
                 }
               >
-                {Icon && <Icon className="text-lg" />}
+                {Icon && typeof Icon === "string" ? (
+                  <img src={Icon} alt={item.title} className="w-5 h-5" />
+                ) : (
+                  Icon && <Icon className="text-lg" />
+                )}
                 <span>{item.title}</span>
               </NavLink>
             </li>

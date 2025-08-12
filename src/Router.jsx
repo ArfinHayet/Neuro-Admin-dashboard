@@ -19,7 +19,8 @@ import SubmittedInitialList from "./Pages/Submitted Assessments/SubmittedInitial
 import InitialsDetails from "./Pages/Submitted Assessments/InitialsDetails";
 import OnDemandDetails from "./Pages/Submitted Assessments/OnDemandDetails";
 import SubmittedOnDemand from "./Pages/Submitted Assessments/SubmittedOnDemand";
-import PrivateRoute from "./PrivateRoute";
+import CliniciansOnboarding  from "./Pages/Clinicians/CliniciansOnboarding";
+
 
 export const router = createBrowserRouter([
   {
@@ -99,6 +100,10 @@ export const router = createBrowserRouter([
       {
         path: "/clinicians/:id",
         element: <ClinicianProfile />,
+      },
+      {
+        path: "/clinician-onboarding",
+        element: <CliniciansOnboarding />,
       },
       {
         path: "/blogs",
