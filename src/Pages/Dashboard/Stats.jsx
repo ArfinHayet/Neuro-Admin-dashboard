@@ -21,7 +21,7 @@ const Stats = () => {
   }).length;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 p-6  rounded-xl text-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6  rounded-xl text-center">
       {/* Users */}
       <div className="bg-white p-4 rounded-lg shadow-sm">
         <h3 className="mb-2 font-medium ">Total Users</h3>
