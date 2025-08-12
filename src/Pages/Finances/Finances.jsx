@@ -1,7 +1,7 @@
 import { useState } from "react";
-import AssessmentPricing from "../../Components/FInance/AssessmentPricing";
-import ClinicianCommission from "../../Components/FInance/ClinicianCommission";
-import TransactionLogs from "../../Components/FInance/TransactionLogs";
+import AssessmentPricing from "./AssessmentPricing";
+import ClinicianCommission from "./ClinicianCommission";
+import TransactionLogs from "./TransactionLogs";
 
 const tabs = [
   { id: "pricing", label: "Assessment Pricing" },

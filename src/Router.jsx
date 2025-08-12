@@ -7,7 +7,7 @@ import Login from "./Pages/Authentication/Login/Login";
 import InitialAssessment from "./Pages/Assessments/Initial Assessment/InitialAssessment";
 import OnDemandAssessment from "./Pages/Assessments/On Demand Assessment/OnDemandAssessment";
 import Patients from "./Pages/Patients/Patients";
-import Clinicians from "./Pages/Clinicians/Clinicians";
+import CliniciansList from "./Pages/Clinicians/CliniciansList";
 import Blogs from "./Pages/Blogs/Blogs";
 import AssessmentDetails from "./Pages/Assessments/On Demand Assessment/AssessmentDetails";
 import Dashboard from "./Pages/Dashboard/Dashboard";
@@ -50,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/user",
         element: <User />,
+      }, 
+      {
+        path: "/",
+        element: <Dashboard />,
       },
       {
         path: "/submitted-assessments/initial",
@@ -79,10 +83,7 @@ export const router = createBrowserRouter([
         path: "/ondemandassessment/:id",
         element: <AssessmentDetails />,
       },
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
+     
       {
         path: "/patients",
         element: <Patients />,
@@ -95,7 +96,7 @@ export const router = createBrowserRouter([
 
       {
         path: "/clinicians",
-        element: <Clinicians />,
+        element: <CliniciansList />,
       },
       {
         path: "/clinicians/:id",

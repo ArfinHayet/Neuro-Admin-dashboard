@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import { assessmentCategories } from "../utils/Data";
-import DataTable from "../Common/DataTable";
+import { assessmentCategories } from "../../Components/utils/Data";
+import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 
 

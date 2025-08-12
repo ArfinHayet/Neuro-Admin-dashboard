@@ -1,7 +1,7 @@
 
-import { transactionLogs } from "../utils/Data";
+import { transactionLogs } from "../../Components/utils/Data";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import DataTable from "../Common/DataTable";
+import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 
 export default function TransactionLogs() {

@@ -46,7 +46,7 @@ export const navItem = [
   {
     title: "Dashboard",
     icon: p1,
-    path: "/dashboard",
+    path: "/",
     routes: [],
   },
   {

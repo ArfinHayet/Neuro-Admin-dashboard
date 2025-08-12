@@ -1,7 +1,7 @@
 import React  from "react";
 import { MdDeleteOutline, MdOutlineDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-import QuestionModal from "../Common/QuestionModal";
+import QuestionModal from "./QuestionModal";
 import { AiFillEdit } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 
