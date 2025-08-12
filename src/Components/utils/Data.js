@@ -1,19 +1,43 @@
-
-
 //assessments
 export const initialQuestions = [
   { id: 1, question: "I often notice small sounds when others do not." },
-  { id: 2, question: "I usually concentrate more on the whole picture, rather than the small details." },
+  {
+    id: 2,
+    question:
+      "I usually concentrate more on the whole picture, rather than the small details.",
+  },
   { id: 3, question: "I find it easy to do more than one thing at once." },
-  { id: 4, question: "If there is an interruption, I can switch back to what I was doing very quickly." },
-  { id: 5, question: "I find it easy to ‘read between the lines’ when someone is talking to me." },
-  { id: 6, question: "I know how to tell if someone listening to me is getting bored" },
-  { id: 7, question: "When I’m reading a story I find it difficult to work out the characters’ intentions." },
-  { id: 8, question: "I like to collect information about categories of things (e.g. types of car, bird, train, plant etc.)." },
-  { id: 9, question: "I find it easy to work out what someone is thinking or feeling just by looking at their face." },
+  {
+    id: 4,
+    question:
+      "If there is an interruption, I can switch back to what I was doing very quickly.",
+  },
+  {
+    id: 5,
+    question:
+      "I find it easy to ‘read between the lines’ when someone is talking to me.",
+  },
+  {
+    id: 6,
+    question: "I know how to tell if someone listening to me is getting bored",
+  },
+  {
+    id: 7,
+    question:
+      "When I’m reading a story I find it difficult to work out the characters’ intentions.",
+  },
+  {
+    id: 8,
+    question:
+      "I like to collect information about categories of things (e.g. types of car, bird, train, plant etc.).",
+  },
+  {
+    id: 9,
+    question:
+      "I find it easy to work out what someone is thinking or feeling just by looking at their face.",
+  },
   { id: 10, question: "I find it difficult to work out people’s intentions." },
 ];
-
 
 export const onDemandAssessments = [
   {
@@ -125,7 +149,6 @@ export const onDemandAssessments = [
   },
 ];
 
-
 export const categories = [
   { id: 1, title: "Behavioral", chartData: {} },
   { id: 2, title: "Cognitive", chartData: {} },
@@ -134,7 +157,6 @@ export const categories = [
   { id: 5, title: "Communication", chartData: {} },
   { id: 6, title: "Sensory", chartData: {} },
 ];
-
 
 //clinicians
 export const clinicians = [
@@ -168,28 +190,91 @@ export const clinicians = [
     bio: "Therapist with 10 years of experience in behavioral therapy.",
     registrationInfo: "Registered with ABC Medical Board",
   },
+  {
+    id: 3,
+    name: "Dr. Emily White",
+    title: "Child Psychiatrist",
+    image: "https://randomuser.me/api/portraits/women/45.jpg",
+    status: "active",
+    casesTaken: 10,
+    casesCompleted: 8,
+    totalEarnings: 5400,
+    pendingAmount: 600,
+    joinedDate: "2025-07-30",
+    specialities: ["Child Psychiatry", "Behavioral Therapy"],
+    bio: "Passionate child psychiatrist with 7 years of experience.",
+    registrationInfo: "Registered with DEF Medical Board",
+    createdAt: "2025-07-20T09:00:00Z", 
+  },
+  {
+    id: 4,
+    name: "Dr. Mark Black",
+    title: "Neuropsychologist",
+    image: "https://randomuser.me/api/portraits/men/55.jpg",
+    status: "active",
+    casesTaken: 5,
+    casesCompleted: 4,
+    totalEarnings: 3000,
+    pendingAmount: 400,
+    joinedDate: "2025-05-15",
+    specialities: ["Neuropsychology"],
+    bio: "Experienced neuropsychologist focusing on adult cases.",
+    registrationInfo: "Registered with GHI Medical Board",
+    createdAt: "2025-08-10T11:00:00Z", 
+  },
 ];
 
 export const clinicianAssessments = {
   1: [
-    { id: 1, assessmentName: "Speech Assessment", patientName: "Alice", dateTaken: "2025-07-25" },
-    { id: 2, assessmentName: "Motor Skills Assessment", patientName: "Bob", dateTaken: "2025-07-30" },
+    {
+      id: 1,
+      assessmentName: "Speech Assessment",
+      patientName: "Alice",
+      dateTaken: "2025-07-25",
+    },
+    {
+      id: 2,
+      assessmentName: "Motor Skills Assessment",
+      patientName: "Bob",
+      dateTaken: "2025-07-30",
+    },
   ],
   2: [
-    { id: 3, assessmentName: "Cognitive Skills", patientName: "Charlie", dateTaken: "2025-07-26" },
+    {
+      id: 3,
+      assessmentName: "Cognitive Skills",
+      patientName: "Charlie",
+      dateTaken: "2025-07-26",
+    },
   ],
 };
 
 export const clinicianLeaves = {
   1: [
-    { id: 101, start: "2025-09-01", end: "2025-09-05", reason: "Family emergency", status: "Pending" },
-    { id: 201, start: "2025-08-15", end: "2025-08-20", reason: "Medical Emergency", status: "Pending" },
-    { id: 202, start: "2025-09-10", end: "2025-09-12", reason: "N/A", status: "Approved" },
+    {
+      id: 101,
+      start: "2025-09-01",
+      end: "2025-09-05",
+      reason: "Family emergency",
+      status: "Pending",
+    },
+    {
+      id: 201,
+      start: "2025-08-15",
+      end: "2025-08-20",
+      reason: "Medical Emergency",
+      status: "Pending",
+    },
+    {
+      id: 202,
+      start: "2025-09-10",
+      end: "2025-09-12",
+      reason: "N/A",
+      status: "Approved",
+    },
   ],
   2: [],
 };
-
-
 
 //blog
 
@@ -209,7 +294,6 @@ export const dummyblogs = [
     image: "./public/png/blog-img.jpg",
   },
 ];
-
 
 // Your existing users and children arrays (unchanged)
 export const users = [
@@ -254,6 +338,36 @@ export const users = [
     postCode: "75001",
     age: 38,
     isBlocked: true,
+  },
+  {
+    id: 4,
+    role: "Patient",
+    name: "Alice Brown",
+    image: "./public/png/patient-img.png",
+    email: "alice@example.com",
+    phone: "1112223333",
+    country: "USA",
+    state: "Florida",
+    street: "789 Oak St",
+    postCode: "32004",
+    age: 28,
+    isBlocked: false,
+    createdAt: "2025-07-25T10:30:00Z", // within 30 days
+  },
+  {
+    id: 5,
+    role: "Guardian",
+    name: "Michael Green",
+    image: "./public/png/patient-img.png",
+    email: "michael@example.com",
+    phone: "4445556666",
+    country: "USA",
+    state: "Nevada",
+    street: "123 Pine St",
+    postCode: "89012",
+    age: 50,
+    isBlocked: false,
+    createdAt: "2025-08-10T15:45:00Z", // older than 30 days
   },
 ];
 
@@ -317,7 +431,13 @@ export const assessments = [
       { questionId: 1, answer: "No" },
       { questionId: 2, answer: "Yes" },
       { questionId: 3, answer: "No" },
-      // ...
+      { questionId: 4, answer: "No" },
+      { questionId: 5, answer: "Yes" },
+      { questionId: 6, answer: "No" },
+      { questionId: 7, answer: "Yes" },
+      { questionId: 8, answer: "No" },
+      { questionId: 9, answer: "Yes" },
+      { questionId: 10, answer: "No" },
     ],
   },
   {
@@ -329,12 +449,62 @@ export const assessments = [
     dateTaken: "2025-08-12",
     type: "on-demand",
     answers: [
+     { questionId: 1, answer: "No" },
+      { questionId: 2, answer: "Yes" },
+      { questionId: 3, answer: "No" },
+      { questionId: 4, answer: "No" },
+      { questionId: 5, answer: "Yes" },
+      { questionId: 6, answer: "No" },
+      { questionId: 7, answer: "Yes" },
+      { questionId: 8, answer: "No" },
+      { questionId: 9, answer: "Yes" },
+      { questionId: 10, answer: "No" },
+    ],
+  },
+  {
+    id: 101,
+    userId: 1,
+    childId: "c1",
+    name: "Initial Autism Screening",
+    categoryId: 1,
+    dateTaken: "2025-08-01",
+    type: "initial",
+    answers: [
       { questionId: 1, answer: "Yes" },
       { questionId: 2, answer: "No" },
-      // ...
+      { questionId: 3, answer: "Sometimes" },
+      { questionId: 4, answer: "Yes" },
+      { questionId: 5, answer: "No" },
+      { questionId: 6, answer: "Yes" },
+      { questionId: 7, answer: "No" },
+      { questionId: 8, answer: "Yes" },
+      { questionId: 9, answer: "No" },
+      { questionId: 10, answer: "Sometimes" },
+    ],
+  },
+  {
+    id: 102,
+    userId: 2,
+    childId: "c2",
+    name: "Initial Sensory Screening",
+    categoryId: 2,
+    dateTaken: "2025-08-05",
+    type: "initial",
+    answers: [
+      { questionId: 1, answer: "No" },
+      { questionId: 2, answer: "Yes" },
+      { questionId: 3, answer: "No" },
+      { questionId: 4, answer: "No" },
+      { questionId: 5, answer: "Yes" },
+      { questionId: 6, answer: "No" },
+      { questionId: 7, answer: "Yes" },
+      { questionId: 8, answer: "No" },
+      { questionId: 9, answer: "Yes" },
+      { questionId: 10, answer: "No" },
     ],
   },
 ];
+
 
 
 // Clinician approval requests
@@ -352,7 +522,6 @@ export const clinicianRequests = [
     requestedOn: "2025-07-22",
   },
 ];
-
 
 export const assessmentCategories = [
   { id: 1, name: "Speech Assessment", price: 50, enabled: true },

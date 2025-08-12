@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import { assessments, onDemandAssessments } from "../../Components/utils/Data";
 
 const OnDemandDetails = () => {
   const { assessmentId } = useParams();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("questions");
 
   const assessment = assessments.find(a => a.id === parseInt(assessmentId));

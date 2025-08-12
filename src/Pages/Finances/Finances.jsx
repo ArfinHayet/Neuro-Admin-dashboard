@@ -26,22 +26,27 @@ export default function Finances() {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 ">
-      <h1 className="text-2xl font-semibold mb-1">Finance </h1>
-      <p className="text-sm mb-4 text-secondary">Manage your platform’s pricing, clinician commissions, and transaction history in one place.</p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
+      <h1 className="text-2xl font-semibold mb-1">Finance</h1>
+      <p className="text-sm mb-8 text-secondary">
+        Manage your platform's pricing, clinician commissions, and transaction history in one place.
+      </p>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-8 mb-6 border-b border-gray-200">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg font-medium ${
+            className={`relative pb-3 font-medium text-sm ${
               activeTab === tab.id
-                ? "bg-primary text-white"
-                : "bg-white text-gray-600 border"
+                ? "text-primary font-semibold"
+                : "text-gray-500"
             }`}
           >
             {tab.label}
+            {activeTab === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+            )}
           </button>
         ))}
       </div>

@@ -4,7 +4,7 @@ import { onDemandAssessments } from "../../../Components/utils/Data";
 import CategoryModal from "../../../Components/Common/CategoryModal";
 import { FaRegClock } from "react-icons/fa6";
 
-const CategoryCard = ({ category, onEdit, onSelect }) => {
+const CategoryCard = ({ category, onSelect }) => {
   return (
     <section>
       <div
