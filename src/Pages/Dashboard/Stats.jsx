@@ -4,25 +4,15 @@ import {
   clinicians,
   transactionLogs,
 } from "../../Components/utils/Data";
+import { LuUsers } from "react-icons/lu";
+import { MdOutlineCurrencyPound } from "react-icons/md";
+import { MdOutlineMedicalServices } from "react-icons/md";
+
 
 const Stats = () => {
   const totalUsers = users.length;
-  const newUsersLast30Days = users.filter((user) => {
-    if (!user.createdAt) return false; // avoid errors if createdAt missing
-    const createdDate = new Date(user.createdAt);
-    const daysDiff =
-      (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
-    return daysDiff <= 30;
-  }).length;
 
   const totalClinicians = clinicians.length;
-  const newCliniciansLast30Days = clinicians.filter((c) => {
-    if (!c.createdAt) return false;
-    const createdDate = new Date(c.createdAt);
-    const daysDiff =
-      (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
-    return daysDiff <= 30;
-  }).length;
 
   // Calculate total revenue from transaction logs
   const totalRevenue = transactionLogs.reduce(
@@ -31,33 +21,38 @@ const Stats = () => {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 rounded-xl text-center">
+    <div className="grid grid-cols-4 gap-4 rounded-xl ">
       {/* Users */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="mb-2 font-medium">Total Users</h3>
-        <p className="text-2xl font-bold">{totalUsers}</p>
-      </div>
-
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="mb-2 font-medium">New Users (30 days)</h3>
-        <p className="text-2xl font-bold">{newUsersLast30Days}</p>
+      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center">
+        <div>
+          <p className="text-2xl font-medium">{totalUsers}</p>
+          <h3 className="mb-1">Total Users</h3>
+        </div>
+        <div className="bg-teal-100 bg-opacity-50 rounded-full p-4">
+          <LuUsers size={22} className="text-primary"/>
+        </div>
       </div>
 
       {/* Clinicians */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="mb-2 font-medium">Total Clinicians</h3>
-        <p className="text-2xl font-bold">{totalClinicians}</p>
-      </div>
-
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="mb-2 font-medium">New Clinicians</h3>
-        <p className="text-2xl font-bold">{newCliniciansLast30Days}</p>
+      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center">
+       <div> <p className="text-2xl font-medium">{totalClinicians}</p>{" "}
+        <h3 className="mb-1 ">Total Clinicians</h3>
+        
+         
+        </div>
+        <div className="bg-indigo-100 rounded-full p-4">
+          <MdOutlineMedicalServices  size={22} className="text-indigo-600" />
+        </div>
       </div>
 
       {/* Revenue */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="mb-2 font-medium">Total Revenue</h3>
-        <p className="text-2xl font-bold">${totalRevenue}</p>
+      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center ">
+       <div><p className="text-2xl font-medium">${totalRevenue}</p>{" "}
+        <h3 className="mb-1 ">Total Revenue</h3>
+        </div> 
+         <div className="bg-orange-200 bg-opacity-50 rounded-full p-4">
+          <MdOutlineCurrencyPound size={22} className="text-orange-600"/>
+        </div>
       </div>
     </div>
   );

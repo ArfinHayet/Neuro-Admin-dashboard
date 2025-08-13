@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { clinicians } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
+import { IoEye } from "react-icons/io5";
 
 const CliniciansList = () => {
   const navigate = useNavigate();
@@ -18,20 +19,15 @@ const CliniciansList = () => {
       cell: ({ row }) => {
         const clinician = row.original;
         return (
-          <div className="flex items-start">
-            <img
-              src={clinician.image}
-              alt={clinician.name}
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="ml-4 text-left">
-              <div className="font-medium text-gray-900 text-base">
-                {clinician.name}
-              </div>
-              <div className="text-xs text-gray-500">{clinician.title}</div>
-            </div>
-          </div>
+          <p className="  text-sm">{clinician.name}</p>
         );
+      },
+    }),
+    columnHelper.accessor("email", {
+      header: "Email",
+      cell: ({ row }) => {
+        const clinician = row.original;
+        return <p className="text-xs text-gray-500">{clinician.title}</p>;
       },
     }),
     columnHelper.accessor("status", {
@@ -40,7 +36,7 @@ const CliniciansList = () => {
         const status = getValue();
         return (
           <span
-            className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${
+            className={`px-2 inline-flex text-xs leading-5  rounded-full ${
               status === "active"
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-800"
@@ -61,9 +57,9 @@ const CliniciansList = () => {
       cell: ({ row }) => (
         <button
           onClick={() => navigate(`/clinicians/${row.original.id}`)}
-          className="text-sm bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-dark"
+          className="text-lg text-primary ml-4"
         >
-          View profile
+          <IoEye />
         </button>
       ),
     }),
@@ -77,8 +73,10 @@ const CliniciansList = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-20">
-      <h1 className="font-medium text-2xl mb-4">Clinicians</h1>
-      <div className="bg-white rounded-lg px-2 w-[80vw] overflow-x-auto">
+      <h1 className="font-medium text-2xl mb-1">Clinicians</h1>
+        <p className="text-secondary text-sm mb-4">Browse and manage all registered clinicians.</p>
+
+      <div className="p-2 w-[75vw] bg-white rounded-xl overflow-x-auto">
         <DataTable table={table} />
       </div>
     </section>

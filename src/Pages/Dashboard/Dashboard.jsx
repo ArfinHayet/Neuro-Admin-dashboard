@@ -80,8 +80,11 @@ const Dashboard = () => {
 
   // === Return JSX ===
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-10">
-      <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md">
+
+     
+      <h1 className="text-xl font-semibold mb-1">Dashboard</h1>
       <p className="text-sm mb-4 text-secondary">
         Get an overview of your platform’s performance, user engagement, and
         clinician activity.
@@ -298,7 +301,7 @@ const Dashboard = () => {
             )}
           </section>
         </div>
-      </div>
+      </div> </div>
     </section>
   );
 };

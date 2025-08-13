@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onDemandAssessments } from "../../../Components/utils/Data";
-import CategoryModal from "../../../Components/Common/CategoryModal";
+import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { FaRegClock } from "react-icons/fa6";
 
 const CategoryCard = ({ category, onSelect }) => {

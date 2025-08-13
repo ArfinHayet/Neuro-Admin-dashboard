@@ -4,6 +4,7 @@ import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
  import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionModal from "../../../Components/Common/QuestionModal";
+import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
 
 
 const AssessmentDetails = () => {
@@ -106,7 +107,7 @@ const AssessmentDetails = () => {
           ))}
         </tbody>
       </table>
-         <QuestionModal
+         <OnDemandQuestionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}

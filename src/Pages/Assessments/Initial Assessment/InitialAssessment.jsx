@@ -2,6 +2,7 @@ import { useState } from "react";
 import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import QuestionModal from "../../../Components/Common/QuestionModal";
+import InitialModal from "../../../Components/Assessments/InitialModal";
 
 const InitialAssessment = () => {
   const [questions, setQuestions] = useState(
@@ -93,7 +94,7 @@ const InitialAssessment = () => {
         </tbody>
       </table>
 
-      <QuestionModal
+      <InitialModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}

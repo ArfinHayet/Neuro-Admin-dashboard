@@ -10,7 +10,7 @@ const DataTable = ({ table }) => {
             {headerGroup.headers.map((header) => (
               <th
                 key={header.id}
-                className="px-4 border-t text-sm font-medium text-[#333333] py-2 text-left"
+                className="px-4 text-sm font-medium text-[#333333] py-1 text-left "
               >
                 {flexRender(
                   header.column.columnDef.header,
@@ -21,13 +21,13 @@ const DataTable = ({ table }) => {
           </tr>
         ))}
       </thead>
-      <tbody className="divide-y">
+      <tbody className="divide-y ">
         {table.getRowModel().rows.map((row) => (
           <tr key={row.id} className="hover:bg-gray-50">
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
-                className="px-4 py-3 text-xs font-normal text-[#6C6C6C]"
+                className="px-3 py-1 text-xs font-normal text-[#525252] text-left"
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>

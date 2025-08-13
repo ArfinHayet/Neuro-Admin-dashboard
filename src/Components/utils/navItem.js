@@ -2,13 +2,16 @@
 // import p2 from "../../public/png/Group 54.svg";
 // import p3 from "../../public/png/Group 53.svg";
 import p4 from "../../../public/png/settings.svg";
-import p5 from "../../../public/png/assessments.svg";
 import p6 from "../../../public/png/users.svg";
 import p7 from "../../../public/png/clinicians.svg";
-import p1 from "../../../public/png/dashboard.svg";
 import p2 from "../../../public/png/article.svg";
 import p3 from "../../../public/png/pound.svg";
 
+import { RiDashboardFill } from "react-icons/ri";
+import { BiBarChartSquare } from "react-icons/bi";
+import { HiUser } from "react-icons/hi2";
+import { GiMedicalPackAlt } from "react-icons/gi";
+import { CiSettings } from "react-icons/ci";
 
 
 export const navItem = [
@@ -45,13 +48,13 @@ export const navItem = [
 
   {
     title: "Dashboard",
-    icon: p1,
+    icon: RiDashboardFill,
     path: "/",
     routes: [],
   },
   {
     title: "Submitted Assessments",
-    icon: p5,
+    icon: BiBarChartSquare,
     routes: [
       {
         label: "Initial Assessment",
@@ -66,13 +69,13 @@ export const navItem = [
 
   {
     title: "Patients",
-    icon: p6,
+    icon: HiUser,
     path: "/patients",
     routes: [],
   },
   {
     title: "Clinicians",
-    icon: p7,
+    icon: GiMedicalPackAlt,
     path: "/clinicians",
     routes: [
       {
@@ -88,7 +91,7 @@ export const navItem = [
 
   {
     title: "Assessment Questions",
-    icon: p5,
+    icon: BiBarChartSquare,
     routes: [
       {
         label: "Initial Assessment",
@@ -121,7 +124,7 @@ export const navItem = [
 
   {
     title: "Settings",
-    icon: p4,
+    icon: CiSettings,
     routes: [
       { label: "User", path: "/user" },
       { label: "Role", path: "/role" },

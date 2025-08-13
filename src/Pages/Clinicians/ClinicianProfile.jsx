@@ -8,6 +8,8 @@ import {
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import toast from "react-hot-toast";
 import DataTable from "../../Components/Common/DataTable";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { TiDeleteOutline } from "react-icons/ti";
 
 const ClinicianProfile = () => {
   const { id } = useParams();
@@ -44,14 +46,14 @@ const ClinicianProfile = () => {
 
   const assessmentColumns = useMemo(
     () => [
-      { 
-        accessorKey: "assessmentName", 
-        header: "Assessment Name" 
+      {
+        accessorKey: "assessmentName",
+        header: "Assessment Name",
       },
       {
-         accessorKey: "patientName", 
-         header: "Patient Name" 
-        },
+        accessorKey: "patientName",
+        header: "Patient Name",
+      },
       {
         accessorKey: "dateTaken",
         header: "Date Taken",
@@ -81,18 +83,18 @@ const ClinicianProfile = () => {
         cell: ({ row }) => {
           if (row.original.status !== "Pending") return null;
           return (
-            <div className="flex gap-2">
+            <div className="flex gap-2 ml-2">
               <button
-                className="text-green-600 hover:underline"
+                className="text-green-600 hover:underline "
                 onClick={() => handleApprove(row.original.id)}
               >
-                Approve
+                <FaRegCheckCircle size={17} />
               </button>
               <button
-                className="text-red-600 hover:underline"
+                className="text-red-600 hover:underline "
                 onClick={() => handleReject(row.original.id)}
               >
-                Reject
+                <TiDeleteOutline size={22} />
               </button>
             </div>
           );
@@ -118,50 +120,50 @@ const ClinicianProfile = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-20">
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 mb-4">
         <img
           src={clinician.image}
           alt={clinician.name}
           className="w-24 h-24 rounded-full"
         />
-        <div>
-          <h2 className="text-xl font-semibold mb-1">{clinician.name}</h2>
-          <p className="text-sm text-gray-600 mb-1">{clinician.title}</p>
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold ">{clinician.name}</h2>
+          <p className="text-sm text-gray-500">
+            Joined on{" "}
+            {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
+          </p>
+
+          {clinician.specialities && (
+            <p className="text-sm text-gray-500 ">
+              <strong className="text-gray-700">Specialties </strong>{" "}
+              {clinician.specialities.join(", ")}
+            </p>
+          )}
+          {clinician.registrationInfo && (
+            <p className="text-sm text-gray-500 ">
+              <strong className="text-gray-700">Registered in </strong>{" "}
+              {clinician.registrationInfo}
+            </p>
+          )}
           {clinician.bio && (
             <p className="text-sm text-gray-700 max-w-xl">{clinician.bio}</p>
           )}
         </div>
       </div>
 
-      <div className="mt-4 bg-white p-4 rounded-lg w-[35vw]">
-        <p className="text-sm text-gray-500">
-          Joined on {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
-        </p>
-        {clinician.specialities && (
-          <p className="text-sm text-gray-500 mt-2">
-            <strong className="text-gray-700">Specialties </strong>{" "}
-            {clinician.specialities.join(", ")}
-          </p>
-        )}
-        {clinician.registrationInfo && (
-          <p className="text-sm text-gray-500 mt-2">
-            <strong className="text-gray-700">Registered in </strong>{" "}
-            {clinician.registrationInfo}
-          </p>
-        )}
-      </div>
-
-      <section className="mt-6 space-y-8">
-        <h3 className="text-lg font-medium mb-2">Ongoing Assessments</h3>
-        <div className="bg-white p-4 rounded-lg">
+      <div className="mt-4">
+        <h3 className="text-lg font-medium mb-1">Ongoing Assessments</h3>
+        <div className="bg-white p-2 rounded-lg">
           <DataTable table={assessmentTable} />
         </div>
+      </div>
 
-        <h3 className="text-lg font-medium mb-2 mt-6">Leave Management</h3>
-        <div className="bg-white p-4 rounded-lg">
+      <div className="mt-4">
+        <h3 className="text-lg font-medium mb-1">Leave Management</h3>
+        <div className="bg-white p-2 rounded-lg">
           <DataTable table={leaveTable} />
         </div>
-      </section>
+      </div>
     </section>
   );
 };

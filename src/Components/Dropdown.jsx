@@ -1,7 +1,7 @@
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 
-const Dropdown = ({ title, icon, routes, isOpen, onToggle, index }) => {
+const Dropdown = ({ title, icon: Icon, routes, isOpen, onToggle, index }) => {
   return (
     <div>
       <div
@@ -9,12 +9,8 @@ const Dropdown = ({ title, icon, routes, isOpen, onToggle, index }) => {
         onClick={() => onToggle(index)}
       >
         <div className="flex gap-3 ps-4 items-center">
-          <img
-            src={icon}
-            height={300}
-            className="h-[16px] object-contain mt-1"
-            alt="icon"
-          />
+                   {Icon && <Icon className="h-4 w-4 mt-1 text-[#6C6C6C]" />}
+
           <span className="text-sm text-[#6C6C6C] font-medium">{title}</span>
         </div>
         <span className="text-2xl ml-auto text-[#6C6C6C]">
