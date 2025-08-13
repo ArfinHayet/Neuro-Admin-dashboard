@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
-import QuestionModal from "../../../Components/Common/QuestionModal";
 import InitialModal from "../../../Components/Assessments/InitialModal";
 
 const InitialAssessment = () => {

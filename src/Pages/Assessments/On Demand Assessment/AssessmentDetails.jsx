@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
  import { initialQuestions } from "../../../Components/utils/Data";
-import QuestionModal from "../../../Components/Common/QuestionModal";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
 
 
