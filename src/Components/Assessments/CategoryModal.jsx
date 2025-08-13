@@ -3,19 +3,20 @@ import React, { useState, useEffect } from "react";
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-const [duration, setDuration] = useState(""); 
-
+  const [duration, setDuration] = useState("");
+  const [categoryType, setCategoryType] = useState(""); 
 
   useEffect(() => {
     if (defaultCategory) {
       setName(defaultCategory.name || "");
       setDescription(defaultCategory.description || "");
       setDuration(defaultCategory.duration || "");
+      setCategoryType(defaultCategory.categoryType || ""); 
     } else {
       setName("");
-      setDescription("");  
-            setDuration("");
-    
+      setDescription("");
+      setDuration("");
+      setCategoryType("");
     }
   }, [defaultCategory]);
 
@@ -25,7 +26,7 @@ const [duration, setDuration] = useState("");
     e.preventDefault();
     if (!name.trim()) return alert("Category name is required");
 
-    onSave({ name, description });
+    onSave({ name, description, duration, categoryType }); 
     onClose();
   };
 
@@ -38,18 +39,19 @@ const [duration, setDuration] = useState("");
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1 text-sm">Category Name</label>
+            <label className="block mb-1 text-xs">Category Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter category name"
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded px-3 py-2 text-sm"
               required
             />
           </div>
+
           <div>
-            <label className="block mb-1 text-sm">
+            <label className="block mb-1 text-xs">
               Estimated Completion Time (minutes)
             </label>
             <input
@@ -58,18 +60,31 @@ const [duration, setDuration] = useState("");
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="Enter time in minutes"
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded px-3 py-2 text-sm"
               required
             />
           </div>
+
           <div>
-            <label className="block mb-1 text-sm">Description</label>
+            <label className="block mb-1 text-xs">Category Type</label>
+            <select
+              value={categoryType}
+              onChange={(e) => setCategoryType(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-xs"
+            >
+              <option value="free">Free</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-xs">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter description (optional)"
-              className="w-full border rounded px-3 py-2 resize-none"
-              rows={3}
+              className="w-full border rounded px-3 py-2 resize-none text-xs"
+              rows={2}
             />
           </div>
 
@@ -77,13 +92,13 @@ const [duration, setDuration] = useState("");
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border rounded-full hover:bg-gray-100"
+              className="px-4 py-2 border rounded-full bg-gray-100 text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary text-white rounded-full "
+              className="px-4 py-2 bg-primary  text-white rounded-full text-sm"
             >
               Save
             </button>
