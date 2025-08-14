@@ -5,7 +5,6 @@ import QuestionArrangement from "../../../Components/Common/QuestionArrangement"
  import { initialQuestions } from "../../../Components/utils/Data";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
 
-
 const AssessmentDetails = () => {
    const [questions, setQuestions] = useState(
      initialQuestions.map((q, idx) => ({
@@ -61,7 +60,7 @@ const AssessmentDetails = () => {
   return (
     <section className="p-6 bg-[#F6F7F9] rounded-xl h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-center ">
-        <h2 className="text-2xl font-medium ">{assessment.title}</h2>
+        <h2 className="text-xl font-semibold ">{assessment.name}</h2>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
           onClick={() => setIsModalOpen(true)}
@@ -69,8 +68,8 @@ const AssessmentDetails = () => {
           Add Question
         </button>
       </div>
-      <p className="mb-2 text-gray-700 text-sm">
-        <strong></strong> {assessment.description}
+       <p className="text-xs text-secondary">
+        View, Edit and manage questions for the On-Demand Assessment to ensure accuracy and relevance.
       </p>
       <p className="mb-4 text-gray-700 text-sm">
         <strong></strong> {assessment.time}
@@ -78,9 +77,9 @@ const AssessmentDetails = () => {
 
       <h3 className="font-medium my-3">Question List</h3>
       <table className="w-full text-sm text-left text-gray-700">
-        <thead className="bg-white">
+        <thead className="bg-[#f3f1f1] font-light">
           <tr>
-            <th className="p-2">#</th>
+            <th className="pl-4">#</th>
             <th className="p-2">Question</th>
             <th className="p-2">Order</th>
             <th className="p-2">Answer Type</th>

@@ -42,7 +42,7 @@ export const initialQuestions = [
 export const onDemandAssessments = [
   {
     id: 1,
-    title: "Child Autism Diagnosis",
+    name: "Child Autism Diagnosis",
     description: "Assess characteristics related to autism spectrum.",
     time: "15 min",
     image: "/public/png/autism.svg",
@@ -73,7 +73,7 @@ export const onDemandAssessments = [
   },
   {
     id: 2,
-    title: "Child Sensory Processing",
+    name: "Child Sensory Processing",
     description: "Evaluate how the child processes sensory inputs.",
     time: "12 min",
     image: "/public/png/autism.svg",
@@ -105,7 +105,7 @@ export const onDemandAssessments = [
   },
   {
     id: 3,
-    title: "Social Interaction",
+    name: "Social Interaction",
     description: "Assess the child’s social skills and interaction.",
     time: "10 min",
     image: "/public/png/autism.svg",
@@ -130,7 +130,7 @@ export const onDemandAssessments = [
   },
   {
     id: 4,
-    title: "Behavioral Assessment",
+    name: "Behavioral Assessment",
     description: "Evaluate child’s behavioral patterns and challenges.",
     time: "14 min",
     image: "/public/png/autism.svg",
@@ -204,7 +204,7 @@ export const clinicians = [
     specialities: ["Child Psychiatry", "Behavioral Therapy"],
     bio: "Passionate child psychiatrist with 7 years of experience.",
     registrationInfo: "Registered with DEF Medical Board",
-    createdAt: "2025-07-20T09:00:00Z", 
+    createdAt: "2025-07-20T09:00:00Z",
   },
   {
     id: 4,
@@ -220,7 +220,7 @@ export const clinicians = [
     specialities: ["Neuropsychology"],
     bio: "Experienced neuropsychologist focusing on adult cases.",
     registrationInfo: "Registered with GHI Medical Board",
-    createdAt: "2025-08-10T11:00:00Z", 
+    createdAt: "2025-08-10T11:00:00Z",
   },
 ];
 
@@ -413,10 +413,52 @@ export const assessments = [
     dateTaken: "2025-08-10",
     type: "on-demand",
     answers: [
-      { questionId: 1, answer: "Yes" },
-      { questionId: 2, answer: "No" },
-      { questionId: 3, answer: "Yes" },
-      // ...
+      { questionId: 1, answer: "No" },
+      {
+        questionId: 2,
+        question: "Does the child have difficulty with social interactions?",
+        answer: "Yes",
+      },
+      {
+        questionId: 3,
+        question: "Does the child show repetitive behaviors?",
+        answer: "No",
+      },
+      {
+        questionId: 4,
+        question: "Does the child have unusual reactions to sensory stimuli?",
+        answer: "No",
+      },
+      {
+        questionId: 5,
+        question: "Does the child have trouble understanding others' feelings?",
+        answer: "Yes",
+      },
+      {
+        questionId: 6,
+        question: "Does the child have delayed speech development?",
+        answer: "No",
+      },
+      {
+        questionId: 7,
+        question: "Does the child engage in imaginative play?",
+        answer: "Yes",
+      },
+      {
+        questionId: 8,
+        question: "Does the child prefer routines and dislike change?",
+        answer: "No",
+      },
+      {
+        questionId: 9,
+        question: "Does the child exhibit hyperactivity or impulsiveness?",
+        answer: "Yes",
+      },
+      {
+        questionId: 10,
+        question: "Does the child have difficulty making friends?",
+        answer: "No",
+      },
     ],
   },
   {
@@ -429,15 +471,51 @@ export const assessments = [
     type: "on-demand",
     answers: [
       { questionId: 1, answer: "No" },
-      { questionId: 2, answer: "Yes" },
-      { questionId: 3, answer: "No" },
-      { questionId: 4, answer: "No" },
-      { questionId: 5, answer: "Yes" },
-      { questionId: 6, answer: "No" },
-      { questionId: 7, answer: "Yes" },
-      { questionId: 8, answer: "No" },
-      { questionId: 9, answer: "Yes" },
-      { questionId: 10, answer: "No" },
+      {
+        questionId: 2,
+        question: "Does the child have difficulty with social interactions?",
+        answer: "Yes",
+      },
+      {
+        questionId: 3,
+        question: "Does the child show repetitive behaviors?",
+        answer: "No",
+      },
+      {
+        questionId: 4,
+        question: "Does the child have unusual reactions to sensory stimuli?",
+        answer: "No",
+      },
+      {
+        questionId: 5,
+        question: "Does the child have trouble understanding others' feelings?",
+        answer: "Yes",
+      },
+      {
+        questionId: 6,
+        question: "Does the child have delayed speech development?",
+        answer: "No",
+      },
+      {
+        questionId: 7,
+        question: "Does the child engage in imaginative play?",
+        answer: "Yes",
+      },
+      {
+        questionId: 8,
+        question: "Does the child prefer routines and dislike change?",
+        answer: "No",
+      },
+      {
+        questionId: 9,
+        question: "Does the child exhibit hyperactivity or impulsiveness?",
+        answer: "Yes",
+      },
+      {
+        questionId: 10,
+        question: "Does the child have difficulty making friends?",
+        answer: "No",
+      },
     ],
   },
   {
@@ -449,16 +527,16 @@ export const assessments = [
     dateTaken: "2025-08-12",
     type: "on-demand",
     answers: [
-     { questionId: 1, answer: "No" },
-      { questionId: 2, answer: "Yes" },
-      { questionId: 3, answer: "No" },
-      { questionId: 4, answer: "No" },
-      { questionId: 5, answer: "Yes" },
-      { questionId: 6, answer: "No" },
-      { questionId: 7, answer: "Yes" },
-      { questionId: 8, answer: "No" },
-      { questionId: 9, answer: "Yes" },
-      { questionId: 10, answer: "No" },
+      { questionId: 1, answer: "No" },
+      { questionId: 2, question: "Does the child have difficulty with social interactions?", answer: "Yes" },
+      { questionId: 3, question: "Does the child show repetitive behaviors?", answer: "No" },
+      { questionId: 4,  question: "Does the child have unusual reactions to sensory stimuli?", answer: "No" },
+      { questionId: 5,  question: "Does the child have trouble understanding others' feelings?", answer: "Yes" },
+      { questionId: 6,question: "Does the child have delayed speech development?", answer: "No" },
+      { questionId: 7,question: "Does the child engage in imaginative play?", answer: "Yes" },
+      { questionId: 8, question: "Does the child prefer routines and dislike change?", answer: "No" },
+      { questionId: 9,  question: "Does the child exhibit hyperactivity or impulsiveness?", answer: "Yes" },
+      { questionId: 10, question: "Does the child have difficulty making friends?", answer: "No" },
     ],
   },
   {
@@ -470,16 +548,16 @@ export const assessments = [
     dateTaken: "2025-08-01",
     type: "initial",
     answers: [
-      { questionId: 1, answer: "Yes" },
-      { questionId: 2, answer: "No" },
-      { questionId: 3, answer: "Sometimes" },
-      { questionId: 4, answer: "Yes" },
-      { questionId: 5, answer: "No" },
-      { questionId: 6, answer: "Yes" },
-      { questionId: 7, answer: "No" },
-      { questionId: 8, answer: "Yes" },
-      { questionId: 9, answer: "No" },
-      { questionId: 10, answer: "Sometimes" },
+     { questionId: 1, answer: "No" },
+      { questionId: 2, question: "Does the child have difficulty with social interactions?", answer: "Yes" },
+      { questionId: 3, question: "Does the child show repetitive behaviors?", answer: "No" },
+      { questionId: 4,  question: "Does the child have unusual reactions to sensory stimuli?", answer: "No" },
+      { questionId: 5,  question: "Does the child have trouble understanding others' feelings?", answer: "Yes" },
+      { questionId: 6,question: "Does the child have delayed speech development?", answer: "No" },
+      { questionId: 7,question: "Does the child engage in imaginative play?", answer: "Yes" },
+      { questionId: 8, question: "Does the child prefer routines and dislike change?", answer: "No" },
+      { questionId: 9,  question: "Does the child exhibit hyperactivity or impulsiveness?", answer: "Yes" },
+      { questionId: 10, question: "Does the child have difficulty making friends?", answer: "No" },
     ],
   },
   {
@@ -504,8 +582,6 @@ export const assessments = [
     ],
   },
 ];
-
-
 
 // Clinician approval requests
 export const clinicianRequests = [

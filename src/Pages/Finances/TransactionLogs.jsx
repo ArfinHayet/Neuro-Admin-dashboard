@@ -59,7 +59,7 @@ export default function TransactionLogs() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-1 text-primary">Transaction Logs</h2>
+      <h2 className="text-lg font-semibold text-primary">Transaction Logs</h2>
       <p className="mb-6 text-sm text-secondary">Track earnings, commission splits, and download invoices</p>
         <DataTable table={table} />
     </div>

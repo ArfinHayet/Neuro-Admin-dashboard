@@ -50,7 +50,7 @@ export default function ClinicianCommission() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-1 text-primary">Clinician Commissions</h2>
+      <h2 className="text-lg font-semibold text-primary">Clinician Commissions</h2>
       <p className="text-sm mb-6 text-secondary">Manage default and custom commission rates for clinicians.</p>
 
       <div className="mb-6">
@@ -71,7 +71,7 @@ export default function ClinicianCommission() {
      <div className="mt-6 flex justify-end">
         <button
           onClick={handleSaveChanges}
-          className="px-4 py-2 text-sm bg-primary text-white rounded-full"
+          className="px-3 py-1 text-sm bg-primary text-white rounded-full"
         >
           Save Changes
         </button>

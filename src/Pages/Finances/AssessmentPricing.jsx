@@ -71,8 +71,8 @@ const AssessmentPricing = () => {
 
   return (
     <section className="bg-white ">
-      <h2 className="text-lg font-semibold mb-1 text-primary">Assessment Pricing</h2>
-      <p className="text-sm text-gray-600 mb-6">
+      <h2 className="text-lg font-semibold text-primary">Assessment Pricing</h2>
+      <p className="text-sm text-secondary mb-6">
         Set the price per category and toggle categories for On-Demand Assessments.
       </p>
 
@@ -81,7 +81,7 @@ const AssessmentPricing = () => {
       <div className="mt-6 flex justify-end">
         <button
           onClick={handleSaveChanges}
-          className="px-4 py-2 text-sm bg-primary text-white rounded-full"
+          className="px-3 py-1 text-sm bg-primary text-white rounded-full"
         >
           Save Changes
         </button>

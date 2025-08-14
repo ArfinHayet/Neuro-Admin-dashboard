@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");

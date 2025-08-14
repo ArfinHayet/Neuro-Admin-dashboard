@@ -1,8 +1,6 @@
 import React  from "react";
-
-import { MdDelete } from "react-icons/md";
 import { FiEdit3 } from "react-icons/fi";
-
+import { MdDeleteOutline } from "react-icons/md";
 
 const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) => {
   
@@ -15,9 +13,9 @@ const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) =>
   };
 
   return (
-    <tr className="border-b">
-      <td className="p-2">{index + 1}</td>
-      <td className="p-2">{question.question}</td>
+    <tr className="border-b bg-white ">
+      <td className="pl-4">{index + 1}</td>
+      <td className="p-2 text-sm">{question.question}</td>
       <td className="p-2">
         <input
           type="number"
@@ -27,11 +25,11 @@ const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) =>
           min={1}
         />
       </td>
-      <td className="p-2">
+      <td className="p-2 text-xs">
         <select
           value={question.answerType}
           onChange={handleAnswerTypeChange}
-          className="border p-1 rounded w-fit"
+          className="border p-1 rounded w-28 text-xs"
         >
           <option value="yesno">Yes/No</option>
           <option value="text">Text</option>
@@ -45,10 +43,10 @@ const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) =>
              onEdit(question);
           } }
         >
-          <FiEdit3 className="text-gray-500" size={20}/>
+          <FiEdit3 className="text-gray-500" size={18}/>
         </button>
         <button className="" onClick={() => onDelete(question.id)}>
-          <MdDelete className="text-gray-500" size={20}/>
+          <MdDeleteOutline className="text-gray-500" size={20}/>
         </button>
       </td>
     </tr>

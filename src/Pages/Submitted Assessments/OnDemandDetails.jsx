@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { useParams,  } from "react-router-dom";
 import { assessments, onDemandAssessments } from "../../Components/utils/Data";
 
+const tabs = [
+  { id: "questions", label: "Questions and Answers" },
+  { id: "aisummary", label: "AI Summary" },
+];
+
 const OnDemandDetails = () => {
   const { assessmentId } = useParams();
   const [activeTab, setActiveTab] = useState("questions");
@@ -13,22 +18,26 @@ const OnDemandDetails = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-2xl font-semibold mb-4">{assessment.name} Details</h1>
+      <h1 className="text-xl font-semibold mb-4">{assessment.name} Details</h1>
 
-      <div className="mb-4">
-        <button
-          className={`mr-4 px-4 py-2 rounded-full ${activeTab === "questions" ? "bg-primary text-white" : "bg-gray-200"}`}
-          onClick={() => setActiveTab("questions")}
-        >
-          Questions
-        </button>
-        <button
-          className={`px-4 py-2 rounded-full ${activeTab === "summary" ? "bg-primary text-white" : "bg-gray-200"}`}
-          onClick={() => setActiveTab("summary")}
-        >
-          AI Summary
-        </button>
-      </div>
+     <div className="flex gap-8 mb-6 border-b border-gray-200">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`relative pb-3 font-medium text-sm ${
+              activeTab === tab.id
+                ? "text-primary font-semibold"
+                : "text-gray-500"
+            }`}
+          >
+            {tab.label}
+            {activeTab === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+            )}
+          </button>
+        ))}
+        </div>
 
       {activeTab === "questions" && (
         <table className="w-full bg-white  border border-gray-300 text-left">
@@ -55,7 +64,7 @@ const OnDemandDetails = () => {
         </table>
       )}
 
-      {activeTab === "summary" && (
+      {activeTab === "aisummary" && (
         <div className="p-4 bg-white  ">
           <p>This is a generated AI summary of the assessment results. (You can replace this with your AI integration output.)</p>
         </div>

@@ -29,11 +29,11 @@ const InitialsDetails = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 ">
-      <h1 className="text-2xl font-medium mb-4">{assessment.name}</h1>
-      <p className="mb-2">
+      <h1 className="text-xl font-medium mb-2">{assessment.name}</h1>
+      <p className="mb-1 text-sm">
         <strong>Date Taken</strong> {assessment.dateTaken}
       </p>
-      <p className="mb-6">
+      <p className="mb-6 text-sm">
         <strong>Type</strong> {assessment.type}
       </p>
 

@@ -52,10 +52,10 @@ const CliniciansOnboarding = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 pb-20">
-      <h1 className="font-medium text-2xl mb-4">Clinicians Onboarding</h1>
+      <h1 className="font-semibold text-xl mb-4">Clinicians Onboarding</h1>
       <section className="p-6 bg-white rounded-lg shadow-md">
         <Toaster />
-        <h2 className="text-xl font-semibold mb-6">Invite New Clinician</h2>
+        <h2 className="text-lg font-semibold mb-3">Invite New Clinician</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <TextInput
             label="Clinician Name"
@@ -90,7 +90,6 @@ const CliniciansOnboarding = () => {
             classw={errors.joinLink ? "border-red-600" : ""}
           />
 
-          {/* Raw native select dropdown */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-[#323232]">Role</label>
             <select

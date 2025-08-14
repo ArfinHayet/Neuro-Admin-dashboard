@@ -73,7 +73,7 @@ const CliniciansList = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-20">
-      <h1 className="font-medium text-2xl mb-1">Clinicians</h1>
+      <h1 className="font-semibold text-xl mb-1">Clinicians</h1>
         <p className="text-secondary text-sm mb-4">Browse and manage all registered clinicians.</p>
 
       <div className="p-2 w-[75vw] bg-white rounded-xl overflow-x-auto">

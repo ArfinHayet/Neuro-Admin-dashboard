@@ -47,7 +47,7 @@ const InitialAssessment = () => {
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
       <div className="flex justify-between items-center ">
-        <h2 className="text-2xl font-medium ">Initial Assessments</h2>
+        <h2 className="text-xl font-semibold ">Initial Assessments</h2>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
           onClick={() => {
@@ -58,15 +58,15 @@ const InitialAssessment = () => {
           Add Question
         </button>
       </div>
-      <p className="text-sm">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      <p className="text-xs text-secondary">
+        View, Edit and manage questions for the Initial Assessment to ensure accuracy and relevance.
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
       <table className="w-full text-sm text-left text-gray-700">
-        <thead className="bg-white">
+        <thead className="bg-[#f3f1f1] font-light">
           <tr>
-            <th className="p-2">#</th>
+            <th className="pl-4">#</th>
             <th className="p-2">Question</th>
             <th className="p-2">Order</th>
             <th className="p-2">Answer Type</th>

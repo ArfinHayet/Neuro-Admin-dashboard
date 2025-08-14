@@ -8,8 +8,12 @@ import {
 } from "../../Components/utils/Data";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
+import { IoEye } from "react-icons/io5";
+
+
 
 const SubmittedOnDemand = () => {
+  
   const navigate = useNavigate();
   const onDemandAssessments = assessments.filter((a) => a.type === "on-demand");
 
@@ -53,9 +57,9 @@ const SubmittedOnDemand = () => {
       cell: ({ row }) => (
         <button
           onClick={() => onView(row.original.id)}
-          className="px-3 py-1 bg-[#114654] text-white rounded-full hover:bg-[#0e3d3a]"
+          className="px-2"
         >
-          View Details
+            <IoEye size={18} />
         </button>
       ),
     },
@@ -69,18 +73,18 @@ const SubmittedOnDemand = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-2xl font-medium mb-2">
+      <h1 className="text-xl font-medium ">
         Submitted On-Demand Assessments
       </h1>
-      <p className="text-sm mb-6">
+      <p className="text-sm mb-6 text-secondary">
         Lorem ipsum dolor sit amet consectetur adipisicing elit.
       </p>
 
-      <p className="mb-4 font-semibold">
+      <p className="mb-4 ">
         Total submitted: {onDemandAssessments.length}
       </p>
 
-      <div className="bg-white rounded-xl p-4 overflow-x-auto">
+      <div className="bg-white rounded border border-opacity-30 ">
         <DataTable table={table} />
       </div>
     </section>

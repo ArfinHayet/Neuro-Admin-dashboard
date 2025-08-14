@@ -75,7 +75,7 @@ const Blogs = () => {
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-medium mb-4">Blog List</h2>
+        <h2 className="text-xl font-semibold ">Blog List</h2>
         <button
           className="px-4 py-2 bg-[#114654] text-white rounded-full text-sm"
           onClick={handleAdd}
@@ -83,6 +83,7 @@ const Blogs = () => {
           Add New Blog
         </button>
       </div>
+      <p className="text-secondary text-sm mb-4 "> View and update all blogs to be updated and relevant.</p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {blogs.map((blog) => (
