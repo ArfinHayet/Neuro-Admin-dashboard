@@ -43,7 +43,7 @@ const Login = () => {
 
       setLoading(false);
       setUserData(userData);
-      navigate("/dashboard");
+      navigate("/");
       // window.location.href = "/dashboard";
     }
   };

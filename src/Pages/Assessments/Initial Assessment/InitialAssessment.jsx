@@ -1,42 +1,47 @@
-import { useState } from "react";
-import { initialQuestions } from "../../../Components/utils/Data";
+import { useState, useEffect } from "react";
+//import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import InitialModal from "../../../Components/Assessments/InitialModal";
+import {
+  getQuestionsByAssessmentId,
+  deleteQuestion,
+} from "../../../api/questionnaires";
 
 const InitialAssessment = () => {
-  const [questions, setQuestions] = useState(
-    initialQuestions.map((q, idx) => ({
-      ...q,
-      order: idx + 1,
-      answerType: "yesno", // default
-    }))
-  );
+  const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [editingQuestion, setEditingQuestion] = useState(null);
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      const data = await getQuestionsByAssessmentId(1); // assessmentId = 1
+      setQuestions(data);
+    } catch (err) {
+      console.error("Failed to fetch questions", err);
+    }
+  };
 
   const handleSave = (newQ) => {
     if (editingQuestion) {
-      // Update existing
       setQuestions((prev) =>
         prev.map((q) => (q.id === editingQuestion.id ? { ...q, ...newQ } : q))
       );
       setEditingQuestion(null);
     } else {
-      // Add new
-      setQuestions((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          order: prev.length + 1,
-          ...newQ,
-        },
-      ]);
+      setQuestions((prev) => [...prev, newQ]);
     }
   };
 
-  const handleDelete = (id) => {
-    setQuestions((prev) => prev.filter((q) => q.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteQuestion(id);
+      setQuestions((prev) => prev.filter((q) => q.id !== id));
+    } catch (err) {
+      console.error("Failed to delete question", err);
+    }
   };
 
   const handleEdit = (question) => {
@@ -59,7 +64,7 @@ const InitialAssessment = () => {
         </button>
       </div>
       <p className="text-xs text-secondary">
-        View, Edit and manage questions for the Initial Assessment to ensure accuracy and relevance.
+        View, Edit and manage questions for the Initial Assessment to ensure  accuracy and relevance.
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
@@ -98,6 +103,7 @@ const InitialAssessment = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         defaultType="initial"
+        editingQuestion={editingQuestion}
       />
     </section>
   );

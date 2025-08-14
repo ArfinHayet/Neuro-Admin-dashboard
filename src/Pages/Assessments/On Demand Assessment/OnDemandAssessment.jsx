@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onDemandAssessments } from "../../../Components/utils/Data";
-import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { FaRegClock } from "react-icons/fa6";
 import { FiEdit3 } from "react-icons/fi";
+import AddNewCategoryModal from "../../../Components/Assessments/AddNewCategoryModal";
 
 const CategoryCard = ({ category, onEdit, onSelect }) => {
   return (
@@ -100,7 +100,7 @@ const OnDemandAssessment = () => {
         ))}
       </div>
 
-      <CategoryModal
+      <AddNewCategoryModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveCategory}
