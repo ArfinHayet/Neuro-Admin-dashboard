@@ -1,11 +1,14 @@
 import { domain } from "../../credential";
+import { token } from "../Components/utils/token";
 
 
 const addQuestion = async (obj) => {
+  console.log(obj)
   const response = await fetch(`${domain}/questionnaires`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(obj),
   });
@@ -18,6 +21,19 @@ const addQuestion = async (obj) => {
 const getQuestionsByAssessmentId = async (assessmentId) => {
   const response = await fetch(`${domain}/questionnaires?assessmentId=${assessmentId}`, {
     method: "GET",
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+
+const getAllQuestions = async () => {
+  const response = await fetch(`${domain}/questionnaires`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await response.json();
@@ -51,4 +67,4 @@ const deleteQuestion = async (id) => {
   return data;
 };
 
-export { addQuestion, getQuestionsByAssessmentId, updateQuestion, deleteQuestion };
+export { addQuestion,getAllQuestions, getQuestionsByAssessmentId, updateQuestion, deleteQuestion };

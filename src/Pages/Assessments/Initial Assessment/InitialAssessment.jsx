@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 //import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import InitialModal from "../../../Components/Assessments/InitialModal";
 import {
-  getQuestionsByAssessmentId,
+  // getQuestionsByAssessmentId,
   deleteQuestion,
+  getAllQuestions,
 } from "../../../api/questionnaires";
 
 const InitialAssessment = () => {
@@ -17,8 +19,9 @@ const InitialAssessment = () => {
 
   const fetchQuestions = async () => {
     try {
-      const data = await getQuestionsByAssessmentId(1); // assessmentId = 1
-      setQuestions(data);
+      const data = await getAllQuestions();
+      console.log("lll",data?.payload)// assessmentId = 1
+      setQuestions(data?.payload);
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
@@ -79,7 +82,7 @@ const InitialAssessment = () => {
           </tr>
         </thead>
         <tbody>
-          {questions.map((q, i) => (
+          {questions?.map((q, i) => (
             <QuestionArrangement
               key={q.id}
               index={i}

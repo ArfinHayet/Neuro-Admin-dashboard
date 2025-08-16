@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
-//import p1 from "../../../../public/png/logo.png";
 import p1 from "../../../../public/png/heading.png";
 import { MdRemoveRedEye } from "react-icons/md";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AuthContext } from "../../../Components/AuthProvider/AuthProvider";
-import { getAuthenticateUser, login } from "../../../api/user";
+import {  login } from "../../../api/user";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -16,37 +15,32 @@ const Login = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLogInUser = async (event) => {
+   const handleLogInUser = async (event) => {
     event.preventDefault();
+    
     const form = event.target;
 
     const email = form.email?.value || "";
     const password = form.password?.value || "";
 
     const postdetails = {
-      email,
+      identifier: email,
       password,
     };
 
-    // console.log("data:", postdetails);
-
-    const result = await login(postdetails);
-
-    // console.log(result.token);
-
-    if (result && result?.token) {
-      localStorage.setItem("accessToken", result?.token);
+   
       setLoading(true);
+      const result = await login(postdetails);
 
-      const userData = await getAuthenticateUser(result?.token);
-      // console.log(userData);
-
-      setLoading(false);
-      setUserData(userData);
-      navigate("/");
-      // window.location.href = "/dashboard";
-    }
+      if (result && result?.payload?.token?.access_token) {
+        localStorage.setItem("accessToken", result.payload.token.access_token);
+        const userData = result.payload.filteredUser;
+        setUserData(userData);
+        navigate("/");
+      }
+    
   };
+
 
   return (
     <div className="flex justify-center items-center h-screen bg-white">
@@ -55,7 +49,7 @@ const Login = () => {
         onSubmit={handleLogInUser}
       >
        <div className="flex items-center justify-center"><img className=" h-[40px] " src={p1} alt="Logo" />
-        </div> 
+        </div>
         <h1 className="font-semibold text-lg mb-2 mt-6 text-[#3B3B3B]">
           User Login
         </h1>

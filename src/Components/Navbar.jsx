@@ -1,11 +1,7 @@
-// import p1 from "../../public/png/logo.png";
+
 import { useContext } from "react";
-//import p1 from "../../public/png/logo.svg";
-//import p2 from "../../public/png/profile.png";
 import { AuthContext } from "./AuthProvider/AuthProvider";
 import { Navigate } from "react-router-dom";
-//import m1 from "../../public/png/message.png";
-//import n1 from "../../public/png/notification.png";
 import p3 from "../../public/png/heading.png"
 
 const Navbar = () => {
@@ -58,7 +54,8 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-xl mt-14 w-48 p-2 shadow-xl"
           >
             <div className="text-sm p-3 ">
-              {/* <h1 className="text-[#3B3B3B] font-bold">hello</h1> */}
+              <h1 className="text-[#3B3B3B] font-bold">{userData?.name}</h1>
+              <h1 className="text-[#3B3B3B] font-bold">{userData?.role}</h1>
 
               <button onClick={Logout}>Logout</button>
             </div>

@@ -26,36 +26,21 @@ const getUsers = async () => {
 
 const login = async (obj) => {
   // //console.log(obj);
-  const response = await fetch(`${domain}/api/login`, {
+  const response = await fetch(`${domain}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      credentials: 'include'
+      // authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
     body: JSON.stringify(obj),
   });
 
   const data = await response.json();
-  // //console.log("token generated", data);
+  // console.log("token generated", data);
 
   return data;
 };
-
-const getAuthenticateUser = async (token) => {
-  // console.log(token)
-  const response = await fetch(`${domain}/api/user/user_info`, {
-    method: "GET",
-    headers: {
-      // authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      authorization: `Bearer ${token}`,
-    },
-  });
-
-  const data = await response.json();
-  // //console.log(data);
-  return data;
-};
-
 
 
 
@@ -72,4 +57,4 @@ const deleteUser = async (id) => {
   return data;
 };
 
-export { addUser, getUsers,getAuthenticateUser,login,deleteUser };
+export { addUser, getUsers,login,deleteUser };

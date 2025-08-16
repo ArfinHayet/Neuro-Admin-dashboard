@@ -11,6 +11,7 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -112,7 +113,7 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
-
+console.log("www",savedQuestion)
       onSave(savedQuestion);
       onClose();
     } catch (err) {

@@ -1,9 +1,9 @@
 // import p1 from "../../public/png/Group 61.svg";
 // import p2 from "../../public/png/Group 54.svg";
 // import p3 from "../../public/png/Group 53.svg";
-import p4 from "../../../public/png/settings.svg";
-import p6 from "../../../public/png/users.svg";
-import p7 from "../../../public/png/clinicians.svg";
+// import p4 from "../../../public/png/settings.svg";
+// import p6 from "../../../public/png/users.svg";
+// import p7 from "../../../public/png/clinicians.svg";
 import p2 from "../../../public/png/article.svg";
 import p3 from "../../../public/png/pound.svg";
 
