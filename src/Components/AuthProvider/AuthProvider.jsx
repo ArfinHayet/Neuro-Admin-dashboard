@@ -1,21 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext,useState, useEffect } from "react";
+import { createContext,useState } from "react";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const user = localStorage.getItem("userData");
-
-     if (token && user) {
-      setUserData(JSON.parse(user));
-    }
-    setLoading(false); 
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   console.log("333", userData?.name)
 

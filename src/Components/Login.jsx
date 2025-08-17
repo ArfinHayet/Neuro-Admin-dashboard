@@ -1,77 +1,124 @@
-import React, { useState, useContext } from "react";
+import { useContext, useState } from "react";
+import p1 from "../../../../public/png/heading.png";
+import { MdRemoveRedEye } from "react-icons/md";
+import { AiFillEyeInvisible } from "react-icons/ai";
+import { AuthContext } from "../../../Components/AuthProvider/AuthProvider";
+import {  login } from "../../../api/user";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { loginUser } from "../api";  // your login API call
-import { AuthContext } from "../context/AuthProvider";
 
 const Login = () => {
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const { setLoading, setUserData } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { setUserData, setLoading } = useContext(AuthContext);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await loginUser(email, password);
-      if (response?.accessToken) {
-        localStorage.setItem("accessToken", response.accessToken);
-        // Optionally fetch and set user data here or let provider handle it
-        setUserData(response.user || null); // if your login API returns user info
-        toast.success("Logged in successfully");
-        navigate("/dashboard");  // or your protected route
-      } else {
-        throw new Error("Invalid login response");
-      }
-    } catch (err) {
-      setError(err.message || "Login failed");
-      toast.error(err.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
+   const handleLogInUser = async (event) => {
+    event.preventDefault();
+    
+    const form = event.target;
+
+    const email = form.email?.value || "";
+    const password = form.password?.value || "";
+
+    const postdetails = {
+      identifier: email,
+      password,
+    };
+
+   
+      setLoading(true);
+      const result = await login(postdetails);
+
+      if (result && result?.payload?.token?.access_token) {
+        localStorage.setItem("accessToken", result.payload.token.access_token);
+        const userData = result.payload.filteredUser;
+        setUserData(userData);
+        navigate("/");
+      }
+    
+  };
+
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl mb-6 font-semibold text-center">Login</h2>
+    <div className="flex justify-center items-center h-screen bg-white">
+      <form
+        className="w-[381px] max-w-sm h-[530px] bg-white border rounded-xl px-[38px] pt-9 pb-8 mb-4"
+        onSubmit={handleLogInUser}
+      >
+       <div className="flex items-center justify-center"><img className=" h-[40px] " src={p1} alt="Logo" />
+        </div>
+        <h1 className="font-semibold text-lg mb-2 mt-6 text-[#3B3B3B]">
+          User Login
+        </h1>
+        <hr className=" mb-9 px-9" />
 
-        {error && <p className="mb-4 text-red-600 text-center">{error}</p>}
+        <div className="mb-6 w-[309px] h-[74px]">
+          <label
+            className="block text-[#6C6C6C] text-sm font-normal mb-2"
+            htmlFor="phone"
+          >
+            Username / Mobile Number
+          </label>
+          <input
+            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[47px] px-3 "
+            id="user_name"
+            name="email"
+            type="text"
+            required
+          />
+        </div>
 
-        <label className="block mb-1 font-medium" htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          required
-          autoComplete="username"
-          className="w-full border p-2 rounded mb-4"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label className="block mb-1 font-medium" htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          className="w-full border p-2 rounded mb-6"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="mb-2 w-[309px] h-[74px] relative">
+          <label
+            className="block text-[#6C6C6C] text-sm font-normal mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[47px] px-3 "
+            id="password"
+            name="password"
+            type={passwordVisible ? "text" : "password"}
+            required
+          />
+          <div
+            className="absolute right-3 top-[53px] text-xl transform -translate-y-1/2 cursor-pointer text-[#979797]"
+            onClick={togglePasswordVisibility}
+          >
+            {passwordVisible ? <AiFillEyeInvisible /> : <MdRemoveRedEye />}
+          </div>
+        </div>
 
         <button
-          type="submit"
-          disabled={false}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          //   onClick={onOpenModal}
+          className="ml-[12.25rem] pb-3 mb-7 underline text-right text-[#959595] text-xs font-medium"
         >
-          Login
+          Forgot Password?
         </button>
+
+        <div>
+          
+          <button className="bg-gradient-to-r from-[#088395] to-[#0A6876] px-4 text-white rounded-lg text-xs w-full  font-medium  py-[2px]  h-[35px]">
+            Login
+          </button>
+        </div>
+
+        <div className="ml-2 mt-8">
+          <p className="flex flex-row justify-center items-center px-4 gap-1">
+            <span className="text-[#959595] text-[11px] font-normal mt-1">
+              Powered by{" "}
+            </span>
+            <a href="https://mpairtech.com" target="_blank">
+              <span className="text-[#000000] text-[11px] font-normal">
+                mPair Technologies Ltd.
+              </span>
+            </a>
+          </p>
+        </div>
       </form>
     </div>
   );
