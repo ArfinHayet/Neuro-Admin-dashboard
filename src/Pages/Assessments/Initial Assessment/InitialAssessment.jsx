@@ -107,6 +107,7 @@ const InitialAssessment = () => {
         onSave={handleSave}
         defaultType="initial"
         editingQuestion={editingQuestion}
+        fetchQuestions={fetchQuestions}
       />
     </section>
   );
