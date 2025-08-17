@@ -11,7 +11,6 @@ import CliniciansList from "./Pages/Clinicians/CliniciansList";
 import Blogs from "./Pages/Blogs/Blogs";
 import AssessmentDetails from "./Pages/Assessments/On Demand Assessment/AssessmentDetails";
 import Dashboard from "./Pages/Dashboard/Dashboard";
-import Reports from "./Pages/Reports/Reports";
 import PatientDetails from "./Pages/Patients/PatientDetails";
 import ClinicianProfile from "./Pages/Clinicians/ClinicianProfile";
 import Finances from "./Pages/Finances/Finances";
@@ -19,19 +18,20 @@ import SubmittedInitialList from "./Pages/Submitted Assessments/SubmittedInitial
 import InitialsDetails from "./Pages/Submitted Assessments/InitialsDetails";
 import OnDemandDetails from "./Pages/Submitted Assessments/OnDemandDetails";
 import SubmittedOnDemand from "./Pages/Submitted Assessments/SubmittedOnDemand";
-import CliniciansOnboarding  from "./Pages/Clinicians/CliniciansOnboarding";
-
+import CliniciansOnboarding from "./Pages/Clinicians/CliniciansOnboarding";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
   },
-   
+
   {
     path: "/",
-    element:   <Layout />
- ,
+    element: 
+      <Layout /> ,
+
     //     errorElement: <ErrorPage />,
     children: [
       // {
@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
       {
         path: "/user",
         element: <User />,
-      }, 
+      },
       {
         path: "/",
         element: <Dashboard />,
@@ -83,7 +83,7 @@ export const router = createBrowserRouter([
         path: "/ondemandassessment/:id",
         element: <AssessmentDetails />,
       },
-     
+
       {
         path: "/patients",
         element: <Patients />,
@@ -110,10 +110,7 @@ export const router = createBrowserRouter([
         path: "/blogs",
         element: <Blogs />,
       },
-      {
-        path: "/reports",
-        element: <Reports />,
-      },
+
       {
         path: "/finances",
         element: <Finances />,

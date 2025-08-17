@@ -18,9 +18,7 @@ const CliniciansList = () => {
       header: "Clinician",
       cell: ({ row }) => {
         const clinician = row.original;
-        return (
-          <p className="  text-sm">{clinician.name}</p>
-        );
+        return <p className="  text-xs">{clinician.name}</p>;
       },
     }),
     columnHelper.accessor("email", {
@@ -29,6 +27,10 @@ const CliniciansList = () => {
         const clinician = row.original;
         return <p className="text-xs text-gray-500">{clinician.title}</p>;
       },
+    }),
+    columnHelper.accessor("casesTaken", {
+      header: "Cases Taken",
+      cell: ({ getValue }) => `${getValue()} Cases`,
     }),
     columnHelper.accessor("status", {
       header: "Status",
@@ -47,10 +49,7 @@ const CliniciansList = () => {
         );
       },
     }),
-    columnHelper.accessor("casesTaken", {
-      header: "Cases Taken",
-      cell: ({ getValue }) => `${getValue()} Cases`,
-    }),
+
     columnHelper.display({
       id: "actions",
       header: "Actions",
@@ -72,12 +71,16 @@ const CliniciansList = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-20">
-      <h1 className="font-semibold text-xl mb-1">Clinicians</h1>
-        <p className="text-secondary text-sm mb-4">Browse and manage all registered clinicians.</p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <h1 className="font-semibold text-xl mb-1">Clinicians</h1>
+        <p className="text-secondary text-sm mb-4">
+          Browse and manage all registered clinicians.
+        </p>
 
-      <div className="p-2 w-[75vw] bg-white rounded-xl overflow-x-auto">
-        <DataTable table={table} />
+        <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
+          <DataTable table={table} />
+        </div>
       </div>
     </section>
   );

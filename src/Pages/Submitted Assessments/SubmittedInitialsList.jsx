@@ -45,7 +45,8 @@ const SubmittedInitialList = () => {
             onClick={() =>
               navigate(`/submitted-assessments/initial/${row.original.id}`)
             }
-          className="ml-2">
+            className="ml-2"
+          >
             <IoEye size={18} />
           </button>
         ),
@@ -61,17 +62,17 @@ const SubmittedInitialList = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-xl font-medium ">
-        Submitted Initial Assessments
-      </h1>
-      <p className="text-sm mb-6 text-secondary">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      </p>
-      <p className="mb-4">Total submitted: {initialAssessments.length}</p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2">
+      <div className="bg-white h-[88vh] p-2 rounded-md overflow-y-auto">
+        <h1 className="text-xl font-medium ">Submitted Initial Assessments</h1>
+        <p className="text-sm mb-6 text-secondary">
+          Access and Review Detailed Records of Every Submitted Assessment.{" "}
+        </p>
+        <p className="mb-2">Total submitted: {initialAssessments.length}</p>
 
-      <div className="bg-white rounded border border-opacity-30 ">
-        <DataTable table={table} />
+        <div className="bg-white rounded border border-opacity-30 ">
+          <DataTable table={table} />
+        </div>
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ const DataTable = ({ table }) => {
             {headerGroup.headers.map((header) => (
               <th
                 key={header.id}
-                className="px-3 text-sm font-medium text-[#333333] py-1 text-left bg-[#]"
+                className="px-3 text-sm font-medium text-[#333333] py-1 text-left bg-[#f3f1f1]"
               >
                 {flexRender(
                   header.column.columnDef.header,

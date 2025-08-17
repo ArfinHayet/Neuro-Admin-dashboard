@@ -22,39 +22,41 @@ const InitialsDetails = () => {
     );
   }
 
- const getAnswer = (questionId) => {
-   const ansObj = assessment.answers.find((a) => a.questionId === questionId);
-   return ansObj ? ansObj.answer : null;
- };
+  const getAnswer = (questionId) => {
+    const ansObj = assessment.answers.find((a) => a.questionId === questionId);
+    return ansObj ? ansObj.answer : null;
+  };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 ">
-      <h1 className="text-xl font-medium mb-2">{assessment.name}</h1>
-      <p className="mb-1 text-sm">
-        <strong>Date Taken</strong> {assessment.dateTaken}
-      </p>
-      <p className="mb-6 text-sm">
-        <strong>Type</strong> {assessment.type}
-      </p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <h1 className="text-xl font-medium mb-2">{assessment.name}</h1>
+        <p className="mb-1 text-sm">
+          <strong>Date Taken</strong> {assessment.dateTaken}
+        </p>
+        <p className="mb-6 text-sm">
+          <strong>Type</strong> {assessment.type}
+        </p>
 
-      <table className="w-full border border-gray-300 text-left bg-white">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border border-gray-300">Question</th>
-            <th className="p-2 border border-gray-300">Answer</th>
-          </tr>
-        </thead>
-        <tbody>
-          {initialQuestions.map(({ id, question }) => (
-            <tr key={id} className="border border-gray-300">
-              <td className="p-2 border border-gray-300">{question}</td>
-              <td className="p-2 border border-gray-300">
-                {getAnswer(id) ?? "No answer"}
-              </td>
+        <table className="w-full border border-gray-300 text-left bg-white">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2 border border-gray-300">Question</th>
+              <th className="p-2 border border-gray-300">Answer</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {initialQuestions.map(({ id, question }) => (
+              <tr key={id} className="border border-gray-300">
+                <td className="p-2 border border-gray-300">{question}</td>
+                <td className="p-2 border border-gray-300">
+                  {getAnswer(id) ?? "No answer"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 };

@@ -51,76 +51,79 @@ const CliniciansOnboarding = () => {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl  px-6 pt-5 pb-20">
-      <h1 className="font-semibold text-xl mb-4">Clinicians Onboarding</h1>
-      <section className="p-6 bg-white rounded-lg shadow-md">
-        <Toaster />
-        <h2 className="text-lg font-semibold mb-3">Invite New Clinician</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <TextInput
-            label="Clinician Name"
-            name="name"
-            type="text"
-            placeholder="Enter clinician's full name"
-            value={formData.name}
-            onChange={handleChange}
-            className=""
-            classw={errors.name ? "border-red-600" : ""}
-          />
-
-          <TextInput
-            label="Clinician Email"
-            name="email"
-            type="email"
-            placeholder="Enter clinician's email"
-            value={formData.email}
-            onChange={handleChange}
-            className=""
-            classw={errors.email ? "border-red-600" : ""}
-          />
-
-          <TextInput
-            label="Joining Link"
-            name="joinLink"
-            type="text"
-            placeholder="Enter invitation joining link"
-            value={formData.joinLink}
-            onChange={handleChange}
-            className=""
-            classw={errors.joinLink ? "border-red-600" : ""}
-          />
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[#323232]">Role</label>
-            <select
-              name="role"
-              value={formData.role}
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <h1 className="font-semibold text-xl mb-1">Clinicians Onboarding</h1>
+        <p className="text-secondary text-sm ">Send invitation to new clinicians to onboard them into the system.</p>
+        <section className=" mt-7 pr-2">
+          <Toaster />
+        { /* <h2 className="text-  mb-2 text-primary">Invite New Clinician</h2> */}
+          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+            <TextInput
+              label="Clinician Name"
+              name="name"
+              type="text"
+              placeholder="Enter clinician's full name"
+              value={formData.name}
               onChange={handleChange}
-              className={`w-full text-sm font-normal p-2 text-darkBlack2 border outline-none rounded-lg bg-white ${
-                errors.role ? "border-red-600" : "border-[#EAEAEA]"
-              }`}
-            >
-              <option value="" disabled>
-                Select clinician role
-              </option>
-              {rolesOptions.map(({ key, label }) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
+              className=""
+              classw={errors.name ? "border-red-600" : ""}
+            />
 
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-primary text-white py-2 rounded-full hover:bg-opacity-80 transition w-[40%]"
-            >
-              Send Invitation
-            </button>
-          </div>
-        </form>
-      </section>
+            <TextInput
+              label="Clinician Email"
+              name="email"
+              type="email"
+              placeholder="Enter clinician's email"
+              value={formData.email}
+              onChange={handleChange}
+              className=""
+              classw={errors.email ? "border-red-600" : ""}
+            />
+
+            <TextInput
+              label="Joining Link"
+              name="joinLink"
+              type="text"
+              placeholder="Enter invitation joining link"
+              value={formData.joinLink}
+              onChange={handleChange}
+              className=""
+              classw={errors.joinLink ? "border-red-600" : ""}
+            />
+
+            <div className="flex flex-col gap-4">
+              <label className="text-sm font-medium text-[#323232]">Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={`w-full text-xs font-normal p-3 text-[#565656] border outline-none rounded-lg bg-white ${
+                  errors.role ? "border-red-600" : "border-[#EAEAEA]"
+                }`}
+              >
+                <option value="" disabled>
+                  Select clinician role
+                </option>
+                {rolesOptions.map(({ key, label }) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </form>
+
+            <div className="flex justify-center mt-10">
+              <button
+                type="submit"
+                className="bg-primary text-sm text-white py-2 rounded-full hover:bg-opacity-80 transition w-[20vw]"
+              >
+                Send Invitation
+              </button>
+            </div>
+        </section>
+      </div>
     </section>
   );
 };

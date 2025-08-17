@@ -3,11 +3,10 @@ import p1 from "../../../../public/png/heading.png";
 import { MdRemoveRedEye } from "react-icons/md";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { AuthContext } from "../../../Components/AuthProvider/AuthProvider";
-import {  login } from "../../../api/user";
+import { login } from "../../../api/user";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { setLoading, setUserData } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -15,9 +14,9 @@ const Login = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-   const handleLogInUser = async (event) => {
+  const handleLogInUser = async (event) => {
     event.preventDefault();
-    
+
     const form = event.target;
 
     const email = form.email?.value || "";
@@ -28,7 +27,7 @@ const Login = () => {
       password,
     };
 
-   
+    try {
       setLoading(true);
       const result = await login(postdetails);
 
@@ -36,11 +35,15 @@ const Login = () => {
         localStorage.setItem("accessToken", result.payload.token.access_token);
         const userData = result.payload.filteredUser;
         setUserData(userData);
+        localStorage.setItem("userData", JSON.stringify(userData));
         navigate("/");
       }
-    
+    } catch (err) {
+      console.error("Login failed:", err);
+    } finally {
+      setLoading(false);
+    }
   };
-
 
   return (
     <div className="flex justify-center items-center h-screen bg-white">
@@ -48,12 +51,11 @@ const Login = () => {
         className="w-[381px] max-w-sm h-[530px] bg-white border rounded-xl px-[38px] pt-9 pb-8 mb-4"
         onSubmit={handleLogInUser}
       >
-       <div className="flex items-center justify-center"><img className=" h-[40px] " src={p1} alt="Logo" />
+        <div className="flex items-center justify-center">
+          <img className=" h-[32px] " src={p1} alt="Logo" />
         </div>
-        <h1 className="font-semibold text-lg mb-2 mt-6 text-[#3B3B3B]">
-          User Login
-        </h1>
-        <hr className=" mb-9 px-9" />
+        <h1 className="font-semibold  mb-2 mt-6 text-[#3B3B3B]">User Login</h1>
+        <hr className=" mb-6 px-9" />
 
         <div className="mb-6 w-[309px] h-[74px]">
           <label
@@ -63,7 +65,7 @@ const Login = () => {
             Username / Mobile Number
           </label>
           <input
-            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[47px] px-3 "
+            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[45px] px-3 "
             id="user_name"
             name="email"
             type="text"
@@ -79,7 +81,7 @@ const Login = () => {
             Password
           </label>
           <input
-            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[47px] px-3 "
+            className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[45px] px-3 "
             id="password"
             name="password"
             type={passwordVisible ? "text" : "password"}
@@ -101,8 +103,7 @@ const Login = () => {
         </button>
 
         <div>
-          
-          <button className="bg-gradient-to-r from-[#088395] to-[#0A6876] px-4 text-white rounded-lg text-xs w-full  font-medium  py-[2px]  h-[35px]">
+          <button className="bg-gradient-to-r from-[#088395] to-[#0A6876] px-4 text-white rounded-lg text-xs w-full  font-medium  py-[2px]  h-[35px] hover:opacity-85">
             Login
           </button>
         </div>

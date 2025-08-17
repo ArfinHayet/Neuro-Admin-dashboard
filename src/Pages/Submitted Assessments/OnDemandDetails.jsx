@@ -17,7 +17,8 @@ const OnDemandDetails = () => {
   const assessmentTemplate = onDemandAssessments.find(o => o.title === assessment.name);
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
+     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
       <h1 className="text-xl font-semibold mb-4">{assessment.name} Details</h1>
 
      <div className="flex gap-8 mb-6 border-b border-gray-200">
@@ -70,7 +71,7 @@ const OnDemandDetails = () => {
         </div>
       )}
 
-
+</div>
     </section>
   );
 };
