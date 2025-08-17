@@ -10,10 +10,7 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 
-
-
 const SubmittedOnDemand = () => {
-  
   const navigate = useNavigate();
   const onDemandAssessments = assessments.filter((a) => a.type === "on-demand");
 
@@ -55,11 +52,8 @@ const SubmittedOnDemand = () => {
       header: "Actions",
       id: "actions",
       cell: ({ row }) => (
-        <button
-          onClick={() => onView(row.original.id)}
-          className="px-2"
-        >
-            <IoEye size={18} />
+        <button onClick={() => onView(row.original.id)} className="px-2">
+          <IoEye size={18} />
         </button>
       ),
     },
@@ -72,23 +66,22 @@ const SubmittedOnDemand = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-xl font-medium ">
-        Submitted On-Demand Assessments
-      </h1>
-      <p className="text-sm mb-6 text-secondary">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      </p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <h1 className="text-xl font-medium ">
+          Submitted On-Demand Assessments
+        </h1>
+        <p className="text-sm mb-6 text-secondary">
+          Access and Review Detailed Records of Every Submitted Assessment.{" "}
+        </p>
 
-      <p className="mb-4 ">
-        Total submitted: {onDemandAssessments.length}
-      </p>
+        <p className="mb-2 ">Total submitted: {onDemandAssessments.length}</p>
 
-      <div className="bg-white rounded border border-opacity-30 ">
-        <DataTable table={table} />
+        <div className="bg-white rounded border border-opacity-30 ">
+          <DataTable table={table} />
+        </div>
       </div>
     </section>
   );
 };
-
 export default SubmittedOnDemand;

@@ -19,7 +19,7 @@ const TextInput = ({
         defaultValue={defaultValue}
         onChange={onChange}
         placeholder={placeholder}
-        className={`bg-[#FFFFFF] text-[#959595] outline-none border border-[#E8E8E8] text-xs px-2 py-2 rounded-md ${classw}`}
+        className={`bg-[#FFFFFF] text-[#565656] outline-none border border-[#E8E8E8] text-xs px-3 py-3 rounded-md ${classw}`}
       />
     </div>
   );

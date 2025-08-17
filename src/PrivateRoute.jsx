@@ -13,7 +13,7 @@ const PrivateRoute = ({ children }) => {
 
   // //////console.log("users", user);
 
-  if (isAuthenticated) {
+  if (isAuthenticated()) {
     if (userData) {
       return children;
     }

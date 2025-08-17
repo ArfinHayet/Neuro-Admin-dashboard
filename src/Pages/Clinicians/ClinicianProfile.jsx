@@ -119,49 +119,51 @@ const ClinicianProfile = () => {
   if (!clinician) return <p className="p-4">Clinician not found.</p>;
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5 pb-20">
-      <div className="flex items-center gap-6 mb-4">
-        <img
-          src={clinician.image}
-          alt={clinician.name}
-          className="w-24 h-24 rounded-full"
-        />
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold ">{clinician.name}</h2>
-          <p className="text-sm text-gray-500">
-            Joined on{" "}
-            {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
-          </p>
-
-          {clinician.specialities && (
-            <p className="text-sm text-gray-500 ">
-              <strong className="text-gray-700">Specialties </strong>{" "}
-              {clinician.specialities.join(", ")}
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <div className="flex items-center gap-6 mb-4">
+          <img
+            src={clinician.image}
+            alt={clinician.name}
+            className="w-24 h-24 rounded-full"
+          />
+          <div className="space-y-1">
+            <h2 className="text-xl font-semibold ">{clinician.name}</h2>
+            <p className="text-sm text-gray-500">
+              Joined on{" "}
+              {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
             </p>
-          )}
-          {clinician.registrationInfo && (
-            <p className="text-sm text-gray-500 ">
-              <strong className="text-gray-700">Registered in </strong>{" "}
-              {clinician.registrationInfo}
-            </p>
-          )}
-          {clinician.bio && (
-            <p className="text-sm text-gray-700 max-w-xl">{clinician.bio}</p>
-          )}
-        </div>
-      </div>
 
-      <div className="mt-4">
-        <h3 className="text-lg font-medium mb-1">Ongoing Assessments</h3>
-        <div className="bg-white p-2 rounded-lg">
-          <DataTable table={assessmentTable} />
+            {clinician.specialities && (
+              <p className="text-sm text-gray-500 ">
+                <strong className="text-gray-700">Specialties </strong>{" "}
+                {clinician.specialities.join(", ")}
+              </p>
+            )}
+            {clinician.registrationInfo && (
+              <p className="text-sm text-gray-500 ">
+                <strong className="text-gray-700">Registered in </strong>{" "}
+                {clinician.registrationInfo}
+              </p>
+            )}
+            {clinician.bio && (
+              <p className="text-sm text-gray-700 max-w-xl">{clinician.bio}</p>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4">
-        <h3 className="text-lg font-medium mb-1">Leave Management</h3>
-        <div className="bg-white p-2 rounded-lg">
-          <DataTable table={leaveTable} />
+        <div className="mt-4">
+          <h3 className="text-lg font-medium mb-1">Ongoing Assessments</h3>
+          <div className="bg-white p-2 rounded-lg">
+            <DataTable table={assessmentTable} />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-lg font-medium mb-1">Leave Management</h3>
+          <div className="bg-white p-2 rounded-lg">
+            <DataTable table={leaveTable} />
+          </div>
         </div>
       </div>
     </section>
