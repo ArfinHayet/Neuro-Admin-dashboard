@@ -12,16 +12,6 @@ export default function InvoiceDetails() {
     (inv) => inv.invoice === Number(invoiceId)
   );
 
-  const invoiceDate = new Date(invoice.date);
-  const monthYear = invoiceDate.toLocaleString("default", {
-    month: "long",
-    year: "numeric",
-  });
-
-  if (!invoice) return <p className="text-red-500">Invoice not found</p>;
-
-  const clinician = clinicians.find((c) => c.name === invoice.clinician);
-
   const invoiceAssessments = useMemo(
     () => [
       {
@@ -83,6 +73,15 @@ export default function InvoiceDetails() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const invoiceDate = new Date(invoice.date);
+  const monthYear = invoiceDate.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
+
+  if (!invoice) return <p className="text-red-500">Invoice not found</p>;
+
+  const clinician = clinicians.find((c) => c.name === invoice.clinician);
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
       <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
@@ -93,9 +92,9 @@ export default function InvoiceDetails() {
           Review your completed assessments and payment details for this month
         </p>
 
-        <div className="border rounded-lg  w-[60vw] flex  items-center ">
+        <div className="border rounded-lg  w-[60vw] flex  justify-center items-center ">
           {/* Clinician Details */}
-          <div className="border-r-2 p-10 w-1/2">
+          <div className="border-r-2 p-6 w-1/2">
             {clinician && (
               <div className="flex flex-col items-start gap-1">
                 <h3 className="text-lg font-semibold ">{clinician.name}</h3>
@@ -109,7 +108,7 @@ export default function InvoiceDetails() {
             )}
           </div>
 
-          <div className="p-10 w-1/2 ">
+          <div className="p-6 w-1/2 ">
             <div className="flex gap-4 items-start justify-start">
               <p className="text-gray-500 mb-2 flex gap-2 items-center">
                 <img src={p1} className="w-5 h-5" /> #{invoiceId}{" "}

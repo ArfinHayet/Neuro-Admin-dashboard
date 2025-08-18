@@ -1,16 +1,15 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-export async function createAssessment(name, description, type) {
+import { domain } from "../../credential";
+import { token } from "../Components/utils/token";
+
+export async function createAssessment(obj) {
   try {
-    const res = await fetch(`${BASE_URL}/assessments`, {
+    const res = await fetch(`${domain}/api/assessments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        name: String(name),
-        description: String(description),
-        type: String(type), 
-      }),
+      body: JSON.stringify(obj),
     });
 
     if (!res.ok) throw new Error("Failed to create assessment");
@@ -23,10 +22,11 @@ export async function createAssessment(name, description, type) {
 
 export async function getAssessments() {
   try {
-    const res = await fetch(`${BASE_URL}/assessments`, {
+    const res = await fetch(`${domain}/api/assessments`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
     });
 
@@ -37,4 +37,3 @@ export async function getAssessments() {
     throw error;
   }
 }
-

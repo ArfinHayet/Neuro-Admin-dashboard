@@ -8,7 +8,15 @@ const addPatient = async (obj) => {
       "Content-Type": "application/json",
       authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(obj),
+    body: JSON.stringify({
+      name: String(obj.name),
+      dateOfBirth: String(obj.dateOfBirth),
+      gender: String(obj.gender),
+      relationshipToUser: String(obj.relationshipToUser),
+      aboutGp: String(obj.aboutGp),
+      profileTag: String(obj.profileTag),
+      userId: String(obj.userId),
+    }),
   });
 
   const data = await response.json();
@@ -66,4 +74,10 @@ const deletePatient = async (id) => {
   return data;
 };
 
-export {  addPatient, getPatients, getPatientById, updatePatient, deletePatient };
+export {
+  addPatient,
+  getPatients,
+  getPatientById,
+  updatePatient,
+  deletePatient,
+};

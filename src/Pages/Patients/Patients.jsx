@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import { users } from "../../Components/utils/Data";
+//import { users } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
-import { getPatients } from "../../api/patient";
+import { getUsers } from "../../api/user";
 
 const PatientPage = () => {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetchPatients();
+    fetchUsers();
   }, []);
 
- const fetchPatients = async () => {
-      try {
-        const data = await getPatients();
-        setPatients(data);
-      } catch (err) {
-        console.error("Error loading patients:", err);
-      } 
-    };
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error loading users:", err);
+    }
+  };
 
   const columns = [
     {
@@ -39,6 +39,17 @@ const PatientPage = () => {
       header: "Gender",
       accessorFn: (row) => row.gender,
       cell: ({ row }) => <p className="text-xs">{row.original.gender}</p>,
+    },
+
+    {
+      header: "Phone",
+      accessorFn: (row) => row.phone,
+      cell: ({ row }) => <p className="text-xs">{row.original.phone}</p>,
+    },
+    {
+      header: "Country",
+      accessorFn: (row) => row.country,
+      cell: ({ row }) => <p className="text-xs">{row.original.country}</p>,
     },
     {
       header: "Role",
@@ -66,7 +77,7 @@ const PatientPage = () => {
       cell: ({ row }) => (
         <div className="text-left">
           <button
-            onClick={() => navigate(`/patients/${row.original.userId}`)}
+            onClick={() => navigate(`/patients/${row.original._id}`)} //if backend => _id
             className="text-primary  text-lg ml-3"
             aria-label={`View profile of ${row.original.name}`}
           >

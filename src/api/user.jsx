@@ -1,13 +1,28 @@
 import { domain } from "../../credential";
+import { token } from "../Components/utils/token";
 
 const addUser = async (obj) => {
-  const response = await fetch(`${domain}/api/adduser`, {
+  const response = await fetch(`${domain}/api/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      //       authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(obj),
+    body: JSON.stringify({
+      name: obj.name,
+      email: obj.email,
+      password: obj.password,
+      phone: obj.phone,
+      age: obj.age,
+      country: obj.country,
+      state: obj.state,
+      postCode: obj.postCode,
+      street: obj.street,
+      role: obj.role,
+      knowHow: obj.knowHow,
+      otp: obj.otp,
+      identifier: obj.identifier,
+    }),
   });
 
   const data = await response.json();
@@ -17,8 +32,11 @@ const addUser = async (obj) => {
 };
 
 const getUsers = async () => {
-  const response = await fetch(`${domain}/api/user`, {
+  const response = await fetch(`${domain}/api/users`, {
     method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    }
   });
   const data = await response.json();
   return data;
@@ -45,10 +63,11 @@ const login = async (obj) => {
 
 
 const deleteUser = async (id) => {
-  const response = await fetch(`${domain}/api/user/${id}`, {
+  const response = await fetch(`${domain}/api/users/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(),
   });
@@ -57,4 +76,4 @@ const deleteUser = async (id) => {
   return data;
 };
 
-export { addUser, getUsers,login,deleteUser };
+export { addUser, getUsers, login, deleteUser };

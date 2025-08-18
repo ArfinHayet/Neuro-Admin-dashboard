@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  assessments,
   users,
   children,
   categories,
@@ -9,10 +8,29 @@ import {
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
+import { getSubmissions } from "../../api/submissionanswers";
+
 
 const SubmittedOnDemand = () => {
   const navigate = useNavigate();
-  const onDemandAssessments = assessments.filter((a) => a.type === "on-demand");
+   const [submissions, setSubmissions] = useState([]);
+  
+    const fetchSubmissions = async () => {
+        try {
+          const data = await getSubmissions();
+          const initialSubmissions = (data || []).filter(
+            (item) => item.assessmentType === "on-demand"
+          );
+          setSubmissions(initialSubmissions);
+        } catch (err) {
+          console.error("Failed to fetch submissions:", err);
+          setSubmissions([]);
+        } 
+      };
+      useEffect(() => {
+        fetchSubmissions();
+      }, []);
+
 
   const onView = (id) => {
     navigate(`/submitted-assessments/on-demand/${id}`);
@@ -29,7 +47,7 @@ const SubmittedOnDemand = () => {
     },
     {
       header: "Child Name",
-      accessorKey: "childId",
+      accessorKey: "patientId",
       cell: ({ getValue }) => {
         const child = children.find((c) => c.id === getValue());
         return child ? child.name : "-";
@@ -60,7 +78,7 @@ const SubmittedOnDemand = () => {
   ];
 
   const table = useReactTable({
-    data: onDemandAssessments,
+    data: submissions,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -75,7 +93,7 @@ const SubmittedOnDemand = () => {
           Access and Review Detailed Records of Every Submitted Assessment.{" "}
         </p>
 
-        <p className="mb-2 ">Total submitted: {onDemandAssessments.length}</p>
+        <p className="mb-2 ">Total submitted: {submissions?.length}</p>
 
         <div className="bg-white rounded border border-opacity-30 ">
           <DataTable table={table} />

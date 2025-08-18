@@ -1,20 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { users, children } from "../../Components/utils/Data";
+//import { users, children } from "../../Components/utils/Data";
 import { childProfileFields } from "../../Components/utils/ChildPorfileConfig";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { LuPhone } from "react-icons/lu";
 import { FaRegAddressCard } from "react-icons/fa";
+import { getUsers } from "../../api/user";
+import { getPatients } from "../../api/patient";
+import { stringify } from "postcss";
 
 const PatientDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [children, setChildren] = useState([]);
+  const [visibleChildren, setVisibleChildren] = useState([]);
 
-  const user = users.find((u) => u.id === parseInt(userId));
-  const userChildren = children.filter((child) => child.userId === user?.id);
-  const [visibleChildren, setVisibleChildren] = useState(
-    userChildren.map((child) => child.id)
-  );
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("assessToken");
+
+      const allUsers = await getUsers(token);
+      const foundUser = allUsers.find((u) => String(u._id) === String(userId));
+
+      if (!foundUser) {
+        setUser(null);
+        return;
+      }
+      setUser(foundUser);
+
+      const allPatients = await getPatients(token);
+      const userChildren = allPatients.filter(
+        (p) => String(p.userId) === String(foundUser._id)
+      );
+      setChildren(userChildren);
+      setVisibleChildren(userChildren.map((child) => child, _id));
+    } catch (err) {
+      console.error("Error Fetching Child Details:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
 
   if (!user) {
     return (
@@ -22,7 +50,7 @@ const PatientDetails = () => {
         <h2>User not found</h2>
         <button
           onClick={() => navigate("/patients")}
-          className="mt-4 px-4 py-2 bg-gray-200 rounded-full"
+          className="mt-4 px-4 py-2 bg-gray-200 rounded"
         >
           Back to User List
         </button>
@@ -91,17 +119,17 @@ const PatientDetails = () => {
         <section className="mb-3">
           <h2 className=" font-medium mb-2">Child Profiles</h2>
 
-          {userChildren.length === 0 && (
-            <p className="text-gray-600">No child profiles linked.</p>
+          {children.length === 0 && (
+            <p className="text-gray-600 text-sm">No child profiles linked.</p>
           )}
 
           <div className="grid grid-cols-2 gap-6">
-            {userChildren.map((child) => (
+            {children.map((child) => (
               <div
                 key={child.id}
                 className="mb-4 border border-gray-300 rounded p-3 bg-gray-50 "
               >
-                <div className="flex justify-between items-center mb-1">
+                <div className="flex justify-between items-center mb-1 text-sm">
                   <h3 className="">{child.name}</h3>
                   <button
                     onClick={() => toggleChildVisibility(child.id)}
@@ -111,17 +139,23 @@ const PatientDetails = () => {
                   </button>
                 </div>
 
-                {visibleChildren.includes(child.id) && (
-                  <div className=" text-sm ">
-                    {childProfileFields.map(({ key, label, required }) => (
-                      <p key={key}>
-                        <strong>
-                          {label}
-                          {required ? " *" : ""}
-                        </strong>{" "}
-                        {child[key]}
-                      </p>
-                    ))}
+                {visibleChildren.includes(child._id) && (
+                  <div className=" text-xs ">
+                    <p>
+                      <strong>Date of Birth </strong> {child.dateOfBirth}
+                    </p>
+                    <p>
+                      <strong>Gender </strong> {child.gender}
+                    </p>
+                    <p>
+                      <strong>Relationship </strong> {child.relationshipToUser}
+                    </p>
+                    <p>
+                      <strong>About GP </strong> {child.aboutGp}
+                    </p>
+                    <p>
+                      <strong>Profile Tag </strong> {child.profileTag}
+                    </p>
                   </div>
                 )}
               </div>
