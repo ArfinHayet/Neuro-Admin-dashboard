@@ -5,12 +5,14 @@ import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
 import { IoMdDownload } from "react-icons/io";
+import {  useNavigate } from "react-router-dom";
 
 
 export default function TransactionLogs() {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [invoices, setInvoices] = useState(transactionLogs);
   const [selectedClinician, setSelectedClinician] = useState("");
+  const navigate = useNavigate();
 
   const handleGenerateInvoice = () => {
     if (!selectedClinician) {
@@ -40,7 +42,7 @@ export default function TransactionLogs() {
   const handleViewInvoice = (invoiceId) => {
     const invoice = invoices.find((inv) => inv.invoice === invoiceId);
     if (invoice) {
-      toast(`Viewing invoice #${invoiceId} for ${invoice.clinician}`, );
+    navigate(`/invoices/${invoiceId}`);
     }
   };
 

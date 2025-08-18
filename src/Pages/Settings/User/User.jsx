@@ -72,14 +72,13 @@ const User = () => {
       },
       {
         accessorKey: "role",
-         cell: (info) => {
+        cell: (info) => {
           const expenseHeadId = info?.row?.original?.role;
           const matchedHead = roleData?.find(
             (head) => String(head?.id) === String(expenseHeadId)
           );
 
           return `${matchedHead?.role ?? ""}`;
-
         },
         header: "Role",
       },
@@ -153,106 +152,107 @@ const User = () => {
   };
 
   return (
-    <div className="h-[90vh] overflow-y-auto bg-white rounded-3xl px-6 pt-5 pb-4">
-      <Header
-        title="User Settings"
-        // subtitle="You can onboard customers, see their info and status"
-      />
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <Header
+          title="User Settings"
+          // subtitle="You can onboard customers, see their info and status"
+        />
 
-      <div className="flex gap-10 mt-6">
-        <div className="h-auto border-r w-3/12 pr-8 flex flex-col justify-between">
-          <form onSubmit={handleAddUser} className="flex flex-col gap-4">
-            
-            <TextInput
-              label="Name"
-              required
-              placeholder="Write name here...."
-              type="text"
-              name="name"
-            />
-            <TextInput
-              label="Phone"
-              required
-              placeholder="Write phone no"
-              type="tel"
-              name="phone_no"
-            />
+        <div className="flex gap-10 mt-6">
+          <div className="h-auto border-r w-3/12 pr-8 flex flex-col justify-between">
+            <form onSubmit={handleAddUser} className="flex flex-col gap-4">
+              <TextInput
+                label="Name"
+                required
+                placeholder="Write name here...."
+                type="text"
+                name="name"
+              />
+              <TextInput
+                label="Phone"
+                required
+                placeholder="Write phone no"
+                type="tel"
+                name="phone_no"
+              />
 
-            <SelectInput
-              label="Department"
-              name="department"
-              options={[
-                { label: "Merchandise", value: "Merchandise" },
-                { label: "IT", value: "IT" },
-                { label: "Accounts", value: "Accounts" },
-                { label: "Admin", value: "Admin" },
-                { label: "Cutting", value: "Cutting" },
-                { label: "Fabric Store", value: "Fabric Store" },
-                { label: "Accessories Store", value: "Accessories Store" },
-                { label: "Maintenance", value: "Maintenance" },
-                { label: "Commercial", value: "Commercial" },
-                { label: "Production", value: "Production" },
-                { label: "Managing Director", value: "Managing Director" },
-              ]}
-            />
+              <SelectInput
+                label="Department"
+                name="department"
+                options={[
+                  { label: "Merchandise", value: "Merchandise" },
+                  { label: "IT", value: "IT" },
+                  { label: "Accounts", value: "Accounts" },
+                  { label: "Admin", value: "Admin" },
+                  { label: "Cutting", value: "Cutting" },
+                  { label: "Fabric Store", value: "Fabric Store" },
+                  { label: "Accessories Store", value: "Accessories Store" },
+                  { label: "Maintenance", value: "Maintenance" },
+                  { label: "Commercial", value: "Commercial" },
+                  { label: "Production", value: "Production" },
+                  { label: "Managing Director", value: "Managing Director" },
+                ]}
+              />
 
-            <SelectInput
-              label="Designation"
-              name="designation"
-              options={[
-                { label: "Managing Director", value: "Managing Director" },
-                { label: "Manager", value: "Manager" },
-                { label: "Executive", value: "Executive" },
-                { label: "Issuer", value: "Issuer" },
-              ]}
-            />
-            <SelectInput
-              label="Role"
-              name="role"
-              options={roleData?.map((i) => ({
-                key: i?.id,
-                label: i?.role,
-              }))}
-            />
+              <SelectInput
+                label="Designation"
+                name="designation"
+                options={[
+                  { label: "Managing Director", value: "Managing Director" },
+                  { label: "Manager", value: "Manager" },
+                  { label: "Executive", value: "Executive" },
+                  { label: "Issuer", value: "Issuer" },
+                ]}
+              />
+              <SelectInput
+                label="Role"
+                name="role"
+                options={roleData?.map((i) => ({
+                  key: i?.id,
+                  label: i?.role,
+                }))}
+              />
 
-            <TextInput label="Email" type="email" name="email" />
+              <TextInput label="Email" type="email" name="email" />
 
-            <TextInput
-              label="User Name"
-              type="text"
-              name="user_name"
-              placeholder="Write section here"
-            />
-            <TextInput
-              label="Password"
-              type="password"
-              name="password"
-              placeholder="Write section here"
-            />
+              <TextInput
+                label="User Name"
+                type="text"
+                name="user_name"
+                placeholder="Write section here"
+              />
+              <TextInput
+                label="Password"
+                type="password"
+                name="password"
+                placeholder="Write section here"
+              />
 
-            <PrimaryButton
-              text="Add User"
-              className="text-xs font-medium  py-[2px] mt-3 h-[35px]"
-            />
-          </form>
-        </div>
+              <PrimaryButton
+                text="Add User"
+                className="text-xs font-medium  py-[2px] mt-3 h-[35px]"
+              />
+            </form>
+          </div>
 
-        <div className="flex-1">
-          <h2 className="font-bold text-xs text-[#3B3B3B] ml-3 mb-3">
-            User List
-          </h2>
-          <div className="w-full">
-            <DataTable table={table} />
+          <div className="flex-1">
+            <h2 className="font-bold text-xs text-[#3B3B3B] ml-3 mb-3">
+              User List
+            </h2>
+            <div className="w-full">
+              <DataTable table={table} />
+            </div>
           </div>
         </div>
-      </div>
 
-      <ConfirmDeleteModal
-        isOpen={isDeleteModalOpen}
-        closeModal={closeDeleteModal}
-        onConfirm={handleDeleteDoctor}
-      />
-    </div>
+        <ConfirmDeleteModal
+          isOpen={isDeleteModalOpen}
+          closeModal={closeDeleteModal}
+          onConfirm={handleDeleteDoctor}
+        />
+      </div>
+    </section>
   );
 };
 

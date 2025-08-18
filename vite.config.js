@@ -8,8 +8,9 @@ export default defineConfig({
     
   ],
    server: {
-    proxy: {
-      '/questionnaires': 'https://nest-backend-4z6f.onrender.com',
-    },
+    // proxy: {
+    //   '/questionnaires': 'https://nest-backend-4z6f.onrender.com',
+    // },
   },
 });
+// 

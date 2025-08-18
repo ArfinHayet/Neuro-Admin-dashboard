@@ -26,34 +26,37 @@ export default function Finances() {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <h1 className="text-xl font-semibold mb-1">Finance</h1>
-      <p className="text-sm mb-6 text-secondary">
-        Manage your platform's pricing, clinician commissions, and transaction history in one place.
-      </p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <h1 className="text-xl font-semibold mb-1">Finance</h1>
+        <p className="text-sm mb-6 text-secondary">
+          Manage your platform's pricing, clinician commissions, and transaction
+          history in one place.
+        </p>
 
-      <div className="flex gap-8 mb-6 border-b border-gray-200">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`relative pb-3 font-medium text-sm ${
-              activeTab === tab.id
-                ? "text-primary font-semibold"
-                : "text-gray-500"
-            }`}
-          >
-            {tab.label}
-            {activeTab === tab.id && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
-            )}
-          </button>
-        ))}
-      </div>
+        <div className="flex gap-8 mb-6 border-b border-gray-200">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative pb-3 font-medium text-sm ${
+                activeTab === tab.id
+                  ? "text-primary font-semibold"
+                  : "text-gray-500"
+              }`}
+            >
+              {tab.label}
+              {activeTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+              )}
+            </button>
+          ))}
+        </div>
 
-      {/* Content */}
-      <div className="bg-white p-5 rounded-lg shadow-sm">
-        {renderTabContent()}
+        {/* Content */}
+        <div className="bg-white p-5 rounded-lg shadow-sm">
+          {renderTabContent()}
+        </div>
       </div>
     </section>
   );

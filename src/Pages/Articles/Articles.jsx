@@ -46,14 +46,14 @@ const Blogs = () => {
 
   const BlogDetails = ({ blog, onEdit, onDelete }) => {
     return (
-      <div className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-2">
+      <div className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-1">
         <img
           src={blog.image}
           alt={blog.title}
           className="w-full h-40 object-cover rounded"
         />
-        <h3 className="text-lg font-bold">{blog.title}</h3>
-        <p className="text-gray-700 text-sm">{blog.content.slice(0, 50)}...</p>
+        <h3 className="text-sm font-semibold">{blog.title}</h3>
+        <p className="text-gray-700 text-xs">{blog.content.slice(0, 50)}...</p>
         <div className="flex gap-2 mt-2">
           <button
             className="text-blue-600 text-sm font-medium"
@@ -73,76 +73,80 @@ const Blogs = () => {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold ">Blog List</h2>
-        <button
-          className="px-4 py-2 bg-[#114654] text-white rounded-full text-sm"
-          onClick={handleAdd}
-        >
-          Add New Blog
-        </button>
-      </div>
-      <p className="text-secondary text-sm mb-4 "> View and update all blogs to be updated and relevant.</p>
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold ">Article List</h2>
+          <button
+            className="px-4 py-2 bg-[#114654] text-white rounded-full text-sm"
+            onClick={handleAdd}
+          >
+            Add New Article
+          </button>
+        </div>
+        <p className="text-secondary text-sm mb-4 ">
+          View and update all articles to be updated and relevant.
+        </p>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {blogs.map((blog) => (
-          <BlogDetails
-            key={blog.id}
-            blog={blog}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {blogs.map((blog) => (
+            <BlogDetails
+              key={blog.id}
+              blog={blog}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
-            <h2 className="text-lg font-bold mb-4">
-              {blogToEdit ? "Edit Blog" : "Add New Blog"}
-            </h2>
-            <input
-              type="text"
-              name="title"
-              value={blog.title}
-              onChange={handleModalChange}
-              placeholder="Title"
-              className="w-full p-2 border rounded mb-2"
-            />
-            <textarea
-              name="content"
-              value={blog.content}
-              onChange={handleModalChange}
-              placeholder="Content"
-              rows="4"
-              className="w-full p-2 border rounded mb-2"
-            />
-            <input
-              type="text"
-              name="image"
-              value={blog.image}
-              onChange={handleModalChange}
-              placeholder="Image URL"
-              className="w-full p-2 border rounded mb-4"
-            />
-            <div className="flex justify-between">
-              <button
-                className="px-4 py-2 bg-gray-200 rounded"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-[#114654] text-white rounded"
-                onClick={handleSave}
-              >
-                Save
-              </button>
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
+              <h2 className="text-lg font-bold mb-4">
+                {blogToEdit ? "Edit Article" : "Add New Article"}
+              </h2>
+              <input
+                type="text"
+                name="title"
+                value={blog.title}
+                onChange={handleModalChange}
+                placeholder="Title"
+                className="w-full p-2 border rounded mb-2"
+              />
+              <textarea
+                name="content"
+                value={blog.content}
+                onChange={handleModalChange}
+                placeholder="Content"
+                rows="4"
+                className="w-full p-2 border rounded mb-2"
+              />
+              <input
+                type="text"
+                name="image"
+                value={blog.image}
+                onChange={handleModalChange}
+                placeholder="Image URL"
+                className="w-full p-2 border rounded mb-4"
+              />
+              <div className="flex justify-between">
+                <button
+                  className="px-4 py-2 bg-gray-200 rounded"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 bg-[#114654] text-white rounded"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 };

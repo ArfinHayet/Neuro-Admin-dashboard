@@ -69,8 +69,9 @@ const OnDemandAssessment = () => {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
-      <div className="flex justify-between items-center">
+ <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+              <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
@@ -106,6 +107,7 @@ const OnDemandAssessment = () => {
         onSave={handleSaveCategory}
         defaultCategory={editingCategory}
       />
+      </div>
     </section>
   );
 };

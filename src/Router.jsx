@@ -20,6 +20,7 @@ import OnDemandDetails from "./Pages/Submitted Assessments/OnDemandDetails";
 import SubmittedOnDemand from "./Pages/Submitted Assessments/SubmittedOnDemand";
 import CliniciansOnboarding from "./Pages/Clinicians/CliniciansOnboarding";
 import PrivateRoute from "./PrivateRoute";
+import InvoiceDetails from "./Pages/Finances/InvoiceDetails";
 
 export const router = createBrowserRouter([
   {
@@ -115,6 +116,10 @@ export const router = createBrowserRouter([
         path: "/finances",
         element: <Finances />,
       },
+      {
+        path: "/invoices/:invoiceId",
+        element: <InvoiceDetails />,
+      }
     ],
   },
 ]);

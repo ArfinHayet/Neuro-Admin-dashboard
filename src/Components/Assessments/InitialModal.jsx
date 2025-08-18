@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
 
-const InitialModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  defaultType = "initial",
-  editingQuestion,
-}) => {
+const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editingQuestion,fetchQuestions }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
     question: "",
@@ -116,7 +110,7 @@ const InitialModal = ({
 
     try {
       const payload = {
-        assessmentId: 1,
+        assessmentId: 7, 
         questions: formData.question,
         order: Number(formData.questionOrder),
         answerType:
@@ -131,8 +125,9 @@ const InitialModal = ({
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
-      console.log("www", savedQuestion);
+      console.log("www",savedQuestion)
       onSave(savedQuestion);
+      fetchQuestions();
       onClose();
     } catch (err) {
       console.error("Failed to save question", err);

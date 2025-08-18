@@ -1,4 +1,4 @@
-// eslint-disable no-unused-vars 
+// eslint-disable no-unused-vars
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import DataTable from "../../../Components/Common/DataTable";
 import PrimaryButton from "../../../Components/Common/PrimaryButton";
@@ -111,59 +111,61 @@ const Role = () => {
     getCoreRowModel: getCoreRowModel(),
   });
   return (
-    <div className="h-[90vh] overflow-y-auto bg-white rounded-3xl  px-6 pt-5">
-      <Header
-        title="Add Role"
-        subtitle="You can onboard customers, see their info and status"
-      />
-
-      <div className="mt-6">
-        <div className="flex flex-row">
-          <div className="h-[464px] flex flex-col items-left w-3/12">
-            <form onSubmit={handleAddRole} className="flex flex-col gap-2 ">
-              <TextInput
-                className="w-full"
-                label="Role"
-                // value={inputs.description}
-                // onChange={handleChange}
-                name="role"
-                placeholder="Enter Role"
-              />
-              <div className="flex justify-end">
-                 {/* <PrimaryButton
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+        {" "}
+        <Header
+          title="Add Role"
+          subtitle="You can onboard customers, see their info and status"
+        />
+        <div className="mt-6">
+          <div className="flex flex-row">
+            <div className="h-[464px] flex flex-col items-left w-3/12">
+              <form onSubmit={handleAddRole} className="flex flex-col gap-2 ">
+                <TextInput
+                  className="w-full"
+                  label="Role"
+                  // value={inputs.description}
+                  // onChange={handleChange}
+                  name="role"
+                  placeholder="Enter Role"
+                />
+                <div className="flex justify-end">
+                  {/* <PrimaryButton
                   text="Add New Role"
                   className="text-sm w-3/5  font-medium px-12 py-[2px] mt-3 h-[35px]"
                 />  */}
 
-                <Permission
-                  requiredPermissions={["role"]}
-                  permissionType="add_privilege"
-                >
-                   <PrimaryButton
-                  text="Add New Role"
-                  className="text-sm w-3/5  font-medium px-12 py-[2px] mt-3 h-[35px]"
-                />
-                </Permission>
-              </div>
-            </form>
-          </div>
+                  <Permission
+                    requiredPermissions={["role"]}
+                    permissionType="add_privilege"
+                  >
+                    <PrimaryButton
+                      text="Add New Role"
+                      className="text-sm w-3/5  font-medium px-12 py-[2px] mt-3 h-[35px]"
+                    />
+                  </Permission>
+                </div>
+              </form>
+            </div>
 
-          <div className="w-9/12">
-            <div className="py-2 ml-7 border-l h-screen p-10">
-              <div className="">
-                <DataTable table={table} />
+            <div className="w-9/12">
+              <div className="py-2 ml-7 border-l h-screen p-10">
+                <div className="">
+                  <DataTable table={table} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <ConfirmDeleteModal
-          isOpen={isDeleteModalOpen}
-          closeModal={closeDeleteModal}
-          onConfirm={handleDeleteDoctor}
-        />
+          <ConfirmDeleteModal
+            isOpen={isDeleteModalOpen}
+            closeModal={closeDeleteModal}
+            onConfirm={handleDeleteDoctor}
+          />
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
