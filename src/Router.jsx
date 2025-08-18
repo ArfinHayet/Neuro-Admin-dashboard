@@ -8,7 +8,7 @@ import InitialAssessment from "./Pages/Assessments/Initial Assessment/InitialAss
 import OnDemandAssessment from "./Pages/Assessments/On Demand Assessment/OnDemandAssessment";
 import Patients from "./Pages/Patients/Patients";
 import CliniciansList from "./Pages/Clinicians/CliniciansList";
-import Blogs from "./Pages/Blogs/Blogs";
+import Articles from "./Pages/Articles/Articles";
 import AssessmentDetails from "./Pages/Assessments/On Demand Assessment/AssessmentDetails";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import PatientDetails from "./Pages/Patients/PatientDetails";
@@ -107,8 +107,8 @@ export const router = createBrowserRouter([
         element: <CliniciansOnboarding />,
       },
       {
-        path: "/blogs",
-        element: <Blogs />,
+        path: "/articles",
+        element: <Articles />,
       },
 
       {

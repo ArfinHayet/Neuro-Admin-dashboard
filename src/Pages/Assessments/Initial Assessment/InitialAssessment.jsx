@@ -30,11 +30,11 @@ const InitialAssessment = () => {
   const handleSave = (newQ) => {
     if (editingQuestion) {
       setQuestions((prev) =>
-        prev.map((q) => (q.id === editingQuestion.id ? { ...q, ...newQ } : q))
+        (prev ?? []).map((q) => (q.id === editingQuestion.id ? { ...q, ...newQ } : q))
       );
       setEditingQuestion(null);
     } else {
-      setQuestions((prev) => [...prev, newQ]);
+      setQuestions((prev) => [...(prev ?? []), newQ]);
     }
   };
 

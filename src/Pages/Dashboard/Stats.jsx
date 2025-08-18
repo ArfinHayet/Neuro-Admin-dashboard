@@ -23,7 +23,7 @@ const Stats = () => {
   return (
     <div className="grid grid-cols-4 gap-4 rounded-xl ">
       {/* Users */}
-      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center">
+      <div className="bg-[#F8F9FA] p-4 rounded-xl shadow-sm text-left flex justify-between items-center">
         <div>
           <p className="text-2xl font-medium">{totalUsers}</p>
           <h3 className="mb-1">Total Users</h3>
@@ -34,7 +34,7 @@ const Stats = () => {
       </div>
 
       {/* Clinicians */}
-      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center">
+      <div className="bg-[#F8F9FA] p-4 rounded-xl shadow-sm text-left flex justify-between items-center">
        <div> <p className="text-2xl font-medium">{totalClinicians}</p>{" "}
         <h3 className="mb-1 ">Total Clinicians</h3>
         
@@ -46,7 +46,7 @@ const Stats = () => {
       </div>
 
       {/* Revenue */}
-      <div className="bg-[#f5f5f5] p-4 rounded-lg shadow-sm text-left flex justify-between items-center ">
+      <div className="bg-[#F8F9FA] p-4 rounded-xl shadow-sm text-left flex justify-between items-center ">
        <div><p className="text-2xl font-medium">${totalRevenue}</p>{" "}
         <h3 className="mb-1 ">Total Revenue</h3>
         </div> 

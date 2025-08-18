@@ -1,17 +1,18 @@
 // import p1 from "../../public/png/Group 61.svg";
 // import p2 from "../../public/png/Group 54.svg";
 // import p3 from "../../public/png/Group 53.svg";
-// import p4 from "../../../public/png/settings.svg";
+
 // import p6 from "../../../public/png/users.svg";
 // import p7 from "../../../public/png/clinicians.svg";
-import p2 from "../../../public/png/article.svg";
-import p3 from "../../../public/png/pound.svg";
 
-import { RiDashboardFill } from "react-icons/ri";
-import { BiBarChartSquare } from "react-icons/bi";
-import { HiUser } from "react-icons/hi2";
-import { GiMedicalPackAlt } from "react-icons/gi";
-import { CiSettings } from "react-icons/ci";
+import p1 from "../../../public/png/dashboard.svg";
+import p2 from "../../../public/png/assessment.svg";
+import p3 from "../../../public/png/users.svg";
+import p4 from "../../../public/png/settings.svg";
+import p5 from "../../../public/png/finances.svg";
+import p6 from "../../../public/png/clinician.svg";
+import p7 from "../../../public/png/articles.svg";
+
 
 
 export const navItem = [
@@ -48,13 +49,13 @@ export const navItem = [
 
   {
     title: "Dashboard",
-    icon: RiDashboardFill,
+    icon: p1,
     path: "/",
     routes: [],
   },
   {
     title: "Submitted Assessments",
-    icon: BiBarChartSquare,
+    icon: p2,
     routes: [
       {
         label: "Initial Assessment",
@@ -69,13 +70,13 @@ export const navItem = [
 
   {
     title: "Patients",
-    icon: HiUser,
+    icon: p3,
     path: "/patients",
     routes: [],
   },
   {
     title: "Clinicians",
-    icon: GiMedicalPackAlt,
+    icon: p6,
     path: "/clinicians",
     routes: [
       {
@@ -91,7 +92,7 @@ export const navItem = [
 
   {
     title: "Assessment Questions",
-    icon: BiBarChartSquare,
+    icon: p2,
     routes: [
       {
         label: "Initial Assessment",
@@ -104,9 +105,9 @@ export const navItem = [
     ],
   },
   {
-    title: "Blogs",
-    icon: p2,
-    path: "/blogs",
+    title: "Articles",
+    icon: p7,
+    path: "/articles",
     routes: [],
   },
   /*{
@@ -117,14 +118,14 @@ export const navItem = [
   },*/
   {
     title: "Finances",
-    icon: p3,
+    icon: p5,
     path: "/finances",
     routes: [],
   },
 
   {
     title: "Settings",
-    icon: CiSettings,
+    icon: p4,
     routes: [
       { label: "User", path: "/user" },
       { label: "Role", path: "/role" },

@@ -51,7 +51,7 @@ const Sidebar = () => {
               <NavLink
                 to={item.path || "#"}
                 className={({ isActive }) =>
-                  `w-full py-2 ps-4 pe-4 text-sm flex items-center gap-2 transition-all border-l-4 ${
+                  `w-full py-2 px-4 text-sm flex items-center justify-start gap-2 transition-all border-l-4 ${
                     isActive
                       ? "text-[#114654] border-[#114654] font-bold bg-transparent"
                       : "text-[#6C6C6C] border-transparent hover:text-[#114654] font-medium"
@@ -59,7 +59,7 @@ const Sidebar = () => {
                 }
               >
                 {Icon && typeof Icon === "string" ? (
-                  <img src={Icon} alt={item.title} className="w-5 h-5" />
+                  <img src={Icon} alt={item.title} className="w-5 h-5 " />
                 ) : (
                   Icon && <Icon className="text-lg" />
                 )}

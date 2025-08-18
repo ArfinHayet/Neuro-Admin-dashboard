@@ -8,9 +8,12 @@ const Dropdown = ({ title, icon: Icon, routes, isOpen, onToggle, index }) => {
         className="flex items-center justify-between py-2 cursor-pointer w-full"
         onClick={() => onToggle(index)}
       >
-        <div className="flex gap-3 ps-4 items-center">
-                   {Icon && <Icon className="h-4 w-4 mt-1 text-[#6C6C6C]" />}
-
+        <div className="flex gap-2 py-2 ps-4 items-center">
+          {Icon && typeof Icon === "string" ? (
+            <img src={Icon} alt={title} className="w-5 h-5 text-[#6C6C6C]" />
+          ) : (
+            Icon && <Icon className="text-lg text-[#6C6C6C]" />
+          )}
           <span className="text-sm text-[#6C6C6C] font-medium">{title}</span>
         </div>
         <span className="text-2xl ml-auto text-[#6C6C6C]">

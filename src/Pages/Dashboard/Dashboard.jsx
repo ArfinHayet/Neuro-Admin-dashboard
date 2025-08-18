@@ -87,15 +87,17 @@ const Dashboard = () => {
         <div className="mb-4">
           <Stats />
         </div>
+
+        {/*on demand assessments*/}
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex justify-between items-start">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className=" font-semibold mb-2">
                   On-demand Assessments
                 </h2>{" "}
                 <button className="text-primary hover:text-opacity-50 text-xs font-medium">
-                  View All Assessments →
+                  View All →
                 </button>
               </div>
               <div className="space-y-4">
@@ -106,11 +108,11 @@ const Dashboard = () => {
                   >
                     <div className="flex items-center">
                       <div>
-                        <h3 className=" text-gray-900">{assessment.title}</h3>
+                        <h3 className="text-xs text-gray-900">{assessment.name}</h3>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500">
                         {assessment.questions.length} questions •{" "}
                         {assessment.time}
                       </p>
@@ -121,10 +123,10 @@ const Dashboard = () => {
             </div>
 
             <div className="bg-white p-4 rounded-lg border border-gray-200 ">
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className=" font-semibold mb-2">
                 Revenue & Commissions
               </h2>
-              <div className="h-52 flex justify-center items-center">
+              <div className="h-48 flex justify-center items-center">
                 <ResponsiveContainer width="80%" height="100%">
                   <PieChart>
                     <Pie

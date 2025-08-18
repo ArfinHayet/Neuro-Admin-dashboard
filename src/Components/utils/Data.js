@@ -615,21 +615,27 @@ export const clinicianList = [
 
 export const defaultCommissionRate = 20;
 
+
+
+// Initial invoices / transaction logs
 export const transactionLogs = [
   {
     id: 1,
-    date: "2025-08-05",
-    clinician: "Dr. Smith",
-    amount: 100,
-    clinicianShare: 80,
-    platformShare: 20,
+    date: "2025-07-10",
+    clinician: "Dr. John Doe",
+    amount: 500,
+    clinicianShare: 350,
+    platformShare: 150,
+    invoice: 1,
   },
   {
     id: 2,
-    date: "2025-08-07",
-    clinician: "Dr. Johnson",
-    amount: 200,
-    clinicianShare: 160,
-    platformShare: 40,
+    date: "2025-07-15",
+    clinician: "Dr. Sarah Smith",
+    amount: 600,
+    clinicianShare: 400,
+    platformShare: 200,
+    invoice: 2,
   },
 ];
+

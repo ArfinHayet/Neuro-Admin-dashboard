@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
 
-const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editingQuestion }) => {
+const InitialModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  defaultType = "initial",
+  editingQuestion,
+}) => {
   const [formData, setFormData] = useState({
     type: defaultType,
     question: "",
@@ -37,15 +43,15 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
   const handleChange = (field, value) => {
     if (field === "questionOrder") {
       if (value === "" || /^\d+$/.test(value)) {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else {
-      setFormData(prev => ({ ...prev, [field]: value }));
+      setFormData((prev) => ({ ...prev, [field]: value }));
     }
   };
 
   const handleAnswerChange = (index, key, value) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const updatedAnswers = [...prev.answers];
       if (key === "score") {
         const numericVal = Number(value);
@@ -58,16 +64,21 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
   };
 
   const addAnswerOption = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       answers: [...prev.answers, { label: "", score: "" }],
     }));
   };
 
-  const removeAnswerOption = index => {
-    setFormData(prev => {
+  const removeAnswerOption = (index) => {
+    setFormData((prev) => {
       const updatedAnswers = prev.answers.filter((_, i) => i !== index);
-      return { ...prev, answers: updatedAnswers.length ? updatedAnswers : [{ label: "", score: "" }] };
+      return {
+        ...prev,
+        answers: updatedAnswers.length
+          ? updatedAnswers
+          : [{ label: "", score: "" }],
+      };
     });
   };
 
@@ -80,11 +91,17 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
       setError("Question order is required");
       return false;
     }
-    if (formData.answerType === "multiple" && formData.answers.some(a => !a.label.trim())) {
+    if (
+      formData.answerType === "multiple" &&
+      formData.answers.some((a) => !a.label.trim())
+    ) {
       setError("All answer options must have labels");
       return false;
     }
-    if (formData.answerType === "multiple" && formData.answers.some(a => a.score === "")) {
+    if (
+      formData.answerType === "multiple" &&
+      formData.answers.some((a) => a.score === "")
+    ) {
       setError("All answer options must have scores");
       return false;
     }
@@ -99,13 +116,14 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
 
     try {
       const payload = {
-        assessmentId: 1, 
+        assessmentId: 1,
         questions: formData.question,
         order: Number(formData.questionOrder),
-        answerType: formData.answerType === "yesno" 
-          ? "Yes/No" 
-          : formData.answerType === "multiple" 
-            ? "Multiple Choice" 
+        answerType:
+          formData.answerType === "yesno"
+            ? "Yes/No"
+            : formData.answerType === "multiple"
+            ? "Multiple Choice"
             : "Text",
         answers: formData.answerType === "multiple" ? formData.answers : [],
       };
@@ -113,7 +131,7 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
-console.log("www",savedQuestion)
+      console.log("www", savedQuestion);
       onSave(savedQuestion);
       onClose();
     } catch (err) {
@@ -125,7 +143,7 @@ console.log("www",savedQuestion)
   };
 
   if (!isOpen) return null;
-  const handleOutsideClick = e => {
+  const handleOutsideClick = (e) => {
     if (e.target.id === "modalWrapper") onClose();
   };
 
@@ -137,11 +155,11 @@ console.log("www",savedQuestion)
     >
       <div
         className="bg-white rounded-lg p-6 w-[30vw] max-w-full max-h-[90vh] overflow-auto"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-center font-medium mb-6">         
-           {editingQuestion ? "Edit Question" : "Add New Assessment Question"}
-</h2>
+        <h2 className="text-center font-medium mb-6">
+          {editingQuestion ? "Edit Question" : "Add New Assessment Question"}
+        </h2>
 
         <label className="block text-xs mb-1">Assessment Type</label>
         <div className="w-full border px-3 py-2 rounded mb-3 text-sm">
@@ -153,7 +171,7 @@ console.log("www",savedQuestion)
           className="w-full border px-2 py-1 rounded mb-4"
           rows={2}
           value={formData.question}
-          onChange={e => handleChange("question", e.target.value)}
+          onChange={(e) => handleChange("question", e.target.value)}
         />
 
         <label className="block text-xs mb-1">Question Order</label>
@@ -161,7 +179,7 @@ console.log("www",savedQuestion)
           type="text"
           className="w-full border px-3 py-2 rounded mb-4 text-sm"
           value={formData.questionOrder}
-          onChange={e => handleChange("questionOrder", e.target.value)}
+          onChange={(e) => handleChange("questionOrder", e.target.value)}
           placeholder="Enter question order number"
         />
 
@@ -169,7 +187,7 @@ console.log("www",savedQuestion)
         <select
           className="w-full border px-3 py-2 rounded mb-4 text-xs"
           value={formData.answerType}
-          onChange={e => handleChange("answerType", e.target.value)}
+          onChange={(e) => handleChange("answerType", e.target.value)}
         >
           <option value="yesno">Yes / No</option>
           <option value="multiple">Multiple Choice</option>
@@ -195,7 +213,9 @@ console.log("www",savedQuestion)
                     type="text"
                     className="flex-1 border px-2 py-1 rounded"
                     value={answer.label}
-                    onChange={e => handleAnswerChange(i, "label", e.target.value)}
+                    onChange={(e) =>
+                      handleAnswerChange(i, "label", e.target.value)
+                    }
                     placeholder={`Option ${i + 1}`}
                   />
                   <input
@@ -205,7 +225,9 @@ console.log("www",savedQuestion)
                     step={1}
                     className="w-28 border px-2 py-1 rounded text-center"
                     value={answer.score}
-                    onChange={e => handleAnswerChange(i, "score", e.target.value)}
+                    onChange={(e) =>
+                      handleAnswerChange(i, "score", e.target.value)
+                    }
                     title="Score (0 or 1)"
                     placeholder="Score(0 or 1)"
                   />
@@ -225,15 +247,15 @@ console.log("www",savedQuestion)
           </>
         )}
 
-         <div className="flex justify-between gap-3 ">
-          <button 
+        <div className="flex justify-between gap-3 ">
+          <button
             className="px-4 py-2 rounded-full bg-gray-200"
             onClick={onClose}
             disabled={isSubmitting}
           >
             Cancel
           </button>
-          <button 
+          <button
             className="px-4 py-2 rounded-full bg-[#114654] text-white"
             onClick={handleSave}
             disabled={isSubmitting}

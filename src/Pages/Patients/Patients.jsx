@@ -1,34 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { users } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
+import { getPatients } from "../../api/patient";
 
 const PatientPage = () => {
   const navigate = useNavigate();
+  const [patients, setPatients] = useState([]);
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+ const fetchPatients = async () => {
+      try {
+        const data = await getPatients();
+        setPatients(data);
+      } catch (err) {
+        console.error("Error loading patients:", err);
+      } 
+    };
 
   const columns = [
     {
-      header: "User",
+      header: "Name",
       accessorFn: (row) => row.name,
-      cell: ({ row }) => {
-        const user = row.original;
-        return <p className=" text-xs">{user.name}</p>;
-      },
+      cell: ({ row }) => <p className="text-xs">{row.original.name}</p>,
     },
     {
       header: "Email",
-      accessorFn: (row) => row.name,
-      cell: ({ row }) => {
-        const user = row.original;
-        return <p className="text-xs">{user.email}</p>;
-      },
+      accessorFn: (row) => row.email,
+      cell: ({ row }) => <p className="text-xs">{row.original.email}</p>,
+    },
+
+    {
+      header: "Gender",
+      accessorFn: (row) => row.gender,
+      cell: ({ row }) => <p className="text-xs">{row.original.gender}</p>,
     },
     {
       header: "Role",
-      accessorKey: "role",
-      cell: (info) => info.getValue(),
+      accessorFn: (row) => row.relationshipToUser,
+      cell: ({ row }) => (
+        <p className="text-xs">{row.original.relationshipToUser}</p>
+      ),
     },
     {
       header: "Status",
@@ -49,7 +66,7 @@ const PatientPage = () => {
       cell: ({ row }) => (
         <div className="text-left">
           <button
-            onClick={() => navigate(`/patients/${row.original.id}`)}
+            onClick={() => navigate(`/patients/${row.original.userId}`)}
             className="text-primary  text-lg ml-3"
             aria-label={`View profile of ${row.original.name}`}
           >
