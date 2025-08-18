@@ -705,6 +705,7 @@ export const transactionLogs = [
     clinicianShare: 350,
     platformShare: 150,
     invoice: 1,
+    status: "paid",
   },
   {
     id: 2,
@@ -714,5 +715,6 @@ export const transactionLogs = [
     clinicianShare: 400,
     platformShare: 200,
     invoice: 2,
+    status: "paid",
   },
 ];

@@ -3,7 +3,6 @@ import { flexRender } from "@tanstack/react-table";
 const DataTable = ({ table }) => {
   return (
     <table className="table-auto  w-full">
-
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id} className="border-b">
@@ -36,9 +35,6 @@ const DataTable = ({ table }) => {
         ))}
       </tbody>
     </table>
-
-
-
   );
 };
 

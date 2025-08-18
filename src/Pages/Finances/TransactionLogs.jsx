@@ -5,8 +5,7 @@ import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
 import { IoMdDownload } from "react-icons/io";
-import {  useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 export default function TransactionLogs() {
   const [selectedMonth, setSelectedMonth] = useState("all");
@@ -28,11 +27,12 @@ export default function TransactionLogs() {
       clinicianShare: Math.floor(Math.random() * 300 + 50),
       platformShare: Math.floor(Math.random() * 100 + 20),
       invoice: invoices.length + 1,
+      status: "Unpaid",
     };
 
     setInvoices((prev) => [...prev, newInvoice]);
     toast.success(`Invoice generated for ${selectedClinician}`);
-    setSelectedClinician(""); 
+    setSelectedClinician("");
   };
 
   const handleDownloadInvoice = (invoiceId) => {
@@ -42,8 +42,17 @@ export default function TransactionLogs() {
   const handleViewInvoice = (invoiceId) => {
     const invoice = invoices.find((inv) => inv.invoice === invoiceId);
     if (invoice) {
-    navigate(`/invoices/${invoiceId}`);
+      navigate(`/invoices/${invoiceId}`);
     }
+  };
+
+  const handleMarkAsPaid = (invoiceId) => {
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.invoice === invoiceId ? { ...inv, status: "Paid" } : inv
+      )
+    );
+    toast.success(`Invoice #${invoiceId} marked as Paid`);
   };
 
   const months = [
@@ -95,22 +104,42 @@ export default function TransactionLogs() {
       cell: (info) => `$${info.getValue()}`,
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <button
+          className={`text-xs px-2 py-1 rounded ${
+            row.original.status === "Unpaid"
+              ? "bg-[#d5f2ae] text-[#578206] rounded-full text-xs px-2"
+              : "bg-[#EEF2AE] text-[#828006] rounded-full text-xs px-2 "
+          }`}
+          onClick={() =>
+            row.original.status === "Unpaid" &&
+            handleMarkAsPaid(row.original.invoice)
+          }
+          disabled={row.original.status !== "Unpaid"}
+        >
+          {row.original.status === "Unpaid" ? "Mark as Paid" : "Paid"}
+        </button>
+      ),
+    },
+
+    {
       accessorKey: "action",
       header: "Action",
       cell: ({ row }) => (
         <div className="flex gap-3">
-         
           <button
             className="text-secondary "
             onClick={() => handleViewInvoice(row.original.invoice)}
           >
-            <IoEye  size={16}/>
+            <IoEye size={16} />
           </button>
           <button
             className="text-secondary "
             onClick={() => handleDownloadInvoice(row.original.invoice)}
           >
-            <IoMdDownload  size={16}/>
+            <IoMdDownload size={16} />
           </button>
         </div>
       ),
@@ -125,17 +154,15 @@ export default function TransactionLogs() {
 
   return (
     <div>
-        <div>
-          <h2 className="text-lg font-semibold text-primary">
-            Transaction Logs
-          </h2>
-          <p className="mb-6 text-sm text-secondary">
-            Track earnings, commission splits, and manage invoices
-          </p>
-        </div>
-       
-    <div className="flex justify-between mb-4">
-       <div className="flex items-center gap-2">
+      <div>
+        <h2 className="text-lg font-semibold text-primary">Transaction Logs</h2>
+        <p className="mb-6 text-sm text-secondary">
+          Track earnings, commission splits, and manage invoices
+        </p>
+      </div>
+
+      <div className="flex justify-between mb-4">
+        <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600">Month</label>
           <select
             value={selectedMonth}
@@ -149,32 +176,31 @@ export default function TransactionLogs() {
             ))}
           </select>
         </div>
-      <div className="flex gap-6 items-center">
-
-        {/* invoice Generate */}
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Clinician</label>
-          <select
-            value={selectedClinician}
-            onChange={(e) => setSelectedClinician(e.target.value)}
-            className="border rounded py-1 px-2 text-xs w-40"
-          >
-            <option value="">Select Clinician</option>
-            {clinicians.map((c) => (
-              <option key={c.id} value={c.name}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <button
-            className="bg-primary text-white px-3 py-1 rounded-full text-xs"
-            onClick={handleGenerateInvoice}
-          >
-            Generate Invoice
-          </button>
+        <div className="flex gap-6 items-center">
+          {/* invoice Generate */}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Clinician</label>
+            <select
+              value={selectedClinician}
+              onChange={(e) => setSelectedClinician(e.target.value)}
+              className="border rounded py-1 px-2 text-xs w-40"
+            >
+              <option value="">Select Clinician</option>
+              {clinicians.map((c) => (
+                <option key={c.id} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <button
+              className="bg-primary text-white px-3 py-1 rounded-full text-xs"
+              onClick={handleGenerateInvoice}
+            >
+              Generate Invoice
+            </button>
+          </div>
         </div>
       </div>
-      </div>  
 
       <DataTable table={table} />
     </div>
