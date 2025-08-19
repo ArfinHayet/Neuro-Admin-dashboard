@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 //import { onDemandAssessments } from "../../../Components/utils/Data";
 import { FaRegClock } from "react-icons/fa6";
 import { FiEdit3 } from "react-icons/fi";
-import AddNewCategoryModal from "../../../Components/Assessments/AddNewCategoryModal";
 import { createAssessment, getAssessments } from "../../../api/assessments";
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 
@@ -56,9 +55,8 @@ const OnDemandAssessment = () => {
 
    const fetchAssessments = async () => {
     try {
-      const response = await getAssessments();
-      const data = Array.isArray(response) ? response : [];
-      setAssessments(data); // updated
+      const data = await getAssessments();
+      setAssessments(Array.isArray(data) ? data : []);
     } catch (err) {
       setError("Failed to load assessments");
       console.error(err);
@@ -75,36 +73,23 @@ const OnDemandAssessment = () => {
     navigate(`/ondemandassessment/${category.id}`);
   };
 
-   const handleSaveCategory = async (newCategory) => {
+   const handleSaveCategory = async (assessment) => {
     try {
-      setIsLoading(true);
-      const savedCategory = await createAssessment(newCategory);
-
-      const normalizedCategory = {
-        id: savedCategory.id,
-        category: savedCategory.category || savedCategory.name || "",
-        description: savedCategory.description || "",
-        type: savedCategory.type || "",
-        totalTime: savedCategory.totalTime || "",
-      };
+      const saved = await createAssessment(assessment);
 
       if (editingAssessments) {
         setAssessments((prev) =>
-          prev.map((cat) =>
-            cat.id === editingAssessments.id ? normalizedCategory : cat
-          )
+          prev.map((a) => (a.id === editingAssessments.id ? saved : a))
         );
       } else {
-        setAssessments((prev) => [...prev, normalizedCategory]);
+        setAssessments((prev) => [...prev, saved]);
       }
 
       setIsModalOpen(false);
-      setEditingAssessments(null); 
+      setEditingAssessments(null);
     } catch (err) {
       setError("Failed to save assessment");
       console.error(err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -147,8 +132,8 @@ const OnDemandAssessment = () => {
             <AssessmentCard
               key={category.id}
               category={category}
-              onEdit={(category) => {
-                setEditingAssessments(category);
+              onEdit={(cat) => {
+                setEditingAssessments(cat);
                 setIsModalOpen(true);
               }}
               onSelect={handleCardClick}
@@ -163,6 +148,8 @@ const OnDemandAssessment = () => {
           }}
           onSave={handleSaveCategory}
           defaultCategory={editingAssessments}
+            onError={(err) => setError(err)} 
+
         />
       </div>
     </section>

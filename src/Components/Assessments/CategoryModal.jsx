@@ -7,7 +7,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [totalTime, setTotalTime] = useState("");
   const [type, setType] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     if (defaultCategory) {
