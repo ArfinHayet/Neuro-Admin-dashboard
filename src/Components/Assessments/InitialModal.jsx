@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
 
-const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editingQuestion,fetchQuestions }) => {
+const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "initial", editingQuestion,fetchQuestions }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
     question: "",
@@ -104,13 +104,15 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
   };
 
   const handleSave = async () => {
+    console.log("eeee")
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
       const payload = {
-        assessmentId: 7, 
+        assessmentId: assessment?.id, 
+       
         questions: formData.question,
         order: Number(formData.questionOrder),
         answerType:
@@ -158,6 +160,8 @@ const InitialModal = ({ isOpen, onClose, onSave, defaultType = "initial", editin
 
         <label className="block text-xs mb-1">Assessment Type</label>
         <div className="w-full border px-3 py-2 rounded mb-3 text-sm">
+                  {/*  <p>{assessment?.name || "Unknown Assessment"}</p>*/}
+
           <p>Initial Assessment</p>
         </div>
 

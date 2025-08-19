@@ -13,6 +13,7 @@ const InitialAssessment = () => {
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+
   useEffect(() => {
     fetchQuestions();
   }, []);
@@ -20,8 +21,12 @@ const InitialAssessment = () => {
   const fetchQuestions = async () => {
     try {
       const data = await getAllQuestions();
-      console.log("lll",data?.payload)// assessmentId = 1
-      setQuestions(data?.payload);
+      console.log("lll", data?.payload);
+      const filtered = data?.payload?.filter(
+        (q) => q.category === null || q.category === "null"
+      );
+
+      setQuestions(filtered || []); //fetching all null category questions
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
@@ -67,7 +72,7 @@ const InitialAssessment = () => {
         </button>
       </div>
       <p className="text-xs text-secondary">
-        View, Edit and manage questions for the Initial Assessment to ensure  accuracy and relevance.
+        View, Edit and manage questions for the Initial Assessment to ensure accuracy and relevance.
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
@@ -82,6 +87,7 @@ const InitialAssessment = () => {
           </tr>
         </thead>
         <tbody>
+        
           {questions?.map((q, i) => (
             <QuestionArrangement
               key={q.id}

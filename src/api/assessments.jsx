@@ -2,7 +2,7 @@ import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
 export async function createAssessment(obj) {
-  try {
+console.log(obj)
     const res = await fetch(`${domain}/api/assessments`, {
       method: "POST",
       headers: {
@@ -12,16 +12,12 @@ export async function createAssessment(obj) {
       body: JSON.stringify(obj),
     });
 
-    if (!res.ok) throw new Error("Failed to create assessment");
-    return await res.json();
-  } catch (error) {
-    console.error("Error creating assessment:", error);
-    throw error;
-  }
+  const data = await res.json();
+  return data;
 }
 
 export async function getAssessments() {
-  try {
+
     const res = await fetch(`${domain}/api/assessments`, {
       method: "GET",
       headers: {
@@ -30,10 +26,7 @@ export async function getAssessments() {
       },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch assessments");
-    return await res.json();
-  } catch (error) {
-    console.error("Error fetching assessments:", error);
-    throw error;
-  }
+  const data = await res.json();
+  return data;
+
 }

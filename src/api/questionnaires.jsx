@@ -21,6 +21,7 @@ const addQuestion = async (obj) => {
 const getQuestionsByAssessmentId = async (assessmentId) => {
   const response = await fetch(`${domain}/questionnaires?assessmentId=${assessmentId}`, {
     method: "GET",
+    
   });
 
   const data = await response.json();

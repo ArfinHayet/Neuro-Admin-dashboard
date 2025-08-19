@@ -1,33 +1,79 @@
 import React, { useState, useEffect } from "react";
-
+import { createAssessment } from "../../api/assessments";
 
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
-  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState("");
-  const [categoryType, setCategoryType] = useState(""); 
+  const [totalTime, setTotalTime] = useState("");
+  const [type, setType] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [setError] = useState(null);
 
   useEffect(() => {
     if (defaultCategory) {
-      setName(defaultCategory.name || "");
+      setCategory(defaultCategory.category || "");
       setDescription(defaultCategory.description || "");
-      setDuration(defaultCategory.duration || "");
-      setCategoryType(defaultCategory.categoryType || ""); 
+      setTotalTime(defaultCategory.totalTime || "");
+      setType(defaultCategory.type || "");
     } else {
-      setName("");
+      setCategory("");
       setDescription("");
-      setDuration("");
-      setCategoryType("");
+      setTotalTime("");
+      setType("");
     }
+    setError(null);
   }, [defaultCategory]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return alert("Category name is required");
+    setError(null);
 
-    onSave({ name, description, duration, categoryType }); 
+    if (!category.trim()) {
+      setError("Category is required");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const assessmentData = {
+        category,
+        description,
+        type,
+        totalTime: `${totalTime} minutes`,
+      };
+
+      const response = await createAssessment(assessmentData);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (onSave) {
+        await onSave(response);
+      }
+      setCategory("");
+      setDescription("");
+      setTotalTime("");
+      setType("");
+
+      onClose();
+    } catch (err) {
+      console.error("Failed to save assessment:", err);
+      setError(err.message || "Failed to save assessment");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setCategory("");
+    setDescription("");
+    setTotalTime("");
+    setType("");
+    setError(null);
     onClose();
   };
 
@@ -43,8 +89,8 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
             <label className="block mb-1 text-xs">Category Name</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               placeholder="Enter category name"
               className="w-full border rounded px-3 py-2 text-sm"
               required
@@ -58,8 +104,8 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
             <input
               type="number"
               min={1}
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
+              value={totalTime}
+              onChange={(e) => setTotalTime(e.target.value)}
               placeholder="Enter time in minutes"
               className="w-full border rounded px-3 py-2 text-sm"
               required
@@ -67,12 +113,13 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
           </div>
 
           <div>
-            <label className="block mb-1 text-xs">Category Type</label>
+            <label className="block mb-1 text-xs">Assessment Type</label>
             <select
-              value={categoryType}
-              onChange={(e) => setCategoryType(e.target.value)}
+              value={type}
+              onChange={(e) => setType(e.target.value)}
               className="w-full border rounded px-3 py-2 text-xs"
             >
+              <option value="">Select Type</option>
               <option value="free">Free</option>
               <option value="premium">Premium</option>
             </select>
@@ -83,7 +130,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description (optional)"
+              placeholder="Enter description "
               className="w-full border rounded px-3 py-2 resize-none text-xs"
               rows={2}
             />
@@ -92,16 +139,18 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
           <div className="flex justify-between gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-2 border rounded-full bg-gray-100 text-sm"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary  text-white rounded-full text-sm"
+              className="px-4 py-2 bg-primary text-white rounded-full text-sm"
+              disabled={isSubmitting}
             >
-              Save
+              {isSubmitting ? "Adding..." : "Add"}
             </button>
           </div>
         </form>
