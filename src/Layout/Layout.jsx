@@ -4,7 +4,7 @@ import Sidebar from "../Components/Sidebar";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-[#F6F7F9">
+    <div className="min-h-screen bg-[#F6F7F9]">
       <div className="fixed h-[5vh] top-0 w-full z-10">
         <Navbar />
       </div>

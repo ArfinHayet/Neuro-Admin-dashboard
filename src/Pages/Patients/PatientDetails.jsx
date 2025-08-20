@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 //import { users, children } from "../../Components/utils/Data";
-import { childProfileFields } from "../../Components/utils/ChildPorfileConfig";
+//import { childProfileFields } from "../../Components/utils/ChildPorfileConfig";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { LuPhone } from "react-icons/lu";
 import { FaRegAddressCard } from "react-icons/fa";
 import { getUsers } from "../../api/user";
 import { getPatients } from "../../api/patient";
-import { stringify } from "postcss";
+
 
 const PatientDetails = () => {
   const { userId } = useParams();
@@ -34,7 +34,7 @@ const PatientDetails = () => {
         (p) => String(p.userId) === String(foundUser._id)
       );
       setChildren(userChildren);
-      setVisibleChildren(userChildren.map((child) => child, _id));
+      setVisibleChildren(userChildren.map((child) => child._id));
     } catch (err) {
       console.error("Error Fetching Child Details:", err);
     }
@@ -69,8 +69,7 @@ const PatientDetails = () => {
   // console.log(user.image);
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+           <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
         <h1 className="font-medium text-2xl mb-4">{user.name}'s Details</h1>
 
         <section className="mb-3 flex justify-between items-start ">
@@ -162,7 +161,6 @@ const PatientDetails = () => {
             ))}
           </div>
         </section>
-      </div>
     </section>
   );
 };

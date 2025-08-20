@@ -23,7 +23,7 @@ const Navbar = () => {
 
 
   return (
-    <div className="navbar bg-white px-7">
+    <div className="navbar bg-[#F6F7F9] px-7">
       <div className="flex-1 gap-[7.5rem]">
         <a href="/">
           <img height={300} className="h-[30px]" src={p3} alt="logo" />

@@ -108,8 +108,7 @@ const OnDemandAssessment = () => {
   }
 
   return (
-   <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
           <button
@@ -151,7 +150,7 @@ const OnDemandAssessment = () => {
             onError={(err) => setError(err)} 
 
         />
-      </div>
+     
     </section>
   );
 };

@@ -83,8 +83,8 @@ const SubmittedInitialList = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2">
-      <div className="bg-white h-[88vh] p-2 rounded-md overflow-y-auto">
+          <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+
         <h1 className="text-xl font-medium ">Submitted Initial Assessments</h1>
         <p className="text-sm mb-6 text-secondary">
           Access and Review Detailed Records of Every Submitted Assessment.{" "}
@@ -94,7 +94,6 @@ const SubmittedInitialList = () => {
         <div className="bg-white rounded border border-opacity-30 ">
           <DataTable table={table} />
         </div>
-      </div>
     </section>
   );
 };

@@ -50,44 +50,40 @@ const InitialsDetails = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
-        <h1 className="text-xl font-medium mb-2">{assessment.name}</h1>
-        <p className="mb-1 text-sm">
-          <strong>Date Taken</strong>{" "}
-          {assessment.dateTaken ? assessment.dateTaken.toLocalDateString() : ""}
-        </p>
-        <p className="mb-6 text-sm">
-          <strong>Category</strong> {assessment.category}
-        </p>
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <h1 className="text-xl font-medium mb-2">{assessment.name}</h1>
+      <p className="mb-1 text-sm">
+        <strong>Date Taken</strong>{" "}
+        {assessment.dateTaken ? assessment.dateTaken.toLocalDateString() : ""}
+      </p>
+      <p className="mb-6 text-sm">
+        <strong>Category</strong> {assessment.category}
+      </p>
 
-        <table className="w-full border border-gray-300 text-left bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border border-gray-300">Question</th>
-              <th className="p-2 border border-gray-300">Answer</th>
-            </tr>
-          </thead>
-          <tbody>
-            {answers.length > 0 ? (
-              answers.map((ans) => (
-                <tr key={ans.id} className="border border-gray-300 text-xs">
-                  <td className="p-2 border border-gray-300">
-                    {ans.questionText}
-                  </td>
-                  <td className="p-2 border border-gray-300">{ans.answer}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td className="p-2 text-center text-gray-500">
-                  No answer
+      <table className="w-full border border-gray-300 text-left bg-white">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2 border border-gray-300">Question</th>
+            <th className="p-2 border border-gray-300">Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {answers.length > 0 ? (
+            answers.map((ans) => (
+              <tr key={ans.id} className="border border-gray-300 text-xs">
+                <td className="p-2 border border-gray-300">
+                  {ans.questionText}
                 </td>
+                <td className="p-2 border border-gray-300">{ans.answer}</td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td className="p-2 text-center text-gray-500">No answer</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </section>
   );
 };

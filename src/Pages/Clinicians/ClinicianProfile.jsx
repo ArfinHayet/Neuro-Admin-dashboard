@@ -119,8 +119,7 @@ const ClinicianProfile = () => {
   if (!clinician) return <p className="p-4">Clinician not found.</p>;
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
         <div className="flex items-center gap-6 mb-4">
           <img
             src={clinician.image}
@@ -165,7 +164,7 @@ const ClinicianProfile = () => {
             <DataTable table={leaveTable} />
           </div>
         </div>
-      </div>
+
     </section>
   );
 };

@@ -152,8 +152,7 @@ const User = () => {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+          <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
         <Header
           title="User Settings"
           // subtitle="You can onboard customers, see their info and status"
@@ -251,7 +250,6 @@ const User = () => {
           closeModal={closeDeleteModal}
           onConfirm={handleDeleteDoctor}
         />
-      </div>
     </section>
   );
 };

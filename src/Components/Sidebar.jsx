@@ -18,15 +18,16 @@ const Sidebar = () => {
   const year = today.getFullYear();
 
   return (
-    <div className="h-screen pt-20 ps-0 pe-2 bg-white w-full ">
-      <hr className="text-[#E9E9E9] mb-3" />
-      <div className=" text-gray-700 leading-5 ps-4">
+    <div className="h-screen pt-20 ps-0 pe-2 bg-[#F6F7F9] w-full ">
+     <div className="mb-8 space-y-2">
+      <hr className="text-[#E9E9E9] " />
+      <div className=" text-primary leading-5 ps-4 ">
         <p className=" text-sm">{dayName}</p>
-        <p className="text-4xl font-medium text-[#3B3B3B]">{date}</p>
+        <p className="text-3xl font-medium text-[#3B3B3B]">{date}</p>
         <p className="text-sm">{year}</p>
       </div>
-      <hr className="text-[#E9E9E9] mt-3" />
-
+      <hr className="text-[#E9E9E9] " />
+ </div>
       <ul>
         {navItem.map((item, index) => {
           const hasDropdown = item.routes && item.routes.length > 0;

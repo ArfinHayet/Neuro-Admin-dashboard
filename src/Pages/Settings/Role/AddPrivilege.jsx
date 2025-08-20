@@ -121,7 +121,7 @@ const AddPrivilege = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl h-[90vh] overflow-y-auto px-6 pt-5 pb-5">
+        <div className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
       <div className="ml-4 mb-5 pb-5">
         <p className="text-lg font-semibold">Edit Privilege</p>
         <p className="text-xs font-normal text-gray-600">

@@ -95,8 +95,7 @@ const PatientPage = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+          <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
         <h1 className="font-semibold text-xl mb-1">Users List</h1>
         <p className="text-secondary text-sm mb-4">
           Manage and view all registered platform users.
@@ -104,7 +103,6 @@ const PatientPage = () => {
         <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
           <DataTable table={table} />
         </div>
-      </div>
     </section>
   );
 };
