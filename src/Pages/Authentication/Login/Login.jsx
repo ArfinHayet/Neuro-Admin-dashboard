@@ -32,10 +32,10 @@ const Login = () => {
       const result = await login(postdetails);
 
       if (result && result?.payload?.token?.access_token) {
-        localStorage.setItem("accessToken", result.payload.token.access_token);
+        const accessToken = result.payload.token.access_token;
         const userData = result.payload.filteredUser;
         setUserData(userData);
-        localStorage.setItem("userData", JSON.stringify(userData));
+        setUserData({ ...userData, accessToken });
         navigate("/");
       }
     } catch (err) {

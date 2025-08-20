@@ -3,7 +3,7 @@ import { token } from "../Components/utils/token";
 
 export async function createAssessment(obj) {
 console.log(obj)
-    const res = await fetch(`${domain}/api/assessments`, {
+    const res = await fetch(`${domain}/assessments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +18,7 @@ console.log(obj)
 
 export async function getAssessments() {
 
-    const res = await fetch(`${domain}/api/assessments`, {
+    const res = await fetch(`${domain}/assessments`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

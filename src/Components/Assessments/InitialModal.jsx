@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
+import { getAssessments } from "../../api/assessments";
 
-const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "initial", editingQuestion,fetchQuestions }) => {
+const InitialModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  defaultType = "initial",
+  editingQuestion,
+  fetchQuestions,
+}) => {
   const [formData, setFormData] = useState({
     type: defaultType,
     question: "",
@@ -13,6 +21,30 @@ const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "ini
   const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
+  const [assessment, setAssessment] = useState(null);
+
+ const fetchAssessment = async () => {
+  try {
+    const data = await getAssessments();
+    console.log( data);
+    
+    if (!data?.payload) {
+      console.error("No payload found");
+      return;
+    }
+
+    const freeAssessment = data.payload.find(  (a) => a.type === "free" );
+    console.log("Free Assessment Found", freeAssessment);
+    setAssessment(freeAssessment || null);
+  } catch (err) {
+    console.error("Failed to fetch assessment", err);
+  }
+};
+
+
+  useEffect(() => {
+    fetchAssessment();
+  }, []);
 
   useEffect(() => {
     if (editingQuestion) {
@@ -104,15 +136,19 @@ const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "ini
   };
 
   const handleSave = async () => {
-    console.log("eeee")
+    console.log("saved");
     if (!validateForm()) return;
+     if (!assessment) {
+      setError("No free assessment found to attach this question.");
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
       const payload = {
-        assessmentId: assessment?.id, 
-       
+        assessmentId: assessment.id,
+
         questions: formData.question,
         order: Number(formData.questionOrder),
         answerType:
@@ -127,7 +163,7 @@ const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "ini
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
-      console.log("www",savedQuestion)
+      console.log("saved question", savedQuestion);
       onSave(savedQuestion);
       fetchQuestions();
       onClose();
@@ -160,7 +196,7 @@ const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "ini
 
         <label className="block text-xs mb-1">Assessment Type</label>
         <div className="w-full border px-3 py-2 rounded mb-3 text-sm">
-                  {/*  <p>{assessment?.name || "Unknown Assessment"}</p>*/}
+          {/*  <p>{assessment?.name || "Initial Assessment"}</p>*/}
 
           <p>Initial Assessment</p>
         </div>
@@ -257,7 +293,6 @@ const InitialModal = ({ isOpen, onClose, onSave, assessment,  defaultType = "ini
           <button
             className="px-4 py-2 rounded-full bg-[#114654] text-white"
             onClick={handleSave}
-            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

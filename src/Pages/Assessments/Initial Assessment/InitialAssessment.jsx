@@ -4,29 +4,43 @@ import { useState, useEffect } from "react";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import InitialModal from "../../../Components/Assessments/InitialModal";
 import {
-  // getQuestionsByAssessmentId,
+  getQuestionsByAssessmentId,
   deleteQuestion,
   getAllQuestions,
 } from "../../../api/questionnaires";
+import { getAssessments } from "../../../api/assessments";
 
 const InitialAssessment = () => {
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+  const [initialAssessment, setInitialAssessment] = useState(null);
 
   useEffect(() => {
-    fetchQuestions();
+    fetchInitialAssessment();
   }, []);
 
-  const fetchQuestions = async () => {
+  const fetchInitialAssessment = async () => {
     try {
-      const data = await getAllQuestions();
-      console.log("lll", data?.payload);
-      const filtered = data?.payload?.filter(
-        (q) => q.category === null || q.category === "null"
-      );
+      const data = await getAssessments();
+      console.log("ee", data)
+      const initial = data?.payload?.find((a) => a.type === "free");
+          console.log("ee", data)
+  setInitialAssessment(initial || null);
 
-      setQuestions(filtered || []); //fetching all null category questions
+      if (initial) {
+        fetchQuestions(initial.id);
+      }
+    } catch (err) {
+      console.error("Failed to fetch assessments", err);
+    }
+  };
+
+  const fetchQuestions = async (assessmentId) => {
+    try {
+      const data = await getQuestionsByAssessmentId(assessmentId);
+      console.log("lll", data?.payload);
+      setQuestions(data?.payload || []);
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
@@ -41,6 +55,8 @@ const InitialAssessment = () => {
     } else {
       setQuestions((prev) => [...prev, newQ]);
     }
+     setIsModalOpen(false);
+    setEditingQuestion(null);
   };
 
   const handleDelete = async (id) => {
@@ -57,10 +73,15 @@ const InitialAssessment = () => {
     setIsModalOpen(true);
   };
 
+    const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingQuestion(null);
+  };
+
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] rounded-3xl px-6 pt-5">
       <div className="flex justify-between items-center ">
-        <h2 className="text-xl font-semibold ">Initial Assessments</h2>
+        <h2 className="text-xl font-semibold ">Initial Assessment</h2>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
           onClick={() => {
@@ -72,7 +93,8 @@ const InitialAssessment = () => {
         </button>
       </div>
       <p className="text-xs text-secondary">
-        View, Edit and manage questions for the Initial Assessment to ensure accuracy and relevance.
+        View, Edit and manage questions for the Initial Assessment to ensure
+        accuracy and relevance.
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
@@ -87,7 +109,6 @@ const InitialAssessment = () => {
           </tr>
         </thead>
         <tbody>
-        
           {questions?.map((q, i) => (
             <QuestionArrangement
               key={q.id}
@@ -113,7 +134,7 @@ const InitialAssessment = () => {
         onSave={handleSave}
         defaultType="initial"
         editingQuestion={editingQuestion}
-        fetchQuestions={fetchQuestions}
+        fetchQuestions={() => initialAssessment && fetchQuestions(initialAssessment.id) }
       />
     </section>
   );

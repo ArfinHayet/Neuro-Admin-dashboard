@@ -2,7 +2,7 @@ import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
 const addUser = async (obj) => {
-  const response = await fetch(`${domain}/api/users`, {
+  const response = await fetch(`${domain}/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +32,7 @@ const addUser = async (obj) => {
 };
 
 const getUsers = async () => {
-  const response = await fetch(`${domain}/api/users`, {
+  const response = await fetch(`${domain}/users`, {
     method: "GET",
     headers: {
       authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ const login = async (obj) => {
 
 
 const deleteUser = async (id) => {
-  const response = await fetch(`${domain}/api/users/${id}`, {
+  const response = await fetch(`${domain}/users/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

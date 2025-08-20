@@ -5,7 +5,7 @@ import { token } from "../Components/utils/token";
 
 export const addSubmission = async (obj ) => {
 
-    const res = await fetch(`${domain}/api/submissions`, {
+    const res = await fetch(`${domain}/submissions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
