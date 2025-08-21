@@ -14,13 +14,18 @@ const OnDemandDetails = () => {
   const [activeTab, setActiveTab] = useState("questions");
   const [assessment, setAssessment] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchAssessmentDetails = async () => {
     try {
-      const submissions = (await getAllSubmissions()) || [];
+      setIsLoading(true);
+
+      const response = (await getAllSubmissions()) ;
+      const submissions = response.payload || []; 
       const thisAssessment = submissions.find(
-        (a) => a.id === parseInt(assessmentId)
+        (a) => a.assessmentId === parseInt(assessmentId)
       );
+
       if (!thisAssessment) {
         setAssessment(null);
         setAnswers([]);
@@ -29,13 +34,14 @@ const OnDemandDetails = () => {
 
       setAssessment(thisAssessment);
 
-      const allAnswers = (await getAnswersByAssessmentId(assessmentId)) || [];
-      const filteredAnswers = allAnswers.filter(
-        (a) => a.assessmentId === parseInt(assessmentId)
-      );
-      setAnswers(filteredAnswers);
+      const allAnswers = await getAnswersByAssessmentId( thisAssessment.assessmentId ) || [];
+     setAnswers(allAnswers);
     } catch (err) {
       console.error("Failed to fetch assessment details:", err);
+      setAssessment(null);
+      setAnswers([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -43,13 +49,23 @@ const OnDemandDetails = () => {
     fetchAssessmentDetails();
   }, [assessmentId]);
 
+  if (isLoading) {
+    return (
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+        <div className="flex justify-center items-center h-40">
+          <p>Loading assessment details...</p>
+        </div>
+      </section>
+    );
+  }
+
   if (!assessment) return <p>Assessment not found.</p>;
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="text-xl font-semibold mb-4">
+      <h1 className="text-xl font-semibold mb-6">
         {" "}
-        {assessment.assessment?.name || "Assessment"} Details
+        {assessment.assessment?.category || "Assessment"} Details
       </h1>
 
       <div className="flex gap-8 mb-6 border-b border-gray-200">

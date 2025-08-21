@@ -29,7 +29,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
-    onEdit(category);
+    if(onEdit) onEdit(category);
     setIsMenuOpen(false);
   };
 
@@ -111,8 +111,11 @@ const OnDemandAssessment = () => {
       setIsLoading(true);
        const response = await getAssessments();
     const data = response.payload || [];
-    console.log("Assessments data:", data);
-    setAssessments(Array.isArray(data) ? data : []);
+     const filtered = Array.isArray(data)
+      ? data.filter((a) => a.type !== "free")
+      : [];
+    console.log("Assessments data:", filtered);
+    setAssessments(Array.isArray(filtered) ? filtered : []);
     } catch (err) {
       setError("Failed to load assessments");
       console.error(err);
@@ -137,7 +140,7 @@ const OnDemandAssessment = () => {
   const handleSaveCategory = async (assessment) => {
     try {
      // const saved = await createAssessment(assessment);
-     console.log("saved assessments" , assessment)
+    //  console.log("saved assessments" , assessment)
 
       if (editingAssessments) {
 setAssessments((prev) =>
@@ -154,6 +157,15 @@ setAssessments((prev) =>
       console.error(err);
     }
   };
+
+   if (isLoading) {
+    return (
+      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+        <p>Loading assessments...</p>
+      </section>
+    );
+  }
+
 
   //  const handleDeleteAssessments = async (category) => {
   //   try {

@@ -4,31 +4,52 @@ import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 // import { initialQuestions } from "../../../Components/utils/Data";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
-import { deleteQuestion, getAllQuestions } from "../../../api/questionnaires";
+import { deleteQuestion, getQuestionsByAssessmentId } from "../../../api/questionnaires";
+import { getAssessments } from "../../../api/assessments";
+
 
 const AssessmentDetails = () => {
   const { id } = useParams();
-  const assessment = onDemandAssessments.find(
-    (item) => item.id.toString() === id
-  );
-
+   const [assessment, setAssessment] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const assessmentsResponse = await getAssessments();
+        const allAssessments = assessmentsResponse?.payload || [];
+        const thisAssessment = allAssessments.find(
+          (a) => a.id.toString() === id
+        );
+
+        if (!thisAssessment) {
+          setError("Assessment not found");
+          setIsLoading(false);
+          return;
+        }
+
+        setAssessment(thisAssessment);
+
+        const questionsResponse = await getQuestionsByAssessmentId(thisAssessment.id);
+        const questionsData = questionsResponse?.payload || [];
+        setQuestions(questionsData);
+
+      } catch (err) {
+        console.error("Failed to fetch assessment details:", err);
+        setError("Failed to load assessment details");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
 
   useEffect(() => {
-    fetchQuestions();
-  }, []);
-
-  const fetchQuestions = async () => {
-    try {
-      const data = await getAllQuestions();
-      console.log("lll", data?.payload); // assessmentId = 1
-      setQuestions(data?.payload);
-    } catch (err) {
-      console.error("Failed to fetch questions", err);
-    }
-  };
+    fetchData();
+  }, [id]);
 
   const handleSave = (newQ) => {
     if (editingQuestion) {
@@ -40,7 +61,8 @@ const AssessmentDetails = () => {
       setEditingQuestion(null);
     } else {
       setQuestions((prev) => [...(prev ?? []), newQ]);
-    }
+    }    setIsModalOpen(false);
+
   };
 
   const handleDelete = async (id) => {
@@ -57,11 +79,17 @@ const AssessmentDetails = () => {
     setIsModalOpen(true);
   };
 
+   if (error) {
+    return (
+     {error}
+    );
+  }
+
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
       <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">{assessment.name}</h2>
+          <h2 className="text-xl font-semibold">{assessment?.category}</h2>
           <button
             className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
             onClick={() => {
@@ -77,7 +105,7 @@ const AssessmentDetails = () => {
           accuracy and relevance.
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Duration:</strong> {assessment.time}
+          <strong>Duration </strong> {assessment?.totalTime || assessment?.time || "N/A"}
         </p>
         <h3 className="font-medium my-3">Question List</h3>
         <table className="w-full text-sm text-left text-gray-700">

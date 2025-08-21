@@ -10,9 +10,11 @@ import { getAnswersByAssessmentId } from "../../api/answers";
 const SubmittedInitialList = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchSubmissions = async () => {
     try {
+      setLoading(true);
       const data = await getAllSubmissions();
       const submissionsData = data?.payload || [];
 
@@ -25,6 +27,8 @@ const SubmittedInitialList = () => {
     } catch (err) {
       console.error("Failed to fetch submissions:", err);
       setSubmissions([]);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -90,11 +94,18 @@ const SubmittedInitialList = () => {
       <p className="text-sm mb-6 text-secondary">
         Access and Review Detailed Records of Every Submitted Assessment.{" "}
       </p>
-      <p className="mb-2">Total submitted: {submissions?.length}</p>
-
-      <div className="bg-white rounded border border-opacity-30 ">
-        <DataTable table={table} />
-      </div>
+      {loading ? (
+        <p className="text-center py-10 text-gray-500">
+          Loading submissions...
+        </p>
+      ) : (
+        <>
+          <p className="mb-2">Total submitted: {submissions?.length}</p>
+          <div className="bg-white rounded border border-opacity-30 ">
+            <DataTable table={table} />
+          </div>
+        </>
+      )}
     </section>
   );
 };

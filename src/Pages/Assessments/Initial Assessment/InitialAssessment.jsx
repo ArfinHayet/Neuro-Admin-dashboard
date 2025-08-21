@@ -15,6 +15,7 @@ const InitialAssessment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [initialAssessment, setInitialAssessment] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchInitialAssessment();
@@ -22,6 +23,7 @@ const InitialAssessment = () => {
 
   const fetchInitialAssessment = async () => {
     try {
+      setIsLoading(true);
       const data = await getAssessments();
       const initial = data?.payload?.find((a) => a.type === "free");
       console.log("ee", data);
@@ -32,6 +34,8 @@ const InitialAssessment = () => {
       }
     } catch (err) {
       console.error("Failed to fetch assessments", err);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -82,6 +86,14 @@ const InitialAssessment = () => {
     setEditingQuestion(question);
     setIsModalOpen(true);
   };
+
+   if (isLoading) {
+    return (
+      <section className="h-[90vh] flex justify-center items-center bg-white rounded-2xl px-4 pt-5">
+        <p>Loading assessment details...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
