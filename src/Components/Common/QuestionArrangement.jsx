@@ -3,16 +3,17 @@ import { FiEdit3 } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 
 const QuestionArrangement = ({ question, index, onChange, onEdit, onDelete }) => {
-  
+    const qId = question.id || question._id; 
+
  const handleOrderChange = (e) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value > 0) {
-      onChange(question.id, "order", value);
+      onChange(qId, "order", value);
     }
   };
 
   const handleAnswerTypeChange = (e) => {
-    onChange(question.id, "answerType", e.target.value);
+    onChange(qId, "answerType", e.target.value);
   };
   return (
     <tr className="border-b bg-white ">

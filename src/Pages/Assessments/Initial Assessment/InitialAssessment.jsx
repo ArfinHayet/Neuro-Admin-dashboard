@@ -23,10 +23,9 @@ const InitialAssessment = () => {
   const fetchInitialAssessment = async () => {
     try {
       const data = await getAssessments();
-      console.log("ee", data)
       const initial = data?.payload?.find((a) => a.type === "free");
-          console.log("ee", data)
-  setInitialAssessment(initial || null);
+      console.log("ee", data);
+      setInitialAssessment(initial || null);
 
       if (initial) {
         fetchQuestions(initial.id);
@@ -40,7 +39,18 @@ const InitialAssessment = () => {
     try {
       const data = await getQuestionsByAssessmentId(assessmentId);
       console.log("lll", data?.payload);
-      setQuestions(data?.payload || []);
+      if (data) {
+        const questionsArray = data.questions.split(" ").map((q, i) => ({
+          id: i + 1,
+          question: q.trim(),
+          order: i + 1,
+          answerType: data.answerType,
+        }));
+
+        setQuestions(questionsArray);
+      } else {
+        setQuestions([]);
+      }
     } catch (err) {
       console.error("Failed to fetch questions", err);
     }
@@ -55,7 +65,7 @@ const InitialAssessment = () => {
     } else {
       setQuestions((prev) => [...prev, newQ]);
     }
-     setIsModalOpen(false);
+    setIsModalOpen(false);
     setEditingQuestion(null);
   };
 
@@ -71,11 +81,6 @@ const InitialAssessment = () => {
   const handleEdit = (question) => {
     setEditingQuestion(question);
     setIsModalOpen(true);
-  };
-
-    const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingQuestion(null);
   };
 
   return (
@@ -134,7 +139,9 @@ const InitialAssessment = () => {
         onSave={handleSave}
         defaultType="initial"
         editingQuestion={editingQuestion}
-        fetchQuestions={() => initialAssessment && fetchQuestions(initialAssessment.id) }
+        fetchQuestions={() =>
+          initialAssessment && fetchQuestions(initialAssessment.id)
+        }
       />
     </section>
   );

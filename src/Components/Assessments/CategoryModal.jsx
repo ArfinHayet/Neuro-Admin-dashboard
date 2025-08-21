@@ -22,7 +22,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       setType("");
     }
     setError(null);
-  }, [defaultCategory]);
+  }, [defaultCategory, isOpen]);
 
   if (!isOpen) return null;
 
@@ -39,9 +39,9 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
     try {
       const assessmentData = {
-        category,
-        description,
-        type,
+        category: category.trim(),
+        description: description.trim(),
+        type: type,
         totalTime: `${totalTime} minutes`,
       };
 

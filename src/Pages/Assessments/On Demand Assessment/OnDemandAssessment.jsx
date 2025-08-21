@@ -5,13 +5,26 @@ import { FaRegClock } from "react-icons/fa6";
 import { FiEdit3 } from "react-icons/fi";
 import { createAssessment, getAssessments } from "../../../api/assessments";
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
+import { PiDotsThreeVerticalBold } from "react-icons/pi";
 
 const AssessmentCard = ({ category, onEdit, onSelect }) => {
   return (
     <section>
-      <div className="bg-[#eeeeee] rounded-xl p-6 cursor-pointer hover:shadow-md flex flex-col gap-2  h-[240px]">
+      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-4  flex flex-col gap-2  h-[240px]">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(category.id);
+          }}
+          title="Edit Category"
+          className=" underline flex justify-end  items-center "
+        >
+          <PiDotsThreeVerticalBold size={20}/>
+        </button>
         <h2 className=" font-semibold text-center ">{category.category}</h2>
-        <p className="text-xs text-secondary text-center ">{category.description}</p>
+        <p className="text-xs text-secondary text-center ">
+          {category.description}
+        </p>
         <span className="flex items-center gap-1 justify-center">
           <FaRegClock size={14} />
           <p className="text-xs text-center">{category.totalTime}</p>
@@ -26,35 +39,22 @@ const AssessmentCard = ({ category, onEdit, onSelect }) => {
             Show Details
           </button>
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit(category.id);
-          }}
-          title="Edit Category"
-          className="text-blue-600 underline flex justify-end  items-center -mt-2"
-        >
-          <FiEdit3 />
-        </button>
       </div>
     </section>
   );
 };
 
-
 const OnDemandAssessment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [assessments, setAssessments] = useState([]); 
-   const [editingAssessments, setEditingAssessments] = useState(null);
-
- // const [categories, setCategories] = useState([]);
-  // const [editingCategory, setEditingCategory] = useState(null);
+  const [assessments, setAssessments] = useState([]);
+  const [editingAssessments, setEditingAssessments] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-   const fetchAssessments = async () => {
+  const fetchAssessments = async () => {
     try {
+      setIsLoading(true);
       const data = await getAssessments();
       setAssessments(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -73,7 +73,7 @@ const OnDemandAssessment = () => {
     navigate(`/ondemandassessment/${category.id}`);
   };
 
-   const handleSaveCategory = async (assessment) => {
+  const handleSaveCategory = async (assessment) => {
     try {
       const saved = await createAssessment(assessment);
 
@@ -108,49 +108,45 @@ const OnDemandAssessment = () => {
   }
 
   return (
-      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
-          <button
-            className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
-            onClick={() => {
-              setEditingAssessments(null);
-              setIsModalOpen(true);
-            }}
-          >
-            Add New Category
-          </button>
-        </div>
-        <p className="text-sm text-secondary mb-6">
-          View, Edit and manage questions for the Initial Assessment to ensure
-          accuracy and relevance.
-        </p>
-
-        <div className="grid grid-cols-4 gap-4">
-          {assessments.map((category) => (
-            <AssessmentCard
-              key={category.id}
-              category={category}
-              onEdit={(cat) => {
-                setEditingAssessments(cat);
-                setIsModalOpen(true);
-              }}
-              onSelect={handleCardClick}
-            />
-          ))}
-        </div>
-
-        <CategoryModal
-          isOpen={isModalOpen}
-          onClose={() => {setIsModalOpen(false);
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
+        <button
+          className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
+          onClick={() => {
             setEditingAssessments(null);
+            setIsModalOpen(true);
           }}
-          onSave={handleSaveCategory}
-          defaultCategory={editingAssessments}
-            onError={(err) => setError(err)} 
+        >
+          Add New Category
+        </button>
+      </div>
+      <p className="text-sm text-secondary mb-6">
+        View, Edit and manage questions for the Initial Assessment to ensure
+        accuracy and relevance.
+      </p>
 
-        />
-     
+      <div className="grid grid-cols-4 gap-4">
+        {assessments.map((category) => (
+          <AssessmentCard
+            key={category.id}
+            category={category}
+            onEdit={ setEditingAssessments}
+            onSelect={handleCardClick}
+          />
+        ))}
+      </div>
+
+      <CategoryModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingAssessments(null);
+        }}
+        onSave={handleSaveCategory}
+        defaultCategory={editingAssessments}
+        onError={(err) => setError(err)}
+      />
     </section>
   );
 };

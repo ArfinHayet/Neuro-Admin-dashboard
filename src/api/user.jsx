@@ -31,12 +31,10 @@ const addUser = async (obj) => {
   return data;
 };
 
+
 const getUsers = async () => {
   const response = await fetch(`${domain}/users`, {
     method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-    }
   });
   const data = await response.json();
   return data;
@@ -67,7 +65,6 @@ const deleteUser = async (id) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(),
   });
@@ -75,5 +72,6 @@ const deleteUser = async (id) => {
   const data = await response.json();
   return data;
 };
-
 export { addUser, getUsers, login, deleteUser };
+
+
