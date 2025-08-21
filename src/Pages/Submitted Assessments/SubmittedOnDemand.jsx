@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { users, children, categories } from "../../Components/utils/Data";
+//import { users, children, categories } from "../../Components/utils/Data";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
-import { getSubmissions } from "../../api/submissionanswers";
+import { getAllSubmissions } from "../../api/submissions";
+import { getAnswersByAssessmentId } from "../../api/answers";
 
 const SubmittedOnDemand = () => {
   const navigate = useNavigate();
@@ -12,11 +13,15 @@ const SubmittedOnDemand = () => {
 
   const fetchSubmissions = async () => {
     try {
-      const data = await getSubmissions();
-      const initialSubmissions = (data || []).filter(
-        (item) => item.assessmentType === "on-demand"
+      const data = await getAllSubmissions();
+      const submissionsData = data?.payload || [];
+
+      const onDemandSubmissions = submissionsData.filter(
+        (submission) => submission.assessmentId !== 12
       );
-      setSubmissions(initialSubmissions);
+      //  console.log(" submissions list:", onDemandSubmissions);
+
+      setSubmissions(onDemandSubmissions);
     } catch (err) {
       console.error("Failed to fetch submissions:", err);
       setSubmissions([]);
@@ -27,52 +32,57 @@ const SubmittedOnDemand = () => {
   }, []);
 
   const onView = (id) => {
-    navigate(`/submitted-assessments/on-demand/${id}`);
+    navigate(`/submitted-assessments/on-demand/${id.assessmentId}`);
   };
 
-  const columns = [
-    {
-      header: "User Name",
-      accessorKey: "userId",
-      cell: ({ getValue }) => {
-        const user = users.find((u) => u.id === getValue());
-        return user ? user.name : "Unknown User";
+  const data = useMemo(() => submissions, [submissions]);
+
+  const columns = useMemo(
+    () => [
+      {
+        header: "User Name",
+        accessorFn: (row) => row.user?.name || "Unknown User",
       },
-    },
-    {
-      header: "Child Name",
-      accessorKey: "patientId",
-      cell: ({ getValue }) => {
-        const child = children.find((c) => c.id === getValue());
-        return child ? child.name : "-";
+      {
+        header: "Child Name",
+        accessorFn: (row) => row.patient?.name || "Unknown Child",
       },
-    },
-    {
-      header: "Date Taken",
-      accessorKey: "dateTaken",
-      cell: ({ getValue }) => new Date(getValue()).toLocaleDateString("en-GB"),
-    },
-    {
-      header: "Assessment Category",
-      accessorKey: "categoryId",
-      cell: ({ getValue }) => {
-        const category = categories.find((cat) => cat.id === getValue());
-        return category ? category.title : "Unknown Category";
+      // {
+      //   header: "Assessment Name",
+      //   accessorFn: (row) => row.assessment?.name || "Unknown Assessment",
+      // },
+      {
+        header: "Category",
+        accessorFn: (row) => row.assessment?.category || "N/A",
       },
-    },
-    {
-      header: "Actions",
-      id: "actions",
-      cell: ({ row }) => (
-        <button onClick={() => onView(row.original.id)} className="px-2">
-          <IoEye size={18} />
-        </button>
-      ),
-    },
-  ];
+      {
+        header: "Score",
+        accessorFn: (row) => row.score || "N/A",
+      },
+      {
+        header: "Date Taken",
+        accessorFn: (row) =>
+          new Date(row.createdAt).toLocaleDateString("en-GB"),
+      },
+      {
+        header: "Actions",
+        id: "actions",
+        cell: ({ row }) => (
+          <button
+            onClick={() => onView(row.original)}
+            className="px-2 p-1 hover:bg-gray-100 rounded"
+            title="View Details"
+          >
+            <IoEye size={18} />
+          </button>
+        ),
+      },
+    ],
+    []
+  );
 
   const table = useReactTable({
-    data: submissions,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

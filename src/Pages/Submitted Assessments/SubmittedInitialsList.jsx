@@ -1,40 +1,38 @@
 import React, { useMemo, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import { users, children,  } from "../../Components/utils/Data";
+//import { users, children,  } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
-import { getSubmissions } from "../../api/submissionanswers";
-
+import { getAllSubmissions } from "../../api/submissions";
+import { getAnswersByAssessmentId } from "../../api/answers";
 
 const SubmittedInitialList = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
 
   const fetchSubmissions = async () => {
-      try {
-        const data = await getSubmissions();
-        const initialSubmissions = (data || []).filter(
-          (item) => item.assessmentType === "initial"
-        );
-        setSubmissions(initialSubmissions);
-      } catch (err) {
-        console.error("Failed to fetch submissions:", err);
-        setSubmissions([]);
-      } 
-    };
-    useEffect(() => {
-      fetchSubmissions();
-    }, []);
+    try {
+      const data = await getAllSubmissions();
+      const submissionsData = data?.payload || [];
 
-  const getUserName = (userId) => {
-    const user = users.find((u) => u.id === userId);
-    return user ? user.name : "Unknown User";
+      const initialSubmissions = (submissionsData || []).filter(
+        // submission => submission.assessmentId === 12       //for initial 12 fixed
+        (submission) => submission.assessmentId === 14
+      );
+      // console.log(" submissions from (assessmentId=12):", initialSubmissions);
+      setSubmissions(initialSubmissions);
+    } catch (err) {
+      console.error("Failed to fetch submissions:", err);
+      setSubmissions([]);
+    }
   };
+  useEffect(() => {
+    fetchSubmissions();
+  }, []);
 
-  const getChildName = (childId) => {
-    const child = children.find((c) => c.id === childId);
-    return child ? child.name : "Unknown Child";
+  const handleViewDetails = (submission) => {
+    navigate(`/submitted-assessments/initial/${submission.assessmentId}`);
   };
 
   const data = useMemo(() => submissions, [submissions]);
@@ -42,31 +40,35 @@ const SubmittedInitialList = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "userId",
+        accessorKey: "user.name",
         header: "User Name",
-        cell: (info) => getUserName(info.row.original.userId),
+        cell: (info) => info.row.original.user?.name || "Unknown User",
       },
       {
-        accessorKey: "patientId",
+        accessorKey: "patient.name",
         header: "Child Name",
-        cell: (info) => getChildName(info.row.original.patientId),
+        cell: (info) => info.row.original.patient?.name || "Unknown Child",
       },
       {
-        accessorKey: "dateTaken",
+        accessorKey: "createdAt",
         header: "Date Taken",
-         cell: (info) =>
-          new Date(info.row.original.dateTaken).toLocaleDateString(),
-      
+        cell: (info) =>
+          new Date(info.row.original.createdAt).toLocaleDateString(),
       },
+      {
+        accessorKey: "score",
+        header: "Score",
+        cell: (info) => `${info.row.original.score}` || "N/A",
+      },
+
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
           <button
-            onClick={() =>
-              navigate(`/submitted-assessments/initial/${row.original.id}`)
-            }
-            className="ml-2"
+            onClick={() => handleViewDetails(row.original)}
+            className="ml-2 p-1 hover:bg-gray-100 rounded"
+            title="View Details"
           >
             <IoEye size={18} />
           </button>
@@ -83,17 +85,16 @@ const SubmittedInitialList = () => {
   });
 
   return (
-          <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <h1 className="text-xl font-medium ">Submitted Initial Assessments</h1>
+      <p className="text-sm mb-6 text-secondary">
+        Access and Review Detailed Records of Every Submitted Assessment.{" "}
+      </p>
+      <p className="mb-2">Total submitted: {submissions?.length}</p>
 
-        <h1 className="text-xl font-medium ">Submitted Initial Assessments</h1>
-        <p className="text-sm mb-6 text-secondary">
-          Access and Review Detailed Records of Every Submitted Assessment.{" "}
-        </p>
-        <p className="mb-2">Total submitted: {submissions?.length}</p>
-
-        <div className="bg-white rounded border border-opacity-30 ">
-          <DataTable table={table} />
-        </div>
+      <div className="bg-white rounded border border-opacity-30 ">
+        <DataTable table={table} />
+      </div>
     </section>
   );
 };

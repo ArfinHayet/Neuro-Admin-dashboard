@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 //import { assessments, onDemandAssessments } from "../../Components/utils/Data";
-import { getSubmissions, getAnswers } from "../../api/submissionanswers";
+import { getAllSubmissions } from "../../api/submissions";
+import { getAnswersByAssessmentId } from "../../api/answers";
 
 const tabs = [
   { id: "questions", label: "Questions and Answers" },
@@ -16,16 +17,19 @@ const OnDemandDetails = () => {
 
   const fetchAssessmentDetails = async () => {
     try {
-      const submissions = (await getSubmissions()) || [];
+      const submissions = (await getAllSubmissions()) || [];
       const thisAssessment = submissions.find(
         (a) => a.id === parseInt(assessmentId)
       );
       if (!thisAssessment) {
         setAssessment(null);
+        setAnswers([]);
         return;
       }
+
       setAssessment(thisAssessment);
-      const allAnswers = (await getAnswers()) || [];
+
+      const allAnswers = (await getAnswersByAssessmentId(assessmentId)) || [];
       const filteredAnswers = allAnswers.filter(
         (a) => a.assessmentId === parseInt(assessmentId)
       );
@@ -43,7 +47,10 @@ const OnDemandDetails = () => {
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="text-xl font-semibold mb-4">{assessment.name} Details</h1>
+      <h1 className="text-xl font-semibold mb-4">
+        {" "}
+        {assessment.assessment?.name || "Assessment"} Details
+      </h1>
 
       <div className="flex gap-8 mb-6 border-b border-gray-200">
         {tabs.map((tab) => (
@@ -77,7 +84,7 @@ const OnDemandDetails = () => {
               answers.map((ans, i) => (
                 <tr key={i} className="border border-gray-300">
                   <td className="p-2 border border-gray-300">
-                    {ans.questionText}
+                    {ans.question?.questions}
                   </td>
                   <td className="p-2 border border-gray-300">{ans.answer}</td>
                 </tr>
@@ -96,8 +103,7 @@ const OnDemandDetails = () => {
       {activeTab === "aisummary" && (
         <div className="p-4 bg-white  ">
           <p>
-            This is a generated AI summary of the assessment results. (You can
-            replace this with your AI integration output.)
+            {assessment.summary ? assessment.summary : "No summary available."}
           </p>
         </div>
       )}

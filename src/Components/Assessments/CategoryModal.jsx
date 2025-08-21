@@ -4,10 +4,11 @@ import { createAssessment } from "../../api/assessments";
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
   const [totalTime, setTotalTime] = useState("");
   const [type, setType] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (defaultCategory) {
@@ -35,15 +36,28 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       return;
     }
 
+    if (!totalTime || parseInt(totalTime) <= 0) {
+      setError("Completion time is required");
+      return;
+    }
+
+    if (!type) {
+      setError("Assessment type is required");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const assessmentData = {
-        category: category.trim(),
+        name: name.trim() || "Cognitive Ability Test",
         description: description.trim(),
         type: type,
         totalTime: `${totalTime} minutes`,
+        category: category.trim(),
       };
+
+      console.log("saving data", assessmentData);
 
       const response = await createAssessment(assessmentData);
 
@@ -52,12 +66,14 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       }
 
       if (onSave) {
-        await onSave(response);
+        await onSave(response.payload);
       }
-      setCategory("");
+      
       setDescription("");
       setTotalTime("");
-      setType("");
+      setType("");      
+      setCategory("");
+
 
       onClose();
     } catch (err) {
@@ -69,10 +85,10 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   };
 
   const handleClose = () => {
-    setCategory("");
     setDescription("");
     setTotalTime("");
     setType("");
+    setCategory("");
     setError(null);
     onClose();
   };

@@ -12,6 +12,11 @@ console.log(obj)
       body: JSON.stringify(obj),
     });
 
+     if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || `HTTP error! status: ${res.status}`);
+  }
+
   const data = await res.json();
   return data;
 }
@@ -26,7 +31,11 @@ export async function getAssessments() {
       },
     });
 
+
+
   const data = await res.json();
+    console.log("Fetched assessments:", data); 
   return data;
 
 }
+

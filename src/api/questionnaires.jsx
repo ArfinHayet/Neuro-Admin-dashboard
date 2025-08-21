@@ -21,7 +21,9 @@ const addQuestion = async (obj) => {
 const getQuestionsByAssessmentId = async (assessmentId) => {
   const response = await fetch(`${domain}/questionnaires?assessmentId=${assessmentId}`, {
     method: "GET",
-    
+     headers: {
+      authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await response.json();
@@ -47,6 +49,8 @@ const updateQuestion = async (id, obj) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+
     },
     body: JSON.stringify(obj),
   });
@@ -61,6 +65,8 @@ const deleteQuestion = async (id) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+
     },
   });
 
