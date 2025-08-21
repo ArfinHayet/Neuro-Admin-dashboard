@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { transactionLogs, clinicians } from "../../Components/utils/Data"; // clinicians list added
+import { useState, useEffect } from "react";
+import { transactionLogs, clinicians } from "../../Components/utils/Data";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
@@ -9,50 +9,67 @@ import { useNavigate } from "react-router-dom";
 
 export default function TransactionLogs() {
   const [selectedMonth, setSelectedMonth] = useState("all");
-  const [invoices, setInvoices] = useState(transactionLogs);
-  const [selectedClinician, setSelectedClinician] = useState("");
+  const [selectedClinician, setSelectedClinician] = useState("all");
+  const [invoices, setInvoices] = useState([]);
   const navigate = useNavigate();
 
-  const handleGenerateInvoice = () => {
-    if (!selectedClinician) {
-      toast.error("Please select a clinician");
-      return;
-    }
+  const getPreviousMonth = () => {
+    const today = new Date();
+    const prevMonth = today.getMonth() === 0 ? 11 : today.getMonth() - 1;
+    const year =
+      today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear();
+    return { prevMonth, year };
+  };
+  const generateInvoicesForLastMonth = () => {
+    const { prevMonth, year } = getPreviousMonth();
 
-    const newInvoice = {
-      id: invoices.length + 1,
-      date: new Date().toISOString().slice(0, 10),
-      clinician: selectedClinician,
-      amount: Math.floor(Math.random() * 500 + 100), // using demo amount
-      clinicianShare: Math.floor(Math.random() * 300 + 50),
-      platformShare: Math.floor(Math.random() * 100 + 20),
-      invoice: invoices.length + 1,
-      status: "Unpaid",
-    };
+    // Filter logs for previous month
+    const prevMonthLogs = transactionLogs.filter((log) => {
+      const d = new Date(log.date);
+      return d.getMonth() === prevMonth && d.getFullYear() === year;
+    });
 
-    setInvoices((prev) => [...prev, newInvoice]);
-    toast.success(`Invoice generated for ${selectedClinician}`);
-    setSelectedClinician("");
+    const grouped = prevMonthLogs.reduce((acc, log) => {
+      //grouped clinician
+      if (!acc[log.clinician]) acc[log.clinician] = [];
+      acc[log.clinician].push(log);
+      return acc;
+    }, {});
+
+    const newInvoices = Object.keys(grouped).map((clinician, index) => {
+      const logs = grouped[clinician];
+      const totalAmount = logs.reduce((sum, l) => sum + l.amount, 0);
+      const clinicianShare = logs.reduce((sum, l) => sum + l.clinicianShare, 0);
+      const platformShare = logs.reduce((sum, l) => sum + l.platformShare, 0);
+      return {
+        id: index + 1,
+        clinician,
+        date: new Date().toISOString().slice(0, 10),
+        assessmentsCount: logs.length,
+        totalAmount,
+        clinicianShare,
+        platformShare,
+        status: "Unpaid",
+      };
+    });
+
+    setInvoices(newInvoices);
   };
 
-  const handleDownloadInvoice = (invoiceId) => {
-    toast.success(`Downloading invoice #${invoiceId}`);
-  };
-
-  const handleViewInvoice = (invoiceId) => {
-    const invoice = invoices.find((inv) => inv.invoice === invoiceId);
-    if (invoice) {
-      navigate(`/invoices/${invoiceId}`);
-    }
-  };
-
+  useEffect(() => {
+    generateInvoicesForLastMonth();
+  }, []);
   const handleMarkAsPaid = (invoiceId) => {
     setInvoices((prev) =>
       prev.map((inv) =>
-        inv.invoice === invoiceId ? { ...inv, status: "Paid" } : inv
+        inv.id === invoiceId ? { ...inv, status: "Paid" } : inv
       )
     );
     toast.success(`Invoice #${invoiceId} marked as Paid`);
+  };
+
+  const handleViewInvoice = (invoiceId) => {
+    navigate(`/invoices/${invoiceId}`);
   };
 
   const months = [
@@ -82,14 +99,22 @@ export default function TransactionLogs() {
         });
 
   const columns = [
-    { accessorKey: "date", header: "Date", cell: (info) => info.getValue() },
     {
-      accessorKey: "clinician",
-      header: "Clinician",
-      cell: (info) => info.getValue(),
-    },
+       accessorKey: "date",
+        header: "Date" 
+      },
     {
-      accessorKey: "amount",
+       accessorKey: "clinician", 
+       header: "Clinician" ,
+      },
+    { 
+      accessorKey: "assessmentsCount",
+       header: "# Assessments" ,
+             cell: (info) => `${info.getValue()}`,
+
+      },
+    {
+      accessorKey: "totalAmount",
       header: "Total Amount",
       cell: (info) => `$${info.getValue()}`,
     },
@@ -108,38 +133,31 @@ export default function TransactionLogs() {
       header: "Status",
       cell: ({ row }) => (
         <button
-          className={`text-xs px-2 py-1 rounded ${
+          className={`text-xs px-2 py-1 rounded-full ${
             row.original.status === "Unpaid"
-              ? "bg-[#d5f2ae] text-[#578206] rounded-full text-xs px-2"
-              : "bg-[#EEF2AE] text-[#828006] rounded-full text-xs px-2 "
+              ? "bg-[#e2f8c9] text-[#578206]"
+              : "bg-[#f5f8b7] text-[#828006]"
           }`}
           onClick={() =>
             row.original.status === "Unpaid" &&
-            handleMarkAsPaid(row.original.invoice)
+            handleMarkAsPaid(row.original.id)
           }
           disabled={row.original.status !== "Unpaid"}
         >
-          {row.original.status === "Unpaid" ? "Mark as Paid" : "Paid"}
+          {row.original.status}
         </button>
       ),
     },
-
     {
       accessorKey: "action",
       header: "Action",
       cell: ({ row }) => (
         <div className="flex gap-3">
           <button
-            className="text-secondary "
-            onClick={() => handleViewInvoice(row.original.invoice)}
+            className="text-secondary"
+            onClick={() => handleViewInvoice(row.original.id)}
           >
             <IoEye size={16} />
-          </button>
-          <button
-            className="text-secondary "
-            onClick={() => handleDownloadInvoice(row.original.invoice)}
-          >
-            <IoMdDownload size={16} />
           </button>
         </div>
       ),
@@ -161,7 +179,8 @@ export default function TransactionLogs() {
         </p>
       </div>
 
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-start gap-10 mb-4">
+
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600">Month</label>
           <select
@@ -176,8 +195,23 @@ export default function TransactionLogs() {
             ))}
           </select>
         </div>
-        <div className="flex gap-6 items-center">
-          {/* invoice Generate */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Clinician</label>
+          <select
+            value={selectedClinician}
+            onChange={(e) => setSelectedClinician(e.target.value)}
+            className="border rounded p-1 text-xs"
+          >
+            <option value="all">All</option>
+            {clinicians.map((c) => (
+              <option key={c.id} value={c.name}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {/* <div className="flex gap-6 items-center">
+           invoice Generate 
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600">Clinician</label>
             <select
@@ -199,7 +233,7 @@ export default function TransactionLogs() {
               Generate Invoice
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <DataTable table={table} />

@@ -7,8 +7,8 @@ import { createAssessment, getAssessments } from "../../../api/assessments";
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 
-const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {  
-   const [isMenuOpen, setIsMenuOpen] = useState(false);
+const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
-    if(onEdit) onEdit(category);
+    if (onEdit) onEdit(category);
     setIsMenuOpen(false);
   };
 
@@ -40,7 +40,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
   //   }
   //   setIsMenuOpen(false);
   // };
-  
+
   return (
     <section>
       <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-4 h-[200px] relative">
@@ -50,7 +50,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
           title="Options"
           className="absolute top-4 right-4"
         >
-          <PiDotsThreeVerticalBold size={20}/>
+          <PiDotsThreeVerticalBold size={20} />
         </button>
 
         {/* Options box */}
@@ -71,28 +71,28 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
               Delete
             </button> */}
           </div>
-        )} 
-       
-     <div className="flex flex-col gap-2 justify-center items-center mt-1">
-             <h2 className=" font-semibold  ">{category.category}</h2>
-        <p className="text-xs text-secondary  text-center">
-          {category.description}
-        </p>
-        <span className="flex items-center gap-1 ">
-          <FaRegClock size={14} />
-          <p className="text-xs text-center">{category.totalTime}</p>
-        </span>
-        <p className="text-xs  capitalize">{category.type}</p>
+        )}
 
-        <div className="flex justify-center">
-          <button
-            onClick={() => onSelect(category)}
-            className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit "
-          >
-            Show Details
-          </button>
+        <div className="flex flex-col gap-2 justify-center items-center mt-1">
+          <h2 className=" font-semibold  ">{category.category}</h2>
+          <p className="text-xs text-secondary  text-center">
+            {category.description}
+          </p>
+          <span className="flex items-center gap-1 ">
+            <FaRegClock size={14} />
+            <p className="text-xs text-center">{category.totalTime}</p>
+          </span>
+          <p className="text-xs  capitalize">{category.type}</p>
+
+          <div className="flex justify-center">
+            <button
+              onClick={() => onSelect(category)}
+              className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit "
+            >
+              Show Details
+            </button>
+          </div>
         </div>
-     </div>
       </div>
     </section>
   );
@@ -109,13 +109,13 @@ const OnDemandAssessment = () => {
   const fetchAssessments = async () => {
     try {
       setIsLoading(true);
-       const response = await getAssessments();
-    const data = response.payload || [];
-     const filtered = Array.isArray(data)
-      ? data.filter((a) => a.type !== "free")
-      : [];
-    console.log("Assessments data:", filtered);
-    setAssessments(Array.isArray(filtered) ? filtered : []);
+      const response = await getAssessments();
+      const data = response.payload || [];
+      const filtered = Array.isArray(data)
+        ? data.filter((a) => a.type !== "free")
+        : [];
+      console.log("Assessments data:", filtered);
+      setAssessments(Array.isArray(filtered) ? filtered : []);
     } catch (err) {
       setError("Failed to load assessments");
       console.error(err);
@@ -133,19 +133,19 @@ const OnDemandAssessment = () => {
   };
 
   const handleEditingAssessments = (category) => {
-    setEditingAssessments(category); 
-    setIsModalOpen(true); 
+    setEditingAssessments(category);
+    setIsModalOpen(true);
   };
 
   const handleSaveCategory = async (assessment) => {
     try {
-     // const saved = await createAssessment(assessment);
-    //  console.log("saved assessments" , assessment)
+      // const saved = await createAssessment(assessment);
+      //  console.log("saved assessments" , assessment)
 
       if (editingAssessments) {
-setAssessments((prev) =>
-        prev.map((a) => (a.id === editingAssessments.id ? assessment : a))
-);
+        setAssessments((prev) =>
+          prev.map((a) => (a.id === editingAssessments.id ? assessment : a))
+        );
       } else {
         setAssessments((prev) => [...prev, assessment]);
       }
@@ -158,14 +158,13 @@ setAssessments((prev) =>
     }
   };
 
-   if (isLoading) {
+  if (isLoading) {
     return (
       <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
         <p>Loading assessments...</p>
       </section>
     );
   }
-
 
   //  const handleDeleteAssessments = async (category) => {
   //   try {
@@ -176,7 +175,6 @@ setAssessments((prev) =>
   //     console.error(err);
   //   }
   // };
-
 
   if (error) {
     return { error };
@@ -206,7 +204,7 @@ setAssessments((prev) =>
           <AssessmentCard
             key={category.id}
             category={category}
-            onEdit={ handleEditingAssessments}
+            onEdit={handleEditingAssessments}
             onSelect={handleCardClick}
             // onDelete={handleDeleteAssessments}
           />

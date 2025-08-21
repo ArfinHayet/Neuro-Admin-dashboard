@@ -4,48 +4,48 @@ import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 // import { initialQuestions } from "../../../Components/utils/Data";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
-import { deleteQuestion, getQuestionsByAssessmentId } from "../../../api/questionnaires";
+import {
+  deleteQuestion,
+  getQuestionsByAssessmentId,
+} from "../../../api/questionnaires";
 import { getAssessments } from "../../../api/assessments";
-
 
 const AssessmentDetails = () => {
   const { id } = useParams();
-   const [assessment, setAssessment] = useState(null);
+  const [assessment, setAssessment] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const assessmentsResponse = await getAssessments();
-        const allAssessments = assessmentsResponse?.payload || [];
-        const thisAssessment = allAssessments.find(
-          (a) => a.id.toString() === id
-        );
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const assessmentsResponse = await getAssessments();
+      const allAssessments = assessmentsResponse?.payload || [];
+      const thisAssessment = allAssessments.find((a) => a.id.toString() === id);
 
-        if (!thisAssessment) {
-          setError("Assessment not found");
-          setIsLoading(false);
-          return;
-        }
-
-        setAssessment(thisAssessment);
-
-        const questionsResponse = await getQuestionsByAssessmentId(thisAssessment.id);
-        const questionsData = questionsResponse?.payload || [];
-        setQuestions(questionsData);
-
-      } catch (err) {
-        console.error("Failed to fetch assessment details:", err);
-        setError("Failed to load assessment details");
-      } finally {
+      if (!thisAssessment) {
+        setError("Assessment not found");
         setIsLoading(false);
+        return;
       }
-    };
 
+      setAssessment(thisAssessment);
+
+      const questionsResponse = await getQuestionsByAssessmentId(
+        thisAssessment.id
+      );
+      const questionsData = questionsResponse?.payload || [];
+      setQuestions(questionsData);
+    } catch (err) {
+      console.error("Failed to fetch assessment details:", err);
+      setError("Failed to load assessment details");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -61,8 +61,8 @@ const fetchData = async () => {
       setEditingQuestion(null);
     } else {
       setQuestions((prev) => [...(prev ?? []), newQ]);
-    }    setIsModalOpen(false);
-
+    }
+    setIsModalOpen(false);
   };
 
   const handleDelete = async (id) => {
@@ -79,10 +79,8 @@ const fetchData = async () => {
     setIsModalOpen(true);
   };
 
-   if (error) {
-    return (
-     {error}
-    );
+  if (error) {
+    return { error };
   }
 
   return (
@@ -105,7 +103,8 @@ const fetchData = async () => {
           accuracy and relevance.
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Duration </strong> {assessment?.totalTime || assessment?.time || "N/A"}
+          <strong>Duration </strong>{" "}
+          {assessment?.totalTime || assessment?.time || "N/A"}
         </p>
         <h3 className="font-medium my-3">Question List</h3>
         <table className="w-full text-sm text-left text-gray-700">
