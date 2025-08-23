@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import {
   onDemandAssessments,
   users,
@@ -23,6 +23,7 @@ import {
   Bar,
 } from "recharts";
 import Stats from "./Stats";
+
 
 const Dashboard = () => {
   const filterLast30Days = (dateStr) => {
@@ -84,19 +85,19 @@ const Dashboard = () => {
     },
   ];
 
-  const totalClinicianShare = transactionLogs.reduce(
-    (sum, log) => sum + log.clinicianShare,
-    0
-  );
-  const totalPlatformShare = transactionLogs.reduce(
-    (sum, log) => sum + log.platformShare,
-    0
-  );
+  // const totalClinicianShare = transactionLogs.reduce(
+  //   (sum, log) => sum + log.clinicianShare,
+  //   0
+  // );
+  // const totalPlatformShare = transactionLogs.reduce(
+  //   (sum, log) => sum + log.platformShare,
+  //   0
+  // );
 
-  const revenuePieData = [
-    { name: "Clinician Share", value: totalClinicianShare },
-    { name: "Platform Share", value: totalPlatformShare },
-  ];
+  // const revenuePieData = [
+  //   { name: "Clinician Share", value: totalClinicianShare },
+  //   { name: "Platform Share", value: totalPlatformShare },
+  // ];
 
   const COLORS = ["#82ca9d", "#ffc658"];
 

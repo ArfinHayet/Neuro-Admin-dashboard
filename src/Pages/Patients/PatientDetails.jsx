@@ -8,35 +8,40 @@ import { FaRegAddressCard } from "react-icons/fa";
 import { getUsers } from "../../api/user";
 import { getPatients } from "../../api/patient";
 
-
 const PatientDetails = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [children, setChildren] = useState([]);
-  const [visibleChildren, setVisibleChildren] = useState([]);
+  // const [visibleChildren, setVisibleChildren] = useState([]);
+  const [selectedChildId, setSelectedChildId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem("assessToken");
-
-      const allUsers = await getUsers(token);
-      const foundUser = allUsers.find((u) => String(u._id) === String(userId));
-
+      setLoading(true);
+      // const token = localStorage.getItem("assessToken");
+      const data = await getUsers();
+      const allUsers = data.payload || [];
+      const foundUser = allUsers.find((u) => String(u.id) === String(userId));
       if (!foundUser) {
         setUser(null);
         return;
       }
       setUser(foundUser);
 
-      const allPatients = await getPatients(token);
+      const patientdata = await getPatients();
+      const allPatients = patientdata.payload || [];
       const userChildren = allPatients.filter(
-        (p) => String(p.userId) === String(foundUser._id)
+        (p) => String(p.userId) === String(foundUser.id)
       );
       setChildren(userChildren);
-      setVisibleChildren(userChildren.map((child) => child._id));
+      if (userChildren.length > 0) setSelectedChildId(userChildren[0].id);
     } catch (err) {
-      console.error("Error Fetching Child Details:", err);
+      console.error("error", err);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,38 +63,41 @@ const PatientDetails = () => {
     );
   }
 
-  const toggleChildVisibility = (childId) => {
-    setVisibleChildren((prev) =>
-      prev.includes(childId)
-        ? prev.filter((id) => id !== childId)
-        : [...prev, childId]
+  // const toggleChildVisibility = (childId) => {
+  //   setVisibleChildren((prev) =>
+  //     prev.includes(childId)
+  //       ? prev.filter((id) => id !== childId)
+  //       : [...prev, childId]
+  //   );
+  // };
+
+  const selectedChild = children.find((c) => c.id === selectedChildId);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center  text-gray-500">
+        Loading user details...
+      </div>
     );
-  };
+  }
 
   // console.log(user.image);
 
   return (
-           <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-        <h1 className="font-medium text-2xl mb-4">{user.name}'s Details</h1>
-
-        <section className="mb-3 flex justify-between items-start ">
-          <div>
-            <h2 className=" font-medium mb-1">Login Information</h2>
-            <p className="flex gap-2 items-center text-sm">
-              <MdOutlineMailOutline size={18} /> {user.email}
-            </p>
-            <p className="flex gap-2 items-center text-sm">
-              <LuPhone size={18} /> {user.phone}
-            </p>
-          </div>
-          <img
-            src={user.image}
-            alt={user.name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <h1 className="font-semibold text-lg mb-4">{user.name}'s Details</h1>
+      <div className="grid grid-cols-3 gap-6 h-[25vh] mb-6 ">
+        <section className=" border rounded-lg p-4 border-[#e8e8e8]">
+          <h2 className=" font-medium mb-2">Login Information</h2>
+          <p className="flex gap-2 items-center text-sm">
+            <MdOutlineMailOutline size={18} /> {user.email}
+          </p>
+          <p className="flex gap-2 items-center text-sm">
+            <LuPhone size={16} /> {user.phone}
+          </p>
         </section>
 
-        <section className="mb-3">
+        <section className=" border rounded-lg p-4 border-[#e8e8e8]">
           <h2 className=" font-medium mb-1">Address</h2>
           <p className="flex gap-2 items-center text-sm">
             <FaRegAddressCard size={18} /> {user.street}, {user.state},{" "}
@@ -97,70 +105,85 @@ const PatientDetails = () => {
           </p>
         </section>
 
-        <section className="mb-3">
-          <h2 className=" font-medium ">Personal Information</h2>
-          <p className="text-sm">{user.name}</p>
+        <section className=" border rounded-lg p-4 border-[#e8e8e8]">
+          <h2 className=" font-medium mb-1">Personal Information</h2>
           <p className="text-sm">{user.age} Year</p>
-          <p className="text-sm">{user.role}</p>
-          <p>
-            {user.isBlocked ? (
-              <span className="text-red-600 font-semibold text-sm">
-                Blocked
-              </span>
-            ) : (
-              <span className="text-green-600 font-semibold text-sm">
-                Active
-              </span>
-            )}
+          <p className="text-sm">
+            <strong>Role </strong> {user.role}
           </p>
-        </section>
-
-        <section className="mb-3">
-          <h2 className=" font-medium mb-2">Child Profiles</h2>
-
-          {children.length === 0 && (
-            <p className="text-gray-600 text-sm">No child profiles linked.</p>
+          <p className="text-sm">
+            <strong>Know How </strong> {user.knowHow}
+          </p>
+          {/* <p>
+          {user.isBlocked ? (
+            <span className="text-red-600 font-semibold text-sm">Blocked</span>
+          ) : (
+            <span className="text-green-600 font-semibold text-sm">Active</span>
           )}
+        </p> */}
+        </section>
+      </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            {children.map((child) => (
-              <div
-                key={child.id}
-                className="mb-4 border border-gray-300 rounded p-3 bg-gray-50 "
-              >
-                <div className="flex justify-between items-center mb-1 text-sm">
-                  <h3 className="">{child.name}</h3>
-                  <button
-                    onClick={() => toggleChildVisibility(child.id)}
-                    className="text-sm text-blue-600 underline"
-                  >
-                    {visibleChildren.includes(child.id) ? "Hide" : "View"}
-                  </button>
+      <section className="mb-3">
+        <h2 className="font-semibold mb-2">Child Profiles</h2>
+        {children.length === 0 ? (
+          <p className="text-gray-600 text-sm">No child profiles linked.</p>
+        ) : (
+          <div className="flex gap-6 ">
+            {/*  Child List */}
+            <div className="w-1/3  overflow-y-auto">
+              {children.map((child) => (
+                <div
+                  key={child.id}
+                  className={`p-2 cursor-pointer rounded ${
+                    selectedChildId === child.id
+                      ? "bg-[#31ac9136] font-semibold"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedChildId(child.id)}
+                >
+                  {child.name}
                 </div>
+              ))}
+            </div>
 
-                {visibleChildren.includes(child._id) && (
-                  <div className=" text-xs ">
+            {/*  Selected Child Details */}
+            <div className="w-3/5 border rounded-lg p-4 overflow-y-auto bg-gray-50">
+              {selectedChild ? (
+                <>
+                  <h3 className="font-medium  mb-2">
+                    {selectedChild.name}
+                  </h3>
+                  <div className="text-sm space-y-1">
                     <p>
-                      <strong>Date of Birth </strong> {child.dateOfBirth}
+                      <strong>Date of Birth </strong>
+                      {selectedChild.dateOfBirth}
                     </p>
                     <p>
-                      <strong>Gender </strong> {child.gender}
+                      <strong>Gender </strong> {selectedChild.gender}
                     </p>
                     <p>
-                      <strong>Relationship </strong> {child.relationshipToUser}
+                      <strong>Relationship </strong>
+                      {selectedChild.relationshipToUser}
                     </p>
                     <p>
-                      <strong>About GP </strong> {child.aboutGp}
+                      <strong>About GP </strong> {selectedChild.aboutGp}
                     </p>
                     <p>
-                      <strong>Profile Tag </strong> {child.profileTag}
+                      <strong>Profile Tag </strong> {selectedChild.profileTag}
+                    </p>
+                    <p>
+                      <strong>User ID </strong> {selectedChild.userId}
                     </p>
                   </div>
-                )}
-              </div>
-            ))}
+                </>
+              ) : (
+                <p className="text-gray-500">Select a child to view details</p>
+              )}
+            </div>
           </div>
-        </section>
+        )}
+      </section>
     </section>
   );
 };

@@ -35,8 +35,8 @@ const SubmittedInitialList = () => {
     fetchSubmissions();
   }, []);
 
-  const handleViewDetails = (submission) => {
-    navigate(`/submitted-assessments/initial/${submission.assessmentId}`);
+ const onView = (id) => {
+    navigate(`/submitted-assessments/initial/${id.assessmentId}`);
   };
 
   const data = useMemo(() => submissions, [submissions]);
@@ -64,14 +64,13 @@ const SubmittedInitialList = () => {
         header: "Score",
         cell: (info) => `${info.row.original.score}` || "N/A",
       },
-
-      {
-        id: "actions",
+ {
         header: "Actions",
+        id: "actions",
         cell: ({ row }) => (
           <button
-            onClick={() => handleViewDetails(row.original)}
-            className="ml-2 p-1 hover:bg-gray-100 rounded"
+            onClick={() => onView(row.original)}
+            className="px-2 p-1 hover:bg-gray-100 rounded"
             title="View Details"
           >
             <IoEye size={18} />
@@ -79,7 +78,7 @@ const SubmittedInitialList = () => {
         ),
       },
     ],
-    [navigate]
+    []
   );
 
   const table = useReactTable({

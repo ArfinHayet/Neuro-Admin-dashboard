@@ -7,34 +7,51 @@ import { getAnswersByAssessmentId } from "../../api/answers";
 const InitialsDetails = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
-
   const [assessment, setAssessment] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchAssessmentDetails();
   }, [assessmentId]);
 
   const fetchAssessmentDetails = async () => {
-    try {
-      const submissions = await getAllSubmissions();
-      const allSubmissions = submissions.payload || [];
-      const thisAssessment = allSubmissions.find(
-        (submission) => submission.id === parseInt(assessmentId)
-      );
-      if (!thisAssessment) {
-        setAssessment(null);
-        return;
-      }
-      setAssessment(thisAssessment);
+     try {
+       setIsLoading(true);
+       const response = (await getAllSubmissions()) ;
+       const submissions = response.payload || []; 
+       const thisAssessment = submissions.find(
+         (a) => a.assessmentId === parseInt(assessmentId)
+       );
+ 
+       if (!thisAssessment) {
+         setAssessment(null);
+         setAnswers([]);
+         return;
+       }
+ 
+       setAssessment(thisAssessment);
+ 
+       const allAnswers = await getAnswersByAssessmentId( thisAssessment.assessmentId ) || [];
+      setAnswers(allAnswers);
+     } catch (err) {
+       console.error("Failed to fetch assessment details:", err);
+       setAssessment(null);
+       setAnswers([]);
+     } finally {
+       setIsLoading(false);
+     }
+   };
 
-      const fetchedAnswers =
-        (await getAnswersByAssessmentId(thisAssessment)) || [];
-      setAnswers(fetchedAnswers);
-    } catch (err) {
-      console.error("Failed to fetch assessment details:", err);
-    }
-  };
+        if (isLoading) {
+    return (
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+        <div className="flex justify-center items-center h-40">
+          <p>Loading assessment details...</p>
+        </div>
+      </section>
+    );
+  }
 
   if (!assessment) {
     return (
@@ -59,15 +76,15 @@ const InitialsDetails = () => {
         <p className=" text-xs">
           <strong>Category </strong> {assessment.assessment?.category || "N/A"}
         </p>
-        <p className=" text-xs text-secondary">
+        <p className=" text-xs ">
           <strong>Score </strong> {assessment.score}
         </p>
 
-        <p className=" text-xs text-secondary">
-          <strong>User name </strong> {assessment.user?.name || "Unknown"}
+        <p className=" text-xs ">
+          <strong>User name  </strong> {assessment.user?.name || "Unknown"}
         </p>
-        <p className=" text-xs text-secondary">
-          <strong>Child name </strong> {assessment.patient?.name || "Unknown"}
+        <p className=" text-xs ">
+          <strong>Child name  </strong> {assessment.patient?.name || "Unknown"}
         </p>
       </div>
 

@@ -19,7 +19,6 @@ const OnDemandDetails = () => {
   const fetchAssessmentDetails = async () => {
     try {
       setIsLoading(true);
-
       const response = (await getAllSubmissions()) ;
       const submissions = response.payload || []; 
       const thisAssessment = submissions.find(
@@ -64,7 +63,6 @@ const OnDemandDetails = () => {
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
       <h1 className="text-xl font-semibold mb-6">
-        {" "}
         {assessment.assessment?.category || "Assessment"} Details
       </h1>
 

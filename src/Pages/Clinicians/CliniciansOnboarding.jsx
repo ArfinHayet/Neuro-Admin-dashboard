@@ -55,10 +55,10 @@ const CliniciansOnboarding = () => {
 
         <h1 className="font-semibold text-xl mb-1">Clinicians Onboarding</h1>
         <p className="text-secondary text-sm ">Send invitation to new clinicians to onboard them into the system.</p>
-        <section className=" mt-7 pr-2">
+        <section className=" mt-6 pr-2">
           <Toaster />
         { /* <h2 className="text-  mb-2 text-primary">Invite New Clinician</h2> */}
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 w-[55vw] items-center">
             <TextInput
               label="Clinician Name"
               name="name"

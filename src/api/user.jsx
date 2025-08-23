@@ -35,6 +35,9 @@ const addUser = async (obj) => {
 const getUsers = async () => {
   const response = await fetch(`${domain}/users`, {
     method: "GET",
+      headers: {
+      authorization: `Bearer ${token}`,
+    },
   });
   const data = await response.json();
   return data;
