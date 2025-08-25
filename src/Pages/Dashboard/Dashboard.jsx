@@ -102,7 +102,7 @@ const Dashboard = () => {
   const COLORS = ["#82ca9d", "#ffc658"];
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
       <h1 className="text-xl font-semibold mb-0">Dashboard</h1>
       <p className="text-sm mb-4 text-secondary">
         Get an overview of your platform’s performance, user engagement, and

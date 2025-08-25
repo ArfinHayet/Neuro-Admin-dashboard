@@ -7,6 +7,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [name, setName] = useState("");
   const [totalTime, setTotalTime] = useState("");
   const [type, setType] = useState("");
+  const [priceId, setPriceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -16,11 +17,13 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       setDescription(defaultCategory.description || "");
       setTotalTime(defaultCategory.totalTime || "");
       setType(defaultCategory.type || "");
+      setPriceId(defaultCategory.priceId || "");
     } else {
       setCategory("");
       setDescription("");
       setTotalTime("");
       setType("");
+      setPriceId("");
     }
     setError(null);
   }, [defaultCategory, isOpen]);
@@ -55,6 +58,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
         type: type,
         totalTime: `${totalTime} minutes`,
         category: category.trim(),
+        priceId: priceId.trim(),
       };
 
       console.log("saving data", assessmentData);
@@ -68,12 +72,12 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       if (onSave) {
         await onSave(response.payload);
       }
-      
+
       setDescription("");
       setTotalTime("");
-      setType("");      
+      setType("");
       setCategory("");
-
+      setPriceId("");
 
       onClose();
     } catch (err) {
@@ -89,6 +93,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
     setTotalTime("");
     setType("");
     setCategory("");
+    setPriceId("");
     setError(null);
     onClose();
   };
@@ -129,6 +134,16 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
           </div>
 
           <div>
+            <label className="block mb-1 text-xs">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter description "
+              className="w-full border rounded px-3 py-2 resize-none text-xs"
+              rows={2}
+            />
+          </div>
+          <div>
             <label className="block mb-1 text-xs">Assessment Type</label>
             <select
               value={type}
@@ -140,15 +155,16 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               <option value="premium">Premium</option>
             </select>
           </div>
-
           <div>
-            <label className="block mb-1 text-xs">Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description "
-              className="w-full border rounded px-3 py-2 resize-none text-xs"
-              rows={2}
+            <label className="block mb-1 text-xs">Price</label>
+            <input
+              type="price"
+              min={1}
+              value={priceId}
+              onChange={(e) => setPriceId(e.target.value)}
+              placeholder="Enter price"
+              className="w-full border rounded px-3 py-2 text-sm"
+              required
             />
           </div>
 

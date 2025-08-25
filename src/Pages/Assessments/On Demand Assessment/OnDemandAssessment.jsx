@@ -43,12 +43,12 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
 
   return (
     <section>
-      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-4 h-[200px] relative">
+      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-3 h-[220px] relative flex items-center justify-center ">
         <button
           ref={menuRef}
           onClick={handleMenuClick}
           title="Options"
-          className="absolute top-4 right-4"
+          className="absolute top-4 right-4 "
         >
           <PiDotsThreeVerticalBold size={20} />
         </button>
@@ -73,16 +73,18 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
           </div>
         )}
 
-        <div className="flex flex-col gap-2 justify-center items-center mt-1">
-          <h2 className=" font-semibold  ">{category.category}</h2>
+        <div className="flex flex-col gap-2 justify-center items-center  mt-2">
+          <h2 className=" font-semibold  text-center text-sm">{category.category}</h2>
           <p className="text-xs text-secondary  text-center">
-            {category.description}
+            {category.description.slice(0, 40)}
+            {category.description.length > 40 ? "..." : ""}
           </p>
           <span className="flex items-center gap-1 ">
             <FaRegClock size={14} />
             <p className="text-xs text-center">{category.totalTime}</p>
           </span>
           <p className="text-xs  capitalize">{category.type}</p>
+          <p className="text-xs  ">£ {category.priceId}</p>
 
           <div className="flex justify-center">
             <button
@@ -158,13 +160,13 @@ const OnDemandAssessment = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-        <p>Loading assessments...</p>
-      </section>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+  //       <p>Loading assessments...</p>
+  //     </section>
+  //   );
+  // }
 
   //  const handleDeleteAssessments = async (category) => {
   //   try {
@@ -177,7 +179,10 @@ const OnDemandAssessment = () => {
   // };
 
   if (error) {
-    return { error };
+    return (
+      <p>{ error }</p>
+
+    );
   }
 
   return (

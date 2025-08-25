@@ -1,93 +1,99 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
-import { onDemandAssessments } from "../utils/Data";
+//import { onDemandAssessments } from "../utils/Data";
 import { useParams } from "react-router-dom";
 
-const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondemand",   editingQuestion,
- }) => {
+const OnDemandQuestionModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  defaultType = "ondemand",
+  editingQuestion,
+  assessment,
+}) => {
   const [formData, setFormData] = useState({
-    assessmentName: "",
     type: defaultType,
-    question: "",
+    questions: "",
     questionOrder: "",
-    answerType: "yesno", // added answerType
-    answers: [{ label: "", score: "" }],
+    answerType: "Yes/No",
+    options: ["Yes", "No"],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  //const { id } = useParams();
+  // const assessment = onDemandAssessments.find(
+  //   (item) => item.id.toString() === id
+  // );
 
-  const { id } = useParams();
-  const assessment = onDemandAssessments.find(
-    (item) => item.id.toString() === id
-  );
-
-   useEffect(() => {
+  useEffect(() => {
     if (editingQuestion) {
       setFormData({
-        assessmentName: editingQuestion.assessmentName || assessment?.name || "",
         type: defaultType,
-        question: editingQuestion.questions || "",
+        questions: editingQuestion.questions || "",
         questionOrder: editingQuestion.order || "",
-        answerType: editingQuestion.answerType || "yesno",
-        answers: editingQuestion.answers || [{ label: "", score: "" }],
+        answerType: editingQuestion.answerType || "Yes/No",
+        options: editingQuestion.options || ["Yes", "No"],
       });
     } else {
       setFormData({
-        assessmentName: assessment?.name || "",
         type: defaultType,
-        question: "",
+        questions: "",
         questionOrder: "",
-        answerType: "yesno",
-        answers: [{ label: "", score: "" }],
+        answerType: "Yes/No",
+        options: ["Yes", "No"],
       });
     }
-  }, [editingQuestion, defaultType, assessment]);
+  }, [editingQuestion, defaultType]);
 
   const handleChange = (field, value) => {
     if (field === "questionOrder") {
       if (value === "" || /^\d+$/.test(value)) {
         setFormData((prev) => ({ ...prev, [field]: value }));
       }
+    } else if (field === "answerType") {
+      let options = [];
+      if (value === "Yes/No") {
+        options = ["Yes", "No"];
+      } else if (value === "Text") {
+        options = ["Text"];
+      } else if (value === "MultipleChoice") {
+        options = [{ label: "", score: "" }];
+      }
+      setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
     }
   };
 
-  const handleAnswerChange = (index, key, value) => {
-    setFormData((prev) => {
-      const updatedAnswers = [...prev.answers];
-      if (key === "score") {
-        const numericVal = Number(value);
-        updatedAnswers[index][key] = numericVal === 1 ? 1 : 0;
-      } else {
-        updatedAnswers[index][key] = value;
-      }
-      return { ...prev, answers: updatedAnswers };
-    });
+  const handleOptionChange = (index, value) => {
+    const updated = [...formData.options];
+    if (formData.answerType === "MultipleChoice") {
+      updated[index].label = value;
+    } else {
+      updated[index] = value;
+    }
+    setFormData((prev) => ({ ...prev, options: updated }));
   };
 
-  const addAnswerOption = () => {
+  const addOption = () => {
     setFormData((prev) => ({
       ...prev,
-      answers: [...prev.answers, { label: "", score: "" }],
+      options: [...prev.options, { label: "" }],
     }));
   };
 
-  const removeAnswerOption = (index) => {
-    setFormData((prev) => {
-      const updatedAnswers = prev.answers.filter((_, i) => i !== index);
-      return {
-        ...prev,
-        answers: updatedAnswers.length ? updatedAnswers : [{ label: "", score: "" }],
-      };
-    });
+ const removeOption = (index) => {
+    const updated = formData.options.filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      options: updated.length ? updated : [{ label: "" }],
+    }));
   };
 
   const validateForm = () => {
-   
-    if (!formData.question.trim()) {
-      setError("Question is required");
+    if (!formData.questions.trim()) {
+      setError("Question(s) is required");
       return false;
     }
     if (!formData.questionOrder) {
@@ -95,17 +101,10 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
       return false;
     }
     if (
-      formData.answerType === "multiple" &&
-      formData.answers.some((a) => !a.label.trim())
+      formData.answerType === "MultipleChoice" &&
+      formData.options.some((o) => !o.label.trim())
     ) {
-      setError("All answer options must have labels");
-      return false;
-    }
-    if (
-      formData.answerType === "multiple" &&
-      formData.answers.some((a) => a.score === "")
-    ) {
-      setError("All answer options must have scores");
+      setError("All options must have labels");
       return false;
     }
     setError(null);
@@ -114,21 +113,22 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
 
   const handleSave = async () => {
     if (!validateForm()) return;
+    if (!assessment) {
+      setError("No assessment selected");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const payload = {
-        assessmentName: formData.assessmentName,
-        type: defaultType,
-        questions: formData.question,
+        assessmentId: assessment.id,
+        questions: formData.questions,
         order: Number(formData.questionOrder),
-        answerType:
-          formData.answerType === "yesno"
-            ? "Yes/No"
-            : formData.answerType === "multiple"
-            ? "Multiple Choice"
-            : "Text",
-        answers: formData.answerType === "multiple" ? formData.answers : [],
+        answerType: formData.answerType,
+        options:
+          formData.answerType === "MultipleChoice"
+            ? formData.options.map((o) => o.label)
+            : formData.options,
       };
 
       const savedQuestion = editingQuestion
@@ -151,12 +151,8 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
     if (e.target.id === "modalWrapper") onClose();
   };
 
-
-
-  
-
   return (
-     <div
+    <div
       id="modalWrapper"
       className="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
       onClick={handleOutsideClick}
@@ -166,12 +162,16 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-center font-medium mb-6">
-          {editingQuestion ? "Edit On-Demand Question" : "Add On-Demand Assessment Question"}
+          {editingQuestion
+            ? "Edit On-Demand Question"
+            : "Add On-Demand Assessment Question"}
         </h2>
 
-   {/* Assessment Name (Fixed) */}
-        <label className="block text-xs mb-1">Assessment Name</label>
-        <p className="w-full border px-3 py-2 rounded mb-3 text-xs">{assessment?.name}</p>
+        {/* Assessment Name (Fixed) */}
+        {/* <label className="block text-xs mb-1">Assessment Name</label>
+        <p className="w-full border px-3 py-2 rounded mb-3 text-xs">
+          {assessment?.category || ""}
+        </p> */}
 
         {/* Assessment Type */}
         <label className="block text-xs mb-3 font-medium text-gray-700">
@@ -186,8 +186,8 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
         <textarea
           className="w-full border px-3 py-2 rounded mb-3 text-xs"
           rows={2}
-          value={formData.question}
-          onChange={(e) => handleChange("question", e.target.value)}
+          value={formData.questions}
+          onChange={(e) => handleChange("questions", e.target.value)}
         />
 
         {/* Question Order */}
@@ -203,54 +203,42 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
         {/* Answer Type */}
         <label className="block text-xs mb-1">Answer Type</label>
         <select
-          className="w-full border px-3 py-2 rounded mb-4 text-xs"
+          className="w-full border px-3 py-2 rounded mb-3 text-xs"
           value={formData.answerType}
           onChange={(e) => handleChange("answerType", e.target.value)}
         >
-          <option value="yesno">Yes / No</option>
-          <option value="multiple">Multiple Choice</option>
-          <option value="text">Text</option>
+          <option value="Yes/No">Yes / No</option>
+          <option value="MultipleChoice">Multiple Choice</option>
+          <option value="Text">Text</option>
         </select>
 
-        {/* Answer Options */}
-        {formData.answerType === "multiple" && (
-          <>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs">Answer Options</label>
+        {formData.answerType === "MultipleChoice" && (
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-xs font-medium">Options</label>
               <button
                 type="button"
-                onClick={addAnswerOption}
+                onClick={addOption}
                 className="text-xs bg-primary px-2 py-1 rounded-full text-white"
               >
                 Add Option
               </button>
             </div>
-            <div className="space-y-3 mb-6 text-xs">
-              {formData.answers.map((answer, i) => (
-                <div key={i} className="flex gap-3 items-center">
+            <div className="space-y-2 text-xs">
+              {formData.options.map((opt, i) => (
+                <div key={i} className="flex gap-2 items-center">
                   <input
                     type="text"
                     className="flex-1 border px-2 py-1 rounded"
-                    value={answer.label}
-                    onChange={(e) => handleAnswerChange(i, "label", e.target.value)}
+                    value={opt}
+                    onChange={(e) => handleOptionChange(i, e.target.value)}
                     placeholder={`Option ${i + 1}`}
                   />
-                  <input
-                    type="number"
-                    min={0}
-                    max={1}
-                    step={1}
-                    className="w-28 border px-1 py-1 rounded text-center"
-                    value={answer.score}
-                    onChange={(e) => handleAnswerChange(i, "score", e.target.value)}
-                    placeholder="Score (0 or 1)"
-                  />
-                  {formData.answers.length > 1 && (
+                  {formData.options.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => removeAnswerOption(i)}
+                      onClick={() => removeOption(i)}
                       className="text-red-500 font-bold px-2"
-                      title="Remove option"
                     >
                       &times;
                     </button>
@@ -258,12 +246,11 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
 
-        {/* Actions */}
         <div className="flex justify-between gap-3">
           <button
             className="px-4 py-2 rounded-full bg-gray-200"
@@ -277,7 +264,7 @@ const OnDemandQuestionModal = ({ isOpen, onClose, onSave, defaultType = "ondeman
             onClick={handleSave}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting ? "Adding..." : "Add"}
           </button>
         </div>
       </div>

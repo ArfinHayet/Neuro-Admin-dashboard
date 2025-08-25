@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { onDemandAssessments } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
+//import { onDemandAssessments } from "../../../Components/utils/Data";
 // import { initialQuestions } from "../../../Components/utils/Data";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
 import {
@@ -80,14 +80,24 @@ const AssessmentDetails = () => {
   };
 
   if (error) {
-    return { error };
+    return(
+     <p> { error } </p>
+    ) ;
   }
+
+  // if (isLoading) {
+  //   return (
+  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+  //       <p>Loading assessments...</p>
+  //     </section>
+  //   );
+  // }
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
       <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">{assessment?.category}</h2>
+          <h2 className="text-lg font-semibold">{assessment?.category}</h2>
           <button
             className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
             onClick={() => {
@@ -99,12 +109,16 @@ const AssessmentDetails = () => {
           </button>
         </div>
         <p className="text-xs text-secondary mb-2">
-          View, Edit and manage questions for the On-Demand Assessment to ensure
-          accuracy and relevance.
+          {/* View, Edit and manage questions for the On-Demand Assessment to ensure
+          accuracy and relevance. */}
+          {assessment?.description}
+        </p>
+        <p className="mb-1 text-gray-700 text-sm">
+          <strong>Duration </strong>
+          {assessment?.totalTime  || "N/A"}
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Duration </strong>{" "}
-          {assessment?.totalTime || assessment?.time || "N/A"}
+          <strong>Price </strong>£{assessment?.priceId  || "N/A"}
         </p>
         <h3 className="font-medium my-3">Question List</h3>
         <table className="w-full text-sm text-left text-gray-700">
@@ -145,6 +159,7 @@ const AssessmentDetails = () => {
           onSave={handleSave}
           defaultType="ondemand"
           editingQuestion={editingQuestion}
+          assessment={assessment}
         />
       </div>
     </section>

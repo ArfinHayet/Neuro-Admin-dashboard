@@ -718,3 +718,34 @@ export const transactionLogs = [
     status: "paid",
   },
 ];
+
+const mockPurchases = [
+  {
+    id: 1,
+    userName: "John Doe",
+    userEmail: "john@example.com",
+    patientName: "Emily Doe",
+    assessmentName: "Autism Diagnostic Test",
+    paymentIntentId: "pi_3Nv12345",
+    amount: 5000, // Stripe stores in cents
+    currency: "GBP",
+    status: "succeeded",
+    paymentMethod: "card",
+    createdAt: "2025-08-20T12:45:00Z",
+    receiptUrl: "https://pay.stripe.com/receipts/123",
+  },
+  {
+    id: 2,
+    userName: "Sarah Lee",
+    userEmail: "sarah@example.com",
+    patientName: "Michael Lee",
+    assessmentName: "ADHD Screening",
+    paymentIntentId: "pi_3Nv67890",
+    amount: 3000,
+    currency: "GBP",
+    status: "succeeded",
+    paymentMethod: "apple_pay",
+    createdAt: "2025-08-22T15:30:00Z",
+    receiptUrl: "https://pay.stripe.com/receipts/456",
+  },
+];

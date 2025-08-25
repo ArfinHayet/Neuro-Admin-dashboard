@@ -14,8 +14,8 @@ const InitialModal = ({
     type: defaultType,
     question: "",
     questionOrder: "",
-    answerType: "yesno",
-    answers: [{ label: "", score: "" }],
+    answerType: "Yes/No",
+    options: ["Yes", "No"],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,24 +23,23 @@ const InitialModal = ({
   const [error, setError] = useState(null);
   const [assessment, setAssessment] = useState(null);
 
- const fetchAssessment = async () => {
-  try {
-    const data = await getAssessments();
-    console.log( data);
-    
-    if (!data?.payload) {
-      console.error("No payload found");
-      return;
+  const fetchAssessment = async () => {
+    try {
+      const data = await getAssessments();
+      console.log(data);
+
+      if (!data?.payload) {
+        console.error("No payload found");
+        return;
+      }
+
+      const freeAssessment = data?.payload?.find((a) => a?.type === "free");
+      console.log("Free Assessment Found", freeAssessment);
+      setAssessment(freeAssessment);
+    } catch (err) {
+      console.error("Failed to fetch assessment", err);
     }
-
-    const freeAssessment = data.payload.find(  (a) => a.type === "free" );
-    console.log("Free Assessment Found", freeAssessment);
-    setAssessment(freeAssessment || null);
-  } catch (err) {
-    console.error("Failed to fetch assessment", err);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchAssessment();
@@ -52,16 +51,16 @@ const InitialModal = ({
         type: defaultType,
         question: editingQuestion.questions || "",
         questionOrder: editingQuestion.order || "",
-        answerType: editingQuestion.answerType || "yesno",
-        answers: editingQuestion.answers || [{ label: "", score: "" }],
+        answerType: editingQuestion.answerType || "Yes/No",
+        options: editingQuestion.options || ["Yes", "No"],
       });
     } else {
       setFormData({
         type: defaultType,
         question: "",
         questionOrder: "",
-        answerType: "yesno",
-        answers: [{ label: "", score: "" }],
+        answerType: "Yes/No",
+        options: ["Yes", "No"],
       });
     }
   }, [editingQuestion, defaultType]);
@@ -71,39 +70,45 @@ const InitialModal = ({
       if (value === "" || /^\d+$/.test(value)) {
         setFormData((prev) => ({ ...prev, [field]: value }));
       }
+    } else if (field === "answerType") {
+      let options = [];
+      if (value === "Yes/No") {
+        options = ["Yes", "No"];
+      } else if (value === "Text") {
+        options = ["Text"];
+      } else if (value === "MultipleChoice") {
+        options = [{ label: "", score: "" }];
+      }
+
+      setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
     }
   };
 
   const handleAnswerChange = (index, key, value) => {
+    if (formData.answerType !== "MultipleChoice") return;
+
     setFormData((prev) => {
-      const updatedAnswers = [...prev.answers];
-      if (key === "score") {
-        const numericVal = Number(value);
-        updatedAnswers[index][key] = numericVal === 1 ? 1 : 0;
-      } else {
-        updatedAnswers[index][key] = value;
-      }
-      return { ...prev, answers: updatedAnswers };
+      const updated = [...prev.options];
+      updated[index][key] = value;
+      return { ...prev, options: updated };
     });
   };
 
   const addAnswerOption = () => {
     setFormData((prev) => ({
       ...prev,
-      answers: [...prev.answers, { label: "", score: "" }],
+      options: [...prev.options, { label: "", score: "" }],
     }));
   };
 
   const removeAnswerOption = (index) => {
     setFormData((prev) => {
-      const updatedAnswers = prev.answers.filter((_, i) => i !== index);
+      const updated = prev.options.filter((_, i) => i !== index);
       return {
         ...prev,
-        answers: updatedAnswers.length
-          ? updatedAnswers
-          : [{ label: "", score: "" }],
+        options: updated.length ? updated : [{ label: "", score: "" }],
       };
     });
   };
@@ -118,17 +123,10 @@ const InitialModal = ({
       return false;
     }
     if (
-      formData.answerType === "multiple" &&
-      formData.answers.some((a) => !a.label.trim())
+      formData.answerType === "MultipleChoice" &&
+      formData.options.some((a) => !a.label.trim())
     ) {
       setError("All answer options must have labels");
-      return false;
-    }
-    if (
-      formData.answerType === "multiple" &&
-      formData.answers.some((a) => a.score === "")
-    ) {
-      setError("All answer options must have scores");
       return false;
     }
     setError(null);
@@ -136,9 +134,8 @@ const InitialModal = ({
   };
 
   const handleSave = async () => {
-    console.log("saved");
     if (!validateForm()) return;
-     if (!assessment) {
+    if (!assessment) {
       setError("No free assessment found to attach this question.");
       return;
     }
@@ -148,22 +145,25 @@ const InitialModal = ({
     try {
       const payload = {
         assessmentId: assessment.id,
-
         questions: formData.question,
         order: Number(formData.questionOrder),
         answerType:
-          formData.answerType === "yesno"
-            ? "Yes/No"
-            : formData.answerType === "multiple"
-            ? "Multiple Choice"
-            : "Text",
-        answers: formData.answerType === "multiple" ? formData.answers : [],
+          formData.answerType === "MultipleChoice"
+            ? "MultipleChoice"
+            : formData.answerType,
+        options:
+          formData.answerType === "MultipleChoice"
+            ? formData.options?.map((a) => a.label)
+            : formData.options,
       };
+
+      console.log("payload", payload);
 
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
       console.log("saved question", savedQuestion);
+
       onSave(savedQuestion);
       fetchQuestions();
       onClose();
@@ -224,15 +224,16 @@ const InitialModal = ({
           value={formData.answerType}
           onChange={(e) => handleChange("answerType", e.target.value)}
         >
-          <option value="yesno">Yes / No</option>
-          <option value="multiple">Multiple Choice</option>
-          <option value="text">Text</option>
+          <option value="Yes/No">Yes / No</option>
+          <option value="MultipleChoice">Multiple Choice</option>
+          <option value="Text">Text</option>
         </select>
 
-        {formData.answerType === "multiple" && (
-          <>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs ">Answer Options</label>
+        {/* MultipleChoice Options */}
+        {formData.answerType === "MultipleChoice" && (
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-xs font-medium">Answer Options</label>
               <button
                 type="button"
                 onClick={addAnswerOption}
@@ -241,32 +242,31 @@ const InitialModal = ({
                 Add Option
               </button>
             </div>
-            <div className="space-y-3 mb-6 text-xs">
-              {formData.answers.map((answer, i) => (
+            <div className="space-y-2 mb-6 text-xs">
+              {formData.options?.map((option, i) => (
                 <div key={i} className="flex gap-3 items-center">
                   <input
                     type="text"
-                    className="flex-1 border px-2 py-1 rounded"
-                    value={answer.label}
+                    value={option.label}
                     onChange={(e) =>
                       handleAnswerChange(i, "label", e.target.value)
                     }
                     placeholder={`Option ${i + 1}`}
+                    className="flex-1 border px-2 py-1 rounded"
                   />
                   <input
                     type="number"
                     min={0}
                     max={1}
                     step={1}
-                    className="w-28 border px-2 py-1 rounded text-center"
-                    value={answer.score}
+                    value={option.score}
                     onChange={(e) =>
                       handleAnswerChange(i, "score", e.target.value)
                     }
-                    title="Score (0 or 1)"
+                    className="w-28 border px-2 py-1 rounded text-center"
                     placeholder="Score(0 or 1)"
                   />
-                  {formData.answers.length > 1 && (
+                  {formData.options.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeAnswerOption(i)}
@@ -279,7 +279,17 @@ const InitialModal = ({
                 </div>
               ))}
             </div>
-          </>
+          </div>
+        )}
+
+        {/* Yes/No or Text Options */}
+        {(formData.answerType === "Yes/No" ||
+          formData.answerType === "Text") && (
+          <ul className="list-disc ml-5 text-sm mb-4">
+            {formData.options?.map((a, i) => (
+              <li key={i}>{a}</li>
+            ))}
+          </ul>
         )}
 
         <div className="flex justify-between gap-3 ">

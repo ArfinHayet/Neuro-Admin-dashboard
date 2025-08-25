@@ -2,20 +2,23 @@ import { useState } from "react";
 import AssessmentPricing from "./AssessmentPricing";
 import ClinicianCommission from "./ClinicianCommission";
 import TransactionLogs from "./TransactionLogs";
+import PurchaseHistory from "./PurchaseHistory";
 
 const tabs = [
-  { id: "pricing", label: "Assessment Pricing" },
+  { id: "purchases", label: "Purchases History" },
   { id: "commissions", label: "Clinician Commissions" },
   { id: "transactions", label: "Transaction Logs" },
 ];
 
 export default function Finances() {
-  const [activeTab, setActiveTab] = useState("pricing");
+  const [activeTab, setActiveTab] = useState("purchases");
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "pricing":
-        return <AssessmentPricing />;
+      // case "pricing":
+      //   return <AssessmentPricing />;
+      case "purchases":
+        return <PurchaseHistory />;
       case "commissions":
         return <ClinicianCommission />;
       case "transactions":
@@ -33,7 +36,7 @@ export default function Finances() {
           history in one place.
         </p>
 
-        <div className="flex gap-8 mb-6 border-b border-gray-200">
+        <div className="flex gap-8 border-b border-gray-200">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -53,7 +56,7 @@ export default function Finances() {
         </div>
 
         {/* Content */}
-        <div className="bg-white p-5 rounded-lg shadow-sm">
+        <div className="bg-white py-5 rounded-lg shadow-sm">
           {renderTabContent()}
         </div>
     </section>

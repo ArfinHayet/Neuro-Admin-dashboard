@@ -15,7 +15,7 @@ const InitialAssessment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [initialAssessment, setInitialAssessment] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchInitialAssessment();
@@ -35,7 +35,7 @@ const InitialAssessment = () => {
     } catch (err) {
       console.error("Failed to fetch assessments", err);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -44,11 +44,19 @@ const InitialAssessment = () => {
       const data = await getQuestionsByAssessmentId(assessmentId);
       console.log("lll", data?.payload);
       if (data) {
-        const questionsArray = data.questions.split(" ").map((q, i) => ({
-          id: i + 1,
-          question: q.trim(),
-          order: i + 1,
-          answerType: data.answerType,
+        const questionsArray = data.payload.map((q, i) => ({
+          id: q.id || i + 1,
+          question: q.questions || q.question || "",
+          order: q.order || i + 1,
+          answerType: q.answerType === "MultipleChoice" 
+          ? "multiple" 
+          : q.answerType === "YesNo" 
+          ? "yesno" 
+          : "text",
+        answers: q.options ? q.options.map(option => ({ 
+          label: option, 
+          score: 0 ,
+        })) : []
         }));
 
         setQuestions(questionsArray);
@@ -60,18 +68,28 @@ const InitialAssessment = () => {
     }
   };
 
-  const handleSave = (newQ) => {
-    if (editingQuestion) {
-      setQuestions((prev) =>
-        prev.map((q) => (q.id === editingQuestion.id ? { ...q, ...newQ } : q))
-      );
-      setEditingQuestion(null);
-    } else {
-      setQuestions((prev) => [...prev, newQ]);
-    }
-    setIsModalOpen(false);
-    setEditingQuestion(null);
+ const handleSave = (savedQuestion) => {
+  console.log("Saved question received:", savedQuestion);
+  
+  const newQ = {
+    id: savedQuestion.id , 
+    questions: savedQuestion.questions || savedQuestion.question,
+    order: savedQuestion.order,
+    answerType: savedQuestion.answerType,
+    answers: savedQuestion.answers || savedQuestion.options || []
   };
+
+  if (editingQuestion) {
+    setQuestions(prev => prev.map(q => 
+      q.id === editingQuestion.id ? newQ : q
+    ));
+  } else {
+    setQuestions(prev => [...prev, newQ]);
+  }
+  
+  setIsModalOpen(false);
+  setEditingQuestion(null);
+};
 
   const handleDelete = async (id) => {
     try {
@@ -87,7 +105,7 @@ const InitialAssessment = () => {
     setIsModalOpen(true);
   };
 
-   if (isLoading) {
+  if (isLoading) {
     return (
       <section className="h-[90vh] flex justify-center items-center bg-white rounded-2xl px-4 pt-5">
         <p>Loading assessment details...</p>
