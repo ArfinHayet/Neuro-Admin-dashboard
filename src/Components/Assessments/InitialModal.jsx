@@ -77,7 +77,7 @@ const InitialModal = ({
       } else if (value === "Text") {
         options = ["Text"];
       } else if (value === "MultipleChoice") {
-        options = [{ label: "", score: "" }];
+        options = ["Option A"];
       }
 
       setFormData((prev) => ({ ...prev, answerType: value, options }));
@@ -99,7 +99,7 @@ const InitialModal = ({
   const addAnswerOption = () => {
     setFormData((prev) => ({
       ...prev,
-      options: [...prev.options, { label: "", score: "" }],
+      options: [...prev.options, `Option ${prev.options.length + 1}`],
     }));
   };
 
@@ -108,7 +108,7 @@ const InitialModal = ({
       const updated = prev.options.filter((_, i) => i !== index);
       return {
         ...prev,
-        options: updated.length ? updated : [{ label: "", score: "" }],
+        options: updated.length ? updated : ["Option A"],
       };
     });
   };
@@ -147,14 +147,8 @@ const InitialModal = ({
         assessmentId: assessment.id,
         questions: formData.question,
         order: Number(formData.questionOrder),
-        answerType:
-          formData.answerType === "MultipleChoice"
-            ? "MultipleChoice"
-            : formData.answerType,
-        options:
-          formData.answerType === "MultipleChoice"
-            ? formData.options?.map((a) => a.label)
-            : formData.options,
+        answerType: formData.answerType,
+        options: formData.options,
       };
 
       console.log("payload", payload);
@@ -212,7 +206,7 @@ const InitialModal = ({
         <label className="block text-xs mb-1">Question Order</label>
         <input
           type="text"
-          className="w-full border px-3 py-2 rounded mb-4 text-sm"
+          className="w-full border px-3 py-2 rounded mb-4 text-xs"
           value={formData.questionOrder}
           onChange={(e) => handleChange("questionOrder", e.target.value)}
           placeholder="Enter question order number"
@@ -248,13 +242,11 @@ const InitialModal = ({
                   <input
                     type="text"
                     value={option.label}
-                    onChange={(e) =>
-                      handleAnswerChange(i, "label", e.target.value)
-                    }
+                    onChange={(e) => handleAnswerChange(i, e.target.value)}
                     placeholder={`Option ${i + 1}`}
                     className="flex-1 border px-2 py-1 rounded"
                   />
-                  <input
+                  {/* <input
                     type="number"
                     min={0}
                     max={1}
@@ -265,7 +257,7 @@ const InitialModal = ({
                     }
                     className="w-28 border px-2 py-1 rounded text-center"
                     placeholder="Score(0 or 1)"
-                  />
+                  /> */}
                   {formData.options.length > 1 && (
                     <button
                       type="button"
@@ -280,16 +272,6 @@ const InitialModal = ({
               ))}
             </div>
           </div>
-        )}
-
-        {/* Yes/No or Text Options */}
-        {(formData.answerType === "Yes/No" ||
-          formData.answerType === "Text") && (
-          <ul className="list-disc ml-5 text-sm mb-4">
-            {formData.options?.map((a, i) => (
-              <li key={i}>{a}</li>
-            ))}
-          </ul>
         )}
 
         <div className="flex justify-between gap-3 ">

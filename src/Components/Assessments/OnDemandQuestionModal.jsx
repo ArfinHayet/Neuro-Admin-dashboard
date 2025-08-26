@@ -58,7 +58,7 @@ const OnDemandQuestionModal = ({
       } else if (value === "Text") {
         options = ["Text"];
       } else if (value === "MultipleChoice") {
-        options = [{ label: "", score: "" }];
+        options = ["Option A"];
       }
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
@@ -79,15 +79,15 @@ const OnDemandQuestionModal = ({
   const addOption = () => {
     setFormData((prev) => ({
       ...prev,
-      options: [...prev.options, { label: "" }],
+      options: [...prev.options, `Option ${prev.options.length + 1}`],
     }));
   };
 
- const removeOption = (index) => {
+  const removeOption = (index) => {
     const updated = formData.options.filter((_, i) => i !== index);
     setFormData((prev) => ({
       ...prev,
-      options: updated.length ? updated : [{ label: "" }],
+      options: updated.length ? updated : ["Option A"],
     }));
   };
 
@@ -125,10 +125,7 @@ const OnDemandQuestionModal = ({
         questions: formData.questions,
         order: Number(formData.questionOrder),
         answerType: formData.answerType,
-        options:
-          formData.answerType === "MultipleChoice"
-            ? formData.options.map((o) => o.label)
-            : formData.options,
+        options: formData.options,
       };
 
       const savedQuestion = editingQuestion
