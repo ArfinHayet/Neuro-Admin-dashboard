@@ -43,7 +43,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
 
   return (
     <section>
-      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-3 h-[220px] relative flex items-center justify-center ">
+      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-4 h-[220px] relative flex items-center justify-center ">
         <button
           ref={menuRef}
           onClick={handleMenuClick}
@@ -186,7 +186,7 @@ const OnDemandAssessment = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
         <button

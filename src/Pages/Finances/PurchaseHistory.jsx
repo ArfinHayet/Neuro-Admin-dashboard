@@ -77,7 +77,7 @@ const PurchaseHistory = () => {
 
   return (
     <section className="">
-      <h2 className="text-lg font-semibold text-primary">Assessment Purchases History</h2>
+      <h2 className="text-lg font-semibold text-primary">Assessment History</h2>
       <p className="text-xs text-secondary mb-8">
         View which users purchased which assessments along with Stripe payment details.
       </p>

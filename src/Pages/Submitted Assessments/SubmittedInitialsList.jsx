@@ -88,10 +88,10 @@ const SubmittedInitialList = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="text-xl font-medium ">Submitted Initial Assessments</h1>
-      <p className="text-sm mb-6 text-secondary">
-        Access and Review Detailed Records of Every Submitted Assessment.{" "}
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h1 className="text-xl font-semibold ">Submitted Initial Assessments</h1>
+      <p className="text-sm mb-4 text-secondary">
+        Access and Review Detailed Records of Every Submitted Assessment.
       </p>
       {loading ? (
         <p className="text-center py-10 text-gray-500">

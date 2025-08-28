@@ -94,10 +94,10 @@ const AssessmentDetails = () => {
   // }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
+    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-4 ">
       <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{assessment?.category}</h2>
+          <h2 className="text-xl font-semibold">{assessment?.category}</h2>
           <button
             className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
             onClick={() => {

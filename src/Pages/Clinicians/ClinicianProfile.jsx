@@ -119,7 +119,7 @@ const ClinicianProfile = () => {
   if (!clinician) return <p className="p-4">Clinician not found.</p>;
 
   return (
-       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
         <div className="flex items-center gap-6 mb-4">
           <img
             src={clinician.image}

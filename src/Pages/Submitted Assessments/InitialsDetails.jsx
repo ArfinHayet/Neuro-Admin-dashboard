@@ -65,25 +65,27 @@ const InitialsDetails = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+     
       {/* <h1 className="text-xl font-medium mb-2">{assessment.assessment?.name || "Assessment Details"}</h1> */}
-      <h1 className="text-lg font-semibold  mb-2"> Assessment Details</h1>
+      <h1 className="text-xl font-semibold  mb-0"> Assessment Details</h1>
+
       <div className="flex flex-col gap-2 justify-start mb-6">
-        <p className=" text-xs">
+        <p className=" text-sm">
           <strong>Date Taken </strong>
           {new Date(assessment.createdAt).toLocaleDateString()}
         </p>
-        <p className=" text-xs">
+        <p className=" text-sm">
           <strong>Category </strong> {assessment.assessment?.category || "N/A"}
         </p>
-        <p className=" text-xs ">
+        <p className=" text-sm ">
           <strong>Score </strong> {assessment.score}
         </p>
 
-        <p className=" text-xs ">
+        <p className=" text-sm">
           <strong>User name  </strong> {assessment.user?.name || "Unknown"}
         </p>
-        <p className=" text-xs ">
+        <p className=" text-sm">
           <strong>Child name  </strong> {assessment.patient?.name || "Unknown"}
         </p>
       </div>

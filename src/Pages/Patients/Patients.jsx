@@ -20,7 +20,11 @@ const PatientPage = () => {
       setLoading(true);
       const data = await getUsers();
       console.log("users", data);
-      setUsers(data.payload || []);
+       const filteredUsers = (data.payload || []).filter(
+        (user) => user.role !== "admin"
+      );
+
+      setUsers(filteredUsers);
     } catch (err) {
       console.error("Error loading users:", err);
     } finally {
@@ -97,8 +101,8 @@ const PatientPage = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="font-semibold text-xl mb-1">Users List</h1>
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h1 className="font-semibold text-xl ">Users List</h1>
       <p className="text-secondary text-sm mb-4">
         Manage and view all registered platform users.
       </p>

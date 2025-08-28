@@ -19,8 +19,8 @@ const OnDemandDetails = () => {
   const fetchAssessmentDetails = async () => {
     try {
       setIsLoading(true);
-      const response = (await getAllSubmissions()) ;
-      const submissions = response.payload || []; 
+      const response = await getAllSubmissions();
+      const submissions = response.payload || [];
       const thisAssessment = submissions.find(
         (a) => a.assessmentId === parseInt(assessmentId)
       );
@@ -33,8 +33,9 @@ const OnDemandDetails = () => {
 
       setAssessment(thisAssessment);
 
-      const allAnswers = await getAnswersByAssessmentId( thisAssessment.assessmentId ) || [];
-     setAnswers(allAnswers);
+      const allAnswers =
+        (await getAnswersByAssessmentId(thisAssessment.assessmentId)) || [];
+      setAnswers(allAnswers);
     } catch (err) {
       console.error("Failed to fetch assessment details:", err);
       setAssessment(null);
@@ -50,7 +51,7 @@ const OnDemandDetails = () => {
 
   if (isLoading) {
     return (
-      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
         <div className="flex justify-center items-center h-40">
           <p>Loading assessment details...</p>
         </div>
@@ -61,8 +62,8 @@ const OnDemandDetails = () => {
   if (!assessment) return <p>Assessment not found.</p>;
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="text-xl font-semibold mb-6">
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h1 className="text-xl font-semibold mb-4">
         {assessment.assessment?.category || "Assessment"} Details
       </h1>
 
@@ -86,32 +87,31 @@ const OnDemandDetails = () => {
       </div>
 
       {activeTab === "questions" && (
-        <table className="w-full bg-white  border border-gray-300 text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border border-gray-300">Question</th>
-              <th className="p-2 border border-gray-300">Answer</th>
-            </tr>
-          </thead>
-          <tbody>
-            {answers.length > 0 ? (
-              answers.map((ans, i) => (
-                <tr key={i} className="border border-gray-300">
-                  <td className="p-2 border border-gray-300">
+        <div className="space-y-4">
+          {answers.length > 0 ? (
+            answers.map((ans, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl"
+              >
+               
+                <div>
+                  <p className="font-medium text-gray-800">
                     {ans.question?.questions}
-                  </td>
-                  <td className="p-2 border border-gray-300">{ans.answer}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={2} className="p-2 text-center text-gray-500">
-                  No answers submitted yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </p>
+                <div className="flex gap-2 items-center">
+                 <div className="w-3 h-3 rounded-full bg-primary mt-1"></div>  
+                 <p className="text-secondary mt-1">{ans.answer}</p>
+                 </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl">
+              No answers submitted yet.
+            </p>
+          )}
+        </div>
       )}
 
       {activeTab === "aisummary" && (

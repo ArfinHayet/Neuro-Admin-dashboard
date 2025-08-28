@@ -84,8 +84,8 @@ const PatientDetails = () => {
   // console.log(user.image);
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <h1 className="font-semibold text-lg mb-4">{user.name}'s Details</h1>
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h1 className="font-semibold text-xl mb-4">{user.name}'s Details</h1>
       <div className="grid grid-cols-3 gap-6 h-[25vh] mb-6 ">
         <section className=" border rounded-lg p-4 border-[#e8e8e8]">
           <h2 className=" font-medium mb-2">Login Information</h2>

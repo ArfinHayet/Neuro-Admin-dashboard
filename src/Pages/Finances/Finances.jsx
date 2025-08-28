@@ -5,7 +5,7 @@ import TransactionLogs from "./TransactionLogs";
 import PurchaseHistory from "./PurchaseHistory";
 
 const tabs = [
-  { id: "purchases", label: "Purchases History" },
+  { id: "purchases", label: "History" },
   { id: "commissions", label: "Clinician Commissions" },
   { id: "transactions", label: "Transaction Logs" },
 ];
@@ -29,8 +29,8 @@ export default function Finances() {
   };
 
   return (
-           <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-        <h1 className="text-xl font-semibold mb-1">Finance</h1>
+           <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+        <h1 className="text-xl font-semibold mb-">Finance</h1>
         <p className="text-sm mb-6 text-secondary">
           Manage your platform's pricing, clinician commissions, and transaction
           history in one place.

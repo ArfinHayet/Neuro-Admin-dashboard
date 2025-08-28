@@ -71,8 +71,8 @@ const CliniciansList = () => {
   });
 
   return (
-       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-        <h1 className="font-semibold text-xl mb-1">Clinicians</h1>
+       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+        <h1 className="font-semibold text-xl ">Clinicians</h1>
         <p className="text-secondary text-sm mb-4">
           Browse and manage all registered clinicians.
         </p>
