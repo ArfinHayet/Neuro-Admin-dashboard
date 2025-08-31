@@ -30,16 +30,16 @@ export const router = createBrowserRouter([
 
   {
     path: "/",
-    element: 
-      <Layout /> ,
+     element:
+     <Layout />,
+    // (
+    //   <PrivateRoute>
+    //     <Layout />
+    //   </PrivateRoute>
+    // ),
 
     //     errorElement: <ErrorPage />,
     children: [
-      // {
-      //   path: "/",
-      //   element: <Dashboard />,
-      // }
-      // ,
       {
         path: "/role",
         element: <Role />,
