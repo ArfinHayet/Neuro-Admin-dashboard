@@ -62,7 +62,7 @@ const Sidebar = () => {
                 {Icon && typeof Icon === "string" ? (
                   <img src={Icon} alt={item.title} className="w-5 h-5 " />
                 ) : (
-                  Icon && <Icon className="text-lg" />
+                  Icon && <Icon className="text-lg" color="currentColor" />
                 )}
                 <span>{item.title}</span>
               </NavLink>

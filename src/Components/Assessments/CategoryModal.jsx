@@ -13,12 +13,14 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
   useEffect(() => {
     if (defaultCategory) {
+      setName(defaultCategory.name || "");
       setCategory(defaultCategory.category || "");
       setDescription(defaultCategory.description || "");
       setTotalTime(defaultCategory.totalTime || "");
       setType(defaultCategory.type || "");
       setPriceId(defaultCategory.priceId || "");
     } else {
+      setName("");
       setCategory("");
       setDescription("");
       setTotalTime("");
@@ -34,6 +36,10 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
     e.preventDefault();
     setError(null);
 
+    if (!name.trim()) {
+      setError("Name is required");
+      return;
+    }
     if (!category.trim()) {
       setError("Category is required");
       return;
@@ -53,7 +59,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
     try {
       const assessmentData = {
-        name: name.trim() || "Cognitive Ability Test",
+        name: name.trim(),
         description: description.trim(),
         type: type,
         totalTime: `${totalTime} minutes`,
@@ -73,6 +79,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
         await onSave(response.payload);
       }
 
+      setName("");
       setDescription("");
       setTotalTime("");
       setType("");
@@ -89,6 +96,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   };
 
   const handleClose = () => {
+    setName("");
     setDescription("");
     setTotalTime("");
     setType("");
@@ -100,12 +108,23 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-[400px] max-w-full">
-        <h2 className="text-lg font-medium text-center mb-4">
-          {defaultCategory ? "Edit Category" : "Add New Category"}
+      <div className="bg-white rounded-lg p-6 min-w-[480px]  max-w-full">
+        <h2 className="text-lg font-semibold text-center mb-4">
+  {defaultCategory ? "Edit Assessment" : "Add New Assessment"}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+           <div>
+            <label className="block mb-1 text-xs">Assessment Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter assessment name"
+              className="w-full border rounded px-3 py-2 text-sm"
+              required
+            />
+          </div>
           <div>
             <label className="block mb-1 text-xs">Category Name</label>
             <input

@@ -1,17 +1,18 @@
 
 import { useContext } from "react";
 import { AuthContext } from "./AuthProvider/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import p3 from "../../public/png/heading.png"
 
 const Navbar = () => {
   const { userData,handleLogout } = useContext(AuthContext);
+  const navigate = useNavigate();
   console.log("kkkkk",userData)
 
 
   const Logout = () => {
     handleLogout();
-    Navigate("/login");
+    navigate("/login");
   };
 
   const toInitials = str => 
