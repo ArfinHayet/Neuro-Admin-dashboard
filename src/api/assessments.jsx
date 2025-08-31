@@ -40,13 +40,12 @@ export async function getAssessments() {
 }
 
 export async function deleteAssessment(id) {
-  const res = await fetch(`${domain}/assessments`, {
+  const res = await fetch(`${domain}/assessments/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       authorization: `Bearer ${token}`,
     },
-     body: JSON.stringify({ assessmentId: id })
   });
 
   if (!res.ok) {
@@ -55,9 +54,7 @@ export async function deleteAssessment(id) {
   }
 
   const data = await res.json().catch(() => ({})); 
-      console.log("deleted assessments:", data); 
+  console.log("deleted assessment:", data); 
 
   return data;
 }
-
-
