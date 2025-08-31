@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 //import { onDemandAssessments } from "../../../Components/utils/Data";
 import { FaRegClock } from "react-icons/fa6";
 import { FiEdit3, FiTrash2 } from "react-icons/fi";
-import { createAssessment, getAssessments } from "../../../api/assessments";
+import { createAssessment, getAssessments, deleteAssessment } from "../../../api/assessments";
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
+import toast, { Toaster } from "react-hot-toast";
 
 const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,13 +34,15 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
     setIsMenuOpen(false);
   };
 
-  // const handleDeleteClick = (e) => {
-  //   e.stopPropagation();
-  //   if (window.confirm(`Are you sure you want to delete "${category.category}"?`)) {
-  //     onDelete(category);
-  //   }
-  //   setIsMenuOpen(false);
-  // };
+ const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    setIsMenuOpen(false);
+
+  if (window.confirm(`Are you sure you want to delete "${category.category}"?`)) {
+    if (onDelete) onDelete(category);
+  }
+};
+
 
   return (
     <section>
@@ -63,13 +66,13 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
               <FiEdit3 size={14} />
               Edit
             </button>
-            {/* <button
+            <button
               onClick={handleDeleteClick}
               className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"
             >
               <FiTrash2 size={14} />
               Delete
-            </button> */}
+            </button>
           </div>
         )}
 
@@ -160,23 +163,24 @@ const OnDemandAssessment = () => {
     }
   };
 
-  // if (isLoading) {
-  //   return (
-  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-  //       <p>Loading assessments...</p>
-  //     </section>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+        <p>Loading assessments...</p>
+      </section>
+    );
+  }
 
-  //  const handleDeleteAssessments = async (category) => {
-  //   try {
-  //     await deleteAssessment(category.id);
-  //     setAssessments(prev => prev.filter(a => a.id !== category.id));
-  //   } catch (err) {
-  //     setError("Failed to delete assessment");
-  //     console.error(err);
-  //   }
-  // };
+const handleDeleteAssessments = async (category) => {
+  try {
+    await deleteAssessment(category.id);
+    setAssessments((prev) => prev.filter((a) => a.id !== category.id));
+    alert("Assessment deleted successfully "); 
+  } catch (err) {
+    setError("Failed to delete assessment");
+    console.error(err);
+  }
+};
 
   if (error) {
     return (
@@ -211,7 +215,7 @@ const OnDemandAssessment = () => {
             category={category}
             onEdit={handleEditingAssessments}
             onSelect={handleCardClick}
-            // onDelete={handleDeleteAssessments}
+  onDelete={handleDeleteAssessments}
           />
         ))}
       </div>
