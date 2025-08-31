@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import AssessmentPricing from "./AssessmentPricing";
 import ClinicianCommission from "./ClinicianCommission";
 import TransactionLogs from "./TransactionLogs";
 import PurchaseHistory from "./PurchaseHistory";

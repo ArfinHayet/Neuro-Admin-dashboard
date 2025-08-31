@@ -39,3 +39,25 @@ export async function getAssessments() {
 
 }
 
+export async function deleteAssessment(id) {
+  console.log(id)
+  const res = await fetch(`${domain}/assessments/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  // if (!res.ok) {
+  //   const errorText = await res.text();
+  //   throw new Error(errorText || `HTTP error! status: ${res.status}`);
+  // }
+
+  const data = await res.json().catch(() => ({})); 
+      console.log("deleted assessments:", data); 
+
+  return data;
+}
+
+

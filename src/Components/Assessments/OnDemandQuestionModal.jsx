@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
 //import { onDemandAssessments } from "../utils/Data";
-import { useParams } from "react-router-dom";
 
 const OnDemandQuestionModal = ({
   isOpen,
@@ -127,6 +126,8 @@ const OnDemandQuestionModal = ({
         answerType: formData.answerType,
         options: formData.options,
       };
+
+      
 
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
@@ -12,6 +13,7 @@ import { getAssessments } from "../../../api/assessments";
 
 const AssessmentDetails = () => {
   const { id } = useParams();
+
   const [assessment, setAssessment] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,10 +35,13 @@ const AssessmentDetails = () => {
       }
 
       setAssessment(thisAssessment);
-
+     console.log(id)
       const questionsResponse = await getQuestionsByAssessmentId(
         thisAssessment.id
       );
+
+      console.log("999",questionsResponse)
+
       const questionsData = questionsResponse?.payload || [];
       setQuestions(questionsData);
     } catch (err) {
@@ -118,7 +123,7 @@ const AssessmentDetails = () => {
           {assessment?.totalTime  || "N/A"}
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Price </strong>£{assessment?.priceId  || "N/A"}
+          <strong>Price </strong>£{assessment?.stripeInfo?.unit_amount  || "N/A"}
         </p>
         <h3 className="font-medium my-3">Question List</h3>
         <table className="w-full text-sm text-left text-gray-700">
