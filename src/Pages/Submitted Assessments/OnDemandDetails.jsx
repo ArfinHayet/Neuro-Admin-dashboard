@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-//import { assessments, onDemandAssessments } from "../../Components/utils/Data";
 import { getAllSubmissions } from "../../api/submissions";
 import { getAnswersByAssessmentId } from "../../api/answers";
 

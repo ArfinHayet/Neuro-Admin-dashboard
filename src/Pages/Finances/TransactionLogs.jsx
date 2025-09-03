@@ -4,7 +4,6 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
-import { IoMdDownload } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 export default function TransactionLogs() {

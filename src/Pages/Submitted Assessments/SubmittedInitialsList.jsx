@@ -1,28 +1,31 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-//import { users, children,  } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getAllSubmissions } from "../../api/submissions";
 import { getAnswersByAssessmentId } from "../../api/answers";
+  import { IoIosArrowBack, IoIosArrowForward  } from "react-icons/io";
+
 
 const SubmittedInitialList = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 30; 
+
 
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      const data = await getAllSubmissions();
+      const data = await getAllSubmissions(page, limit);
       const submissionsData = data?.payload || [];
 
       const initialSubmissions = (submissionsData || []).filter(
-        // submission => submission.assessmentId === 12       //for initial 12 fixed
-        (submission) => submission.assessmentId === 14
+        (submission) => submission.assessment?.type === "free"
       );
-      // console.log(" submissions from (assessmentId=12):", initialSubmissions);
+      // console.log(" submissions from initial:", initialSubmissions);
       setSubmissions(initialSubmissions);
     } catch (err) {
       console.error("Failed to fetch submissions:", err);
@@ -33,11 +36,12 @@ const SubmittedInitialList = () => {
   };
   useEffect(() => {
     fetchSubmissions();
-  }, []);
+  }, [page]);
 
- const onView = (id) => {
-    navigate(`/submitted-assessments/initial/${id.assessmentId}`);
-  };
+const onView = (submission) => {
+  navigate(`/submitted-assessments/initial/${submission.id}`);
+};
+
 
   const data = useMemo(() => submissions, [submissions]);
 

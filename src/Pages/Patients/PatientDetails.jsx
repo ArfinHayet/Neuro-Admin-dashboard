@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-//import { users, children } from "../../Components/utils/Data";
-//import { childProfileFields } from "../../Components/utils/ChildPorfileConfig";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { LuPhone } from "react-icons/lu";
 import { FaRegAddressCard } from "react-icons/fa";

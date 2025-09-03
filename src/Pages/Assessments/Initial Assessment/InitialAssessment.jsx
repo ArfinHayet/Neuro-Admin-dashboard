@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-//import { initialQuestions } from "../../../Components/utils/Data";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import InitialModal from "../../../Components/Assessments/InitialModal";
 import {

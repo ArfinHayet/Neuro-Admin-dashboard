@@ -1,86 +1,131 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   createColumnHelper,
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { clinicians } from "../../Components/utils/Data";
+//import { clinicians } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
+import { getUsers } from "../../api/user";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const CliniciansList = () => {
   const navigate = useNavigate();
-  const columnHelper = createColumnHelper();
+  const [clinicians, setClinicians] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 30;
+
+  useEffect(() => {
+    const fetchClinicians = async () => {
+      try {
+        const data = await getUsers(page, limit);
+
+        const filteredClinicians = (data.payload || []).filter(
+          (user) => user.role === "clinician"
+        );
+
+        setClinicians(filteredClinicians);
+      } catch (err) {
+        console.error("Error loading clinicians:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClinicians();
+  }, [page]);
 
   const columns = [
-    columnHelper.accessor("name", {
-      header: "Clinician",
-      cell: ({ row }) => {
-        const clinician = row.original;
-        return <p className="  text-xs">{clinician.name}</p>;
-      },
-    }),
-    columnHelper.accessor("email", {
+    {
+      header: "Name",
+      accessorKey: "name",
+      cell: (info) => info.row.original.name || "N/A",
+    },
+    {
       header: "Email",
-      cell: ({ row }) => {
-        const clinician = row.original;
-        return <p className="text-xs text-gray-500">{clinician.title}</p>;
-      },
-    }),
-    columnHelper.accessor("casesTaken", {
-      header: "Cases Taken",
-      cell: ({ getValue }) => `${getValue()} Cases`,
-    }),
-    columnHelper.accessor("status", {
-      header: "Status",
-      cell: ({ getValue }) => {
-        const status = getValue();
-        return (
-          <span
-            className={`px-2 inline-flex text-xs leading-5  rounded-full ${
-              status === "active"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {status}
-          </span>
-        );
-      },
-    }),
-
-    columnHelper.display({
-      id: "actions",
+      accessorKey: "email",
+      cell: (info) => info.row.original.email || "N/A",
+    },
+    {
+      header: "Phone",
+      accessorKey: "phone",
+      cell: (info) => info.row.original.phone || "N/A",
+    },
+    {
+      header: "Title",
+      accessorKey: "hcpcTitle",
+      cell: (info) => info.row.original.hcpcTitle || "N/A",
+    },
+    {
+      header: "Practice",
+      accessorKey: "practiceName",
+      cell: (info) => info.row.original.practiceName || "N/A",
+    },
+    {
       header: "Actions",
       cell: ({ row }) => (
-        <button
-          onClick={() => navigate(`/clinicians/${row.original.id}`)}
-          className="text-lg text-primary ml-4"
-        >
-          <IoEye />
-        </button>
+        <div className="text-left">
+          <button
+            onClick={() => navigate(`/clinicians/${row.original.id}`)} // backend id
+            className="text-primary text-lg ml-3"
+            aria-label={`View profile of ${row.original.name}`}
+          >
+            <IoEye />
+          </button>
+        </div>
       ),
-    }),
+    },
   ];
 
   const table = useReactTable({
     data: clinicians,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.id?.toString(),
   });
 
   return (
-       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
-        <h1 className="font-semibold text-xl ">Clinicians</h1>
-        <p className="text-secondary text-sm mb-4">
-          Browse and manage all registered clinicians.
-        </p>
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h1 className="font-semibold text-xl ">Clinicians</h1>
+      <p className="text-secondary text-sm mb-4">
+        Browse and manage all registered clinicians.
+      </p>
 
-        <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
-          <DataTable table={table} />
+      {loading ? (
+        <div className="flex justify-center items-center h-40 text-gray-500">
+          Loading clinicians...
         </div>
-     
+      ) : (
+        <>
+          <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
+            <DataTable table={table} />
+          </div>
+          <div className="absolute flex justify-end items-center gap-2 right-8 bottom-6">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+            >
+              <IoIosArrowBack size={18} />
+            </button>
+
+            <span className="text-sm p-2">Page {page}</span>
+
+            <button
+              onClick={() =>
+                setPage((prev) => (clinicians.length < limit ? prev : prev + 1))
+              }
+              disabled={clinicians.length < limit}
+              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+            >
+              <IoIosArrowForward size={18} />
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 };

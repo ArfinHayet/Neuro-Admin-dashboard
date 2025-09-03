@@ -699,7 +699,7 @@ export const defaultCommissionRate = 20;
 export const transactionLogs = [
   {
     id: 1,
-    date: "2025-07-10",
+    date: "2025-08-10",
     clinician: "Dr. John Doe",
     amount: 500,
     clinicianShare: 350,
@@ -709,7 +709,7 @@ export const transactionLogs = [
   },
   {
     id: 2,
-    date: "2025-07-15",
+    date: "2025-08-15",
     clinician: "Dr. Sarah Smith",
     amount: 600,
     clinicianShare: 400,

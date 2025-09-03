@@ -16,8 +16,8 @@ const createSubmission = async (obj) => {
   return data;
 };
 
-const getAllSubmissions = async () => {
-  const response = await fetch(`${domain}/submissions`, {
+const getAllSubmissions = async (page = 1, limit = 5) => {
+  const response = await fetch(`${domain}/submissions?page=${page}&limit=${limit}`, {
     method: "GET",
     headers: {
       authorization: `Bearer ${token}`,
