@@ -2,8 +2,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
-//import { onDemandAssessments } from "../../../Components/utils/Data";
-// import { initialQuestions } from "../../../Components/utils/Data";
 import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuestionModal";
 import {
   deleteQuestion,
@@ -85,18 +83,16 @@ const AssessmentDetails = () => {
   };
 
   if (error) {
-    return(
-     <p> { error } </p>
-    ) ;
+    return <p> {error} </p>;
   }
 
-  // if (isLoading) {
-  //   return (
-  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-  //       <p>Loading assessments...</p>
-  //     </section>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+        <p>Loading assessments...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-4 ">
@@ -114,16 +110,15 @@ const AssessmentDetails = () => {
           </button>
         </div>
         <p className="text-xs text-secondary mb-2">
-          {/* View, Edit and manage questions for the On-Demand Assessment to ensure
-          accuracy and relevance. */}
+          {/* View, Edit and manage questions for the On-Demand Assessment to ensure accuracy and relevance. */}
           {assessment?.description}
         </p>
         <p className="mb-1 text-gray-700 text-sm">
           <strong>Duration </strong>
-          {assessment?.totalTime  || "N/A"}
+          {assessment?.totalTime || "N/A"}
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Price </strong>£{assessment?.stripeInfo?.unit_amount  || "N/A"}
+          <strong>Price </strong>£{assessment?.priceId || "N/A"}
         </p>
         <h3 className="font-medium my-3">Question List</h3>
         <table className="w-full text-sm text-left text-gray-700">

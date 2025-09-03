@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-//import { users } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getUsers } from "../../api/user";
+import { IoIosArrowBack, IoIosArrowForward  } from "react-icons/io";
 
 const PatientPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 30; 
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await getUsers();
+      const data = await getUsers(page, limit);
       console.log("users", data);
-       const filteredUsers = (data.payload || []).filter(
+      const filteredUsers = (data.payload || []).filter(
         (user) => user.role !== "admin"
       );
 
@@ -111,9 +113,33 @@ const PatientPage = () => {
           Loading users...
         </div>
       ) : (
-        <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
+       <> <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
           <DataTable table={table} />
         </div>
+
+     
+       <div className=" absolute flex justify-end items-center gap-2 right-8 bottom-6">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+            >
+              <IoIosArrowBack size={18} />
+            </button>
+
+            <span className="text-sm p-2 ">
+              Page {page}
+            </span>
+
+            <button
+              onClick={() => setPage((prev) => (users.length < limit ? prev : prev + 1))}
+              disabled={users.length < limit}
+              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+            >
+              <IoIosArrowForward size={18}/>
+            </button>
+          </div> 
+        </>
       )}
     </section>
   );

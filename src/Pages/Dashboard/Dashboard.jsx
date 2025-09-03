@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   onDemandAssessments,
   users,
@@ -23,7 +23,9 @@ import {
   Bar,
 } from "recharts";
 import Stats from "./Stats";
-
+import { getUsers } from "../../api/user";
+import { getAssessments } from "../../api/assessments";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const filterLast30Days = (dateStr) => {
@@ -33,9 +35,56 @@ const Dashboard = () => {
     return diffDays <= 30;
   };
 
-  const newUsersLast30Days = users.filter((user) =>
-    filterLast30Days(user.createdAt)
-  );
+  const [latestUsers, setLatestUsers] = useState([]);
+  const [onDemandAssessmentsData, setOnDemandAssessmentsData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await getUsers(1, 10);
+        //  console.log("API raw response:", data);
+        if (data && Array.isArray(data.payload)) {
+          const filteredUsers = data.payload.filter(
+            (user) => user.role !== "clinician" && user.role !== "admin"
+          );
+          setLatestUsers(filteredUsers);
+        } else {
+          console.error("Unexpected API response structure:", data);
+          setLatestUsers([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+        setLatestUsers([]);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      try {
+        const data = await getAssessments();
+        if (data && Array.isArray(data.payload)) {
+          // Only extract the name of each assessment
+          const assessmentsList = data.payload.map((item) => ({
+            id: item.id,
+            name: item.name,
+          }));
+          setOnDemandAssessmentsData(assessmentsList);
+        } else {
+          console.error("Unexpected API response structure:", data);
+          setOnDemandAssessmentsData([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch assessments:", err);
+        setOnDemandAssessmentsData([]);
+      }
+    };
+
+    fetchAssessments();
+  }, []);
 
   const activeClinicians = clinicians.filter((c) => c.status === "active");
 
@@ -117,11 +166,11 @@ const Dashboard = () => {
         <div className="space-y-4">
           {/* Active Clinicians */}
           <div className="bg-white rounded-lg border border-gray-200 p-4 ">
-            <h2 className="text-sm font-semibold ">Active Clinicians</h2>
+            <h2 className="text-sm font-semibold ">New Clinicians</h2>
             {activeClinicians.length === 0 ? (
               <p className="text-gray-500">No active clinicians found.</p>
             ) : (
-              <ul className="overflow-y-auto max-h-[200px]">
+              <ul className="overflow-y-auto max-h-[400px]">
                 {activeClinicians.map((clinician) => (
                   <li
                     key={clinician.id}
@@ -133,7 +182,7 @@ const Dashboard = () => {
                       className="w-8 h-8 rounded-full object-cover"
                     />
                     <div>
-                      <p className="text-sm">{clinician.name}</p>
+                      <p className="text-xs">{clinician.name}</p>
                       <p className="text-xs text-secondary">
                         {clinician.title}
                       </p>
@@ -144,18 +193,22 @@ const Dashboard = () => {
             )}
           </div>
 
+          {/* new users */}
           <div className="bg-white rounded-lg border border-gray-200 p-4 ">
             <h2 className="text-sm font-semibold ">
               New Users <span className="text-sm">(Last 30 Days)</span>
             </h2>
-            {newUsersLast30Days.length === 0 ? (
-              <p className="text-gray-500">No new users in the last 30 days.</p>
+            {latestUsers.length === 0 ? (
+              <p className="text-gray-500">No new users found.</p>
             ) : (
-              <ul className="overflow-y-auto max-h-[200px]">
-                {newUsersLast30Days.map((user) => (
+              <ul className="overflow-y-auto max-h-fit">
+                {latestUsers.map((user) => (
                   <li key={user.id} className="border-b py-2 last:border-none">
-                    <p className="text-sm">{user.name}</p>
-                    <p className="text-xs text-secondary">{user.email}</p>
+                    <p className="text-xs">{user.name}</p>
+                    <span className="flex justify-between items-center ">
+                      <p className="text-xs text-secondary">{user.email}</p>
+                      <p className="text-xs text-secondary">{user.role}</p>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -204,12 +257,15 @@ const Dashboard = () => {
               <h2 className="font-semibold mb-2 text-sm">
                 On-demand Assessments
               </h2>
-              <button className="text-primary hover:text-opacity-50 text-xs font-medium">
+              <button
+                className="text-primary hover:text-opacity-50 text-xs font-medium"
+                onClick={() => navigate("/assessment-questions/on-demand")}
+              >
                 View All →
               </button>
             </div>
             <div className="space-y-2 overflow-y-auto max-h-[200px]">
-              {onDemandAssessments.map((assessment) => (
+              {onDemandAssessmentsData.map((assessment) => (
                 <div
                   key={assessment.id}
                   className="flex items-center justify-between py-1 border-b last:border-none"
@@ -221,11 +277,11 @@ const Dashboard = () => {
                       </h3>
                     </div>
                   </div>
-                  <div className="text-right">
+                  {/* <div className="text-right">
                     <p className="text-xs text-gray-500">
                       {assessment.questions.length} questions
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>

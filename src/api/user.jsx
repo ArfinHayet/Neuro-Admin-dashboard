@@ -31,17 +31,18 @@ const addUser = async (obj) => {
   return data;
 };
 
-
-const getUsers = async () => {
-  const response = await fetch(`${domain}/users`, {
+const getUsers = async (page = 1, limit = 5 ) => {
+  const response = await fetch(`${domain}/users?page=${page}&limit=${limit}`, {
     method: "GET",
-      headers: {
+    headers: {
       authorization: `Bearer ${token}`,
     },
   });
+
   const data = await response.json();
   return data;
 };
+
 
 const login = async (obj) => {
   // //console.log(obj);

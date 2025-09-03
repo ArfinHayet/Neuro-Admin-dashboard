@@ -30,8 +30,7 @@ export const router = createBrowserRouter([
 
   {
     path: "/",
-     element:
-     <Layout />,
+    element: <Layout />,
     // (
     //   <PrivateRoute>
     //     <Layout />
@@ -61,7 +60,7 @@ export const router = createBrowserRouter([
         element: <SubmittedInitialList />,
       },
       {
-        path: "/submitted-assessments/initial/:assessmentId",
+        path: "/submitted-assessments/initial/:submissionId",
         element: <InitialsDetails />,
       },
       {
@@ -119,7 +118,7 @@ export const router = createBrowserRouter([
       {
         path: "/invoices/:invoiceId",
         element: <InvoiceDetails />,
-      }
+      },
     ],
   },
 ]);

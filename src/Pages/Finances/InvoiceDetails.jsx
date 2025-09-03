@@ -129,7 +129,7 @@ export default function InvoiceDetails() {
           </div>
         </div>
 
-        <div className="text-sm flex flex-col gap-3 mt-4">
+        {/* <div className="text-sm flex flex-col gap-3 mt-4">
           <p>
             <strong>Total Amount</strong> ${invoice.amount}
           </p>
@@ -139,7 +139,7 @@ export default function InvoiceDetails() {
           <p>
             <strong>Platform Share</strong> ${invoice.platformShare}
           </p>
-        </div>
+        </div> */}
 
         <div className="mt-10 ">
           <h2 className="text-sm font-semibold mb-4">Assessment Summary</h2>

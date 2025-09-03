@@ -54,7 +54,6 @@ const InitialModal = ({
         options = editingQuestion.options;
       } else if (typeof editingQuestion.options === 'string') {
         try {
-          // Try to parse if it's a stringified array
           options = JSON.parse(editingQuestion.options);
         } catch (e) {
           options = ["Yes", "No"];
