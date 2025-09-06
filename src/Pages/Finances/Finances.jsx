@@ -28,7 +28,7 @@ export default function Finances() {
   };
 
   return (
-           <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+  <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
         <h1 className="text-xl font-semibold mb-">Finance</h1>
         <p className="text-sm mb-6 text-secondary">
           Manage your platform's pricing, clinician commissions, and transaction

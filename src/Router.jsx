@@ -21,6 +21,7 @@ import SubmittedOnDemand from "./Pages/Submitted Assessments/SubmittedOnDemand";
 import CliniciansOnboarding from "./Pages/Clinicians/CliniciansOnboarding";
 import PrivateRoute from "./PrivateRoute";
 import InvoiceDetails from "./Pages/Finances/InvoiceDetails";
+import PaymentDetails from "./Pages/Finances/PaymentDetails";
 
 export const router = createBrowserRouter([
   {
@@ -30,12 +31,13 @@ export const router = createBrowserRouter([
 
   {
     path: "/",
-    element: <Layout />,
-    // (
-    //   <PrivateRoute>
-    //     <Layout />
-    //   </PrivateRoute>
-    // ),
+    element: 
+    //<Layout />,
+    (
+      <PrivateRoute>
+        <Layout />
+      </PrivateRoute>
+    ),
 
     //     errorElement: <ErrorPage />,
     children: [
@@ -116,8 +118,12 @@ export const router = createBrowserRouter([
         element: <Finances />,
       },
       {
-        path: "/invoices/:invoiceId",
+        path: "/finances/invoices/:invoiceId",
         element: <InvoiceDetails />,
+      },
+      {
+        path: "/finances/payments/:id",
+        element: <PaymentDetails />,
       },
     ],
   },

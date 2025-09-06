@@ -49,3 +49,13 @@ export async function deleteAssessment(id) {
 
   return data;
 }
+
+export async function getAssessmentById(id) {
+  try {
+    const all = await getAssessments();
+    return (all.payload || []).find((a) => String(a.id) === String(id)) || null;
+  } catch (err) {
+    console.error("Error fetching assessment by ID:", err);
+    return null;
+  }
+}

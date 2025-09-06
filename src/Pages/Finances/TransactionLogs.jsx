@@ -1,63 +1,81 @@
-import { useState, useEffect } from "react";
-import { transactionLogs, clinicians } from "../../Components/utils/Data";
+import { useState, useEffect, useMemo } from "react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { getAssessments } from "../../api/assessments";
+import { getUsers } from "../../api/user";
 
 export default function TransactionLogs() {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedClinician, setSelectedClinician] = useState("all");
+  const [clinicians, setClinicians] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const navigate = useNavigate();
 
-  const getPreviousMonth = () => {
-    const today = new Date();
-    const prevMonth = today.getMonth() === 0 ? 11 : today.getMonth() - 1;
-    const year =
-      today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear();
-    return { prevMonth, year };
-  };
-  const generateInvoicesForLastMonth = () => {
-    const { prevMonth, year } = getPreviousMonth();
-
-    // Filter logs for previous month
-    const prevMonthLogs = transactionLogs.filter((log) => {
-      const d = new Date(log.date);
-      return d.getMonth() === prevMonth && d.getFullYear() === year;
-    });
-
-    const grouped = prevMonthLogs.reduce((acc, log) => {
-      //grouped clinician
-      if (!acc[log.clinician]) acc[log.clinician] = [];
-      acc[log.clinician].push(log);
-      return acc;
-    }, {});
-
-    const newInvoices = Object.keys(grouped).map((clinician, index) => {
-      const logs = grouped[clinician];
-      const totalAmount = logs.reduce((sum, l) => sum + l.amount, 0);
-      const clinicianShare = logs.reduce((sum, l) => sum + l.clinicianShare, 0);
-      const platformShare = logs.reduce((sum, l) => sum + l.platformShare, 0);
-      return {
-        id: index + 1,
-        clinician,
-        date: new Date().toISOString().slice(0, 10),
-        assessmentsCount: logs.length,
-        totalAmount,
-        clinicianShare,
-        platformShare,
-        status: "Unpaid",
-      };
-    });
-
-    setInvoices(newInvoices);
-  };
-
   useEffect(() => {
-    generateInvoicesForLastMonth();
+    const fetchClinicians = async () => {
+      try {
+        const res = await getUsers();
+        const clinicianUsers = res.payload.filter(
+          (u) => u.role === "clinician"
+        );
+        setClinicians(clinicianUsers);
+      } catch (err) {
+        console.error("Error fetching clinicians:", err);
+      }
+    };
+    fetchClinicians();
   }, []);
+
+  // Generate invoices from assessments
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      try {
+        const res = await getAssessments();
+        const assessments = res.payload || [];
+
+        const grouped = assessments.reduce((acc, a) => {
+          const clinicianId = a.userId; // assuming assessment.userId = clinician
+          if (!clinicianId) return acc;
+
+          if (!acc[clinicianId]) acc[clinicianId] = [];
+          acc[clinicianId].push(a);
+          return acc;
+        }, {});
+
+        const newInvoices = Object.keys(grouped).map((clinicianId, index) => {
+          const logs = grouped[clinicianId];
+          const totalAmount = logs.reduce(
+            (sum, a) => sum + (parseFloat(a.price) || 0),
+            0
+          );
+          const clinicianShare = totalAmount * 0.2;
+          const clinician = clinicians.find((c) => c.id === Number(clinicianId));
+
+          return {
+            id: index + 1,
+            clinician: clinician ? clinician.name : `Clinician #${clinicianId}`,
+            clinicianId,
+            date: new Date().toISOString().slice(0, 10),
+            assessmentsCount: logs.length,
+            totalAmount,
+            clinicianShare,
+            status: "Unpaid",
+            assessments: logs,
+          };
+        });
+
+        setInvoices(newInvoices);
+      } catch (err) {
+        console.error("Error generating invoices:", err);
+      }
+    };
+
+    if (clinicians.length > 0) fetchAssessments();
+  }, [clinicians]);
+
   const handleMarkAsPaid = (invoiceId) => {
     setInvoices((prev) =>
       prev.map((inv) =>
@@ -67,9 +85,26 @@ export default function TransactionLogs() {
     toast.success(`Invoice #${invoiceId} marked as Paid`);
   };
 
-  const handleViewInvoice = (invoiceId) => {
-    navigate(`/invoices/${invoiceId}`);
+  const handleViewInvoice = (invoice) => {
+    navigate(`/finances/invoices/${invoice.id}`, { state: { invoice } });
   };
+
+  // Filtered data
+  const filteredInvoices = useMemo(() => {
+    return invoices.filter((inv) => {
+      const matchesClinician =
+        selectedClinician === "all" ||
+        String(inv.clinicianId) === String(selectedClinician);
+
+      const invoiceMonth = new Date(inv.date).toLocaleString("default", {
+        month: "long",
+      });
+      const matchesMonth =
+        selectedMonth === "all" || invoiceMonth === selectedMonth;
+
+      return matchesClinician && matchesMonth;
+    });
+  }, [invoices, selectedClinician, selectedMonth]);
 
   const months = [
     "all",
@@ -87,46 +122,21 @@ export default function TransactionLogs() {
     "December",
   ];
 
-  const filteredInvoices =
-    selectedMonth === "all"
-      ? invoices
-      : invoices.filter((inv) => {
-          const monthName = new Date(inv.date).toLocaleString("default", {
-            month: "long",
-          });
-          return monthName === selectedMonth;
-        });
-
   const columns = [
-    {
-       accessorKey: "date",
-        header: "Date" 
-      },
-    {
-       accessorKey: "clinician", 
-       header: "Clinician" ,
-      },
-    { 
-      accessorKey: "assessmentsCount",
-       header: "# Assessments" ,
-             cell: (info) => `${info.getValue()}`,
-
-      },
+    { accessorKey: "date", header: "Date" },
+    { accessorKey: "clinician", header: "Clinician" },
+    { accessorKey: "assessmentsCount", header: "# Assessments" },
     {
       accessorKey: "totalAmount",
       header: "Total Amount",
-      cell: (info) => `$${info.getValue()}`,
+      cell: (info) => `£${info.getValue()}`,
     },
     {
       accessorKey: "clinicianShare",
       header: "Clinician Share",
-      cell: (info) => `$${info.getValue()}`,
+      cell: (info) => `£${info.getValue()}`,
     },
-    {
-      accessorKey: "platformShare",
-      header: "Platform Share",
-      cell: (info) => `$${info.getValue()}`,
-    },
+   
     {
       accessorKey: "status",
       header: "Status",
@@ -154,7 +164,7 @@ export default function TransactionLogs() {
         <div className="flex gap-3">
           <button
             className="text-secondary"
-            onClick={() => handleViewInvoice(row.original.id)}
+            onClick={() => handleViewInvoice(row.original)}
           >
             <IoEye size={16} />
           </button>
@@ -171,15 +181,14 @@ export default function TransactionLogs() {
 
   return (
     <div>
-      <div>
-        <h2 className="text-lg font-semibold text-primary">Transaction Logs</h2>
-        <p className="mb-6 text-sm text-secondary">
-          Track earnings, commission splits, and manage invoices
-        </p>
-      </div>
+      <h2 className="text-lg font-semibold text-primary">Transaction Logs</h2>
+      <p className="mb-6 text-sm text-secondary">
+        Track earnings, commission splits, and manage invoices
+      </p>
 
-      <div className="flex justify-start gap-10 mb-4">
-
+      {/* Filters */}
+      <div className="flex gap-10 mb-4">
+        {/* Month Filter */}
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600">Month</label>
           <select
@@ -187,13 +196,15 @@ export default function TransactionLogs() {
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="border rounded p-1 text-xs"
           >
-            {months.map((month) => (
-              <option key={month} value={month}>
-                {month}
+            {months.map((m) => (
+              <option key={m} value={m}>
+                {m}
               </option>
             ))}
           </select>
         </div>
+
+        {/* Clinician Filter */}
         <div className="flex items-center gap-2">
           <label className="text-sm text-gray-600">Clinician</label>
           <select
@@ -203,36 +214,12 @@ export default function TransactionLogs() {
           >
             <option value="all">All</option>
             {clinicians.map((c) => (
-              <option key={c.id} value={c.name}>
+              <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
           </select>
         </div>
-        {/* <div className="flex gap-6 items-center">
-           invoice Generate 
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Clinician</label>
-            <select
-              value={selectedClinician}
-              onChange={(e) => setSelectedClinician(e.target.value)}
-              className="border rounded py-1 px-2 text-xs w-40"
-            >
-              <option value="">Select Clinician</option>
-              {clinicians.map((c) => (
-                <option key={c.id} value={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <button
-              className="bg-primary text-white px-3 py-1 rounded-full text-xs"
-              onClick={handleGenerateInvoice}
-            >
-              Generate Invoice
-            </button>
-          </div>
-        </div> */}
       </div>
 
       <DataTable table={table} />

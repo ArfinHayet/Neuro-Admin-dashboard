@@ -76,6 +76,43 @@ const deleteUser = async (id) => {
   const data = await response.json();
   return data;
 };
-export { addUser, getUsers, login, deleteUser };
+
+const getUserById = async (id) => {
+  const response = await fetch(`${domain}/users/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+const getLeaves = async () => {
+  const response = await fetch(`${domain}/leaves`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
+const getAvailability = async () => {
+  const response = await fetch(`${domain}/availabilities`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
+ 
+export { addUser, getUsers, login, deleteUser, getUserById, getLeaves, getAvailability };
 
 
