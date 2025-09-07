@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  createColumnHelper,
   useReactTable,
   getCoreRowModel,
 } from "@tanstack/react-table";
-//import { clinicians } from "../../Components/utils/Data";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getUsers } from "../../api/user";
@@ -100,14 +98,15 @@ const CliniciansList = () => {
         </div>
       ) : (
         <>
-          <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
+          <div className="p-2 w-[75vw] bg-white rounded-xl overflow-x-auto">
             <DataTable table={table} />
           </div>
-          <div className="absolute flex justify-end items-center gap-2 right-8 bottom-6">
+          {/* pagination */}
+          <div className="absolute flex justify-end items-center gap-1 right-10 bottom-8">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
-              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
             >
               <IoIosArrowBack size={18} />
             </button>
@@ -119,7 +118,7 @@ const CliniciansList = () => {
                 setPage((prev) => (clinicians.length < limit ? prev : prev + 1))
               }
               disabled={clinicians.length < limit}
-              className="py-2 rounded bg-gray-200 disabled:opacity-50"
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
             >
               <IoIosArrowForward size={18} />
             </button>

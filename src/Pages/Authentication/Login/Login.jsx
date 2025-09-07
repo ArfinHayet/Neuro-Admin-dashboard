@@ -36,6 +36,7 @@ const Login = () => {
         localStorage.setItem("accessToken", result.payload.token.access_token);
         const userData = result.payload.filteredUser;
         setUserData(userData);
+        setLoading(false);
         navigate("/");
       }
     

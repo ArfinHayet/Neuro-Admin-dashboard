@@ -2,19 +2,12 @@ import React, { useState } from "react";
 import TextInput from "../../Components/Common/TextInput";
 import toast, { Toaster } from "react-hot-toast";
 
-const rolesOptions = [
-  { key: "therapist", label: "Therapist" },
-  { key: "psychologist", label: "Psychologist" },
-  { key: "speech_therapist", label: "Speech Therapist" },
-  { key: "occupational_therapist", label: "Occupational Therapist" },
-];
 
 const CliniciansOnboarding = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    joinLink: "",
-    role: "",
+    joinLink: "https://neurocheck-clinician.vercel.app/signup",
   });
 
   const [errors, setErrors] = useState({});
@@ -32,7 +25,6 @@ const CliniciansOnboarding = () => {
     if (!formData.name.trim()) newErrors.name = true;
     if (!formData.email.trim()) newErrors.email = true;
     if (!formData.joinLink.trim()) newErrors.joinLink = true;
-    if (!formData.role.trim()) newErrors.role = true;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -46,7 +38,7 @@ const CliniciansOnboarding = () => {
     }
 
     toast.success(`Invitation sent to ${formData.email}!`);
-    setFormData({ name: "", email: "", joinLink: "", role: "" });
+    setFormData({ name: "", email: "", joinLink: "" });
     setErrors({});
   };
 
@@ -91,29 +83,6 @@ const CliniciansOnboarding = () => {
               className=""
               classw={errors.joinLink ? "border-red-600" : ""}
             />
-
-            <div className="flex flex-col gap-4">
-              <label className="text-sm font-medium text-[#323232]">Role</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className={`w-full text-xs font-normal p-3 text-[#565656] border outline-none rounded-lg bg-white ${
-                  errors.role ? "border-red-600" : "border-[#EAEAEA]"
-                }`}
-              >
-                <option value="" disabled>
-                  Select clinician role
-                </option>
-                {rolesOptions.map(({ key, label }) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </form>
-
             <div className="flex justify-center mt-10">
               <button
                 type="submit"
@@ -121,7 +90,8 @@ const CliniciansOnboarding = () => {
               >
                 Send Invitation
               </button>
-            </div>
+            </div>          
+            </form>
         </section>
     </section>
   );

@@ -23,7 +23,7 @@ const PatientPage = () => {
       const data = await getUsers(page, limit);
       console.log("users", data);
       const filteredUsers = (data.payload || []).filter(
-        (user) => user.role !== "admin"
+        (user) => user.role !== "admin" && user.role !== "clinician"
       );
 
       setUsers(filteredUsers);
@@ -55,11 +55,7 @@ const PatientPage = () => {
       accessorKey: "country",
       cell: (info) => info.row.original.country || "N/A",
     },
-    {
-      header: "Age",
-      accessorKey: "age",
-      cell: (info) => info.row.original.age || "N/A",
-    },
+    
     {
       header: "Role",
       accessorKey: "role",
@@ -84,7 +80,7 @@ const PatientPage = () => {
       cell: ({ row }) => (
         <div className="text-left">
           <button
-            onClick={() => navigate(`/patients/${row.original.id}`)} //if backend => id
+            onClick={() => navigate(`/patients/${row.original.id}`)} 
             className="text-primary  text-lg ml-3"
             aria-label={`View profile of ${row.original.name}`}
           >
@@ -103,7 +99,7 @@ const PatientPage = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4 ">
       <h1 className="font-semibold text-xl ">Users List</h1>
       <p className="text-secondary text-sm mb-4">
         Manage and view all registered platform users.
@@ -113,34 +109,35 @@ const PatientPage = () => {
           Loading users...
         </div>
       ) : (
-       <> <div className="p-2 w-[80vw] bg-white rounded-xl overflow-x-auto">
+       <> <div className="relative p-2 w-[78vw] bg-white rounded-xl overflow-x-auto">
           <DataTable table={table} />
         </div>
-
      
-       <div className=" absolute flex justify-end items-center gap-2 right-8 bottom-6">
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}
-              className="py-2 rounded bg-gray-200 disabled:opacity-50"
-            >
-              <IoIosArrowBack size={18} />
-            </button>
-
-            <span className="text-sm p-2 ">
-              Page {page}
-            </span>
-
-            <button
-              onClick={() => setPage((prev) => (users.length < limit ? prev : prev + 1))}
-              disabled={users.length < limit}
-              className="py-2 rounded bg-gray-200 disabled:opacity-50"
-            >
-              <IoIosArrowForward size={18}/>
-            </button>
-          </div> 
+       {/* pagination */}
+               <div className=" flex justify-end items-center gap-1 right-10 bottom-4">
+                 <button
+                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                   disabled={page === 1}
+                   className="py-1 rounded bg-gray-200 disabled:opacity-60"
+                 >
+                   <IoIosArrowBack size={18} />
+                 </button>
+     
+                 <span className="text-sm p-2">Page {page}</span>
+     
+                 <button
+                   onClick={() =>
+                     setPage((prev) => (users.length < limit ? prev : prev + 1))
+                   }
+                   disabled={users.length < limit}
+                   className="py-1 rounded bg-gray-200 disabled:opacity-60"
+                 >
+                   <IoIosArrowForward size={18} />
+                 </button>
+               </div>
         </>
-      )}
+      )}  
+     
     </section>
   );
 };

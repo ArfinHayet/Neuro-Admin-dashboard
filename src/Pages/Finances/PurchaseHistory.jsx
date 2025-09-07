@@ -1,70 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
+import { useNavigate } from "react-router-dom";
+import { getPayments } from "../../api/payment";
+import { IoEye } from "react-icons/io5";
 
-const mockPurchases = [
-  {
-    id: 1,
-    userName: "John Doe",
-    userEmail: "john@example.com",
-    patientName: "Emily Doe",
-    assessmentName: "Autism Diagnostic Test",
-    paymentIntentId: "pi_3Nv12345",
-    amount: 5000, // Stripe stores in cents
-    currency: "GBP",
-    status: "succeeded",
-    paymentMethod: "card",
-    createdAt: "2025-08-20T12:45:00Z",
-    receiptUrl: "https://pay.stripe.com/receipts/123",
-  },
-  {
-    id: 2,
-    userName: "Sarah Lee",
-    userEmail: "sarah@example.com",
-    patientName: "Michael Lee",
-    assessmentName: "ADHD Screening",
-    paymentIntentId: "pi_3Nv67890",
-    amount: 3000,
-    currency: "GBP",
-    status: "succeeded",
-    paymentMethod: "apple_pay",
-    createdAt: "2025-08-22T15:30:00Z",
-    receiptUrl: "https://pay.stripe.com/receipts/456",
-  },
-];
 
 const PurchaseHistory = () => {
-  const [purchases] = useState(mockPurchases);
+  const navigate = useNavigate();
+  const [purchases, setPurchases] = useState([]);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      const data = await getPayments();
+      setPurchases(data.payload || []);
+    };
+    fetchPayments();
+  }, []);
 
   const columns = [
-    { accessorKey: "userName", header: "User Name" },
-    { accessorKey: "userEmail", header: "User Email" },
-    { accessorKey: "patientName", header: "Patient Name" },
-    { accessorKey: "assessmentName", header: "Assessment" },
-    {
-      accessorKey: "amount",
-      header: "Amount Paid",
-      cell: ({ row }) => `£${(row.original.amount / 100).toFixed(2)} ${row.original.currency}`,
-    },
-    { accessorKey: "status", header: "Status" },
-    { accessorKey: "paymentMethod", header: "Method" },
-    {
-      accessorKey: "createdAt",
-      header: "Date",
-      cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+    { 
+      accessorKey: "customerEmail", 
+      header: "User Email" 
     },
     {
-      accessorKey: "receiptUrl",
-      header: "Receipt",
+
+       accessorKey: "amount", 
+       header: "Amount", 
+       cell: ({ row }) => `$${row.original.amount} ${row.original.currency}` 
+      },
+    { 
+      accessorKey: "paymentStatus", 
+      header: "Status" 
+    },
+    { 
+      accessorKey: "createdAt", 
+      header: "Date", 
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleString() 
+    },
+    {
+      id: "actions",
+      header: "Actions",
       cell: ({ row }) => (
-        <a
-          href={row.original.receiptUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-600 underline"
+      <div className="text-left">
+       <button
+          className="text-primary text-lg ml-3"
+          onClick={() => navigate(`/finances/payments/${row.original.id}`)}
         >
-          View
-        </a>
+          <IoEye />
+        </button>   
+      </div>
       ),
     },
   ];
@@ -77,11 +62,10 @@ const PurchaseHistory = () => {
 
   return (
     <section className="">
-      <h2 className="text-lg font-semibold text-primary">Assessment History</h2>
-      <p className="text-xs text-secondary mb-8">
-        View which users purchased which assessments along with Stripe payment details.
+      <h2 className="text-lg font-semibold text-primary mb-2">Payment History</h2>
+      <p className="text-xs text-secondary mb-6">
+        View all payments made by users for assessments.
       </p>
-
       <DataTable table={table} />
     </section>
   );

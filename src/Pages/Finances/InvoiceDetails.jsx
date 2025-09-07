@@ -83,8 +83,7 @@ export default function InvoiceDetails() {
 
   const clinician = clinicians.find((c) => c.name === invoice.clinician);
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
         <h2 className="text-xl font-semibold text-primary mb-1">
           Monthly Invoice {monthYear}
         </h2>
@@ -155,7 +154,6 @@ export default function InvoiceDetails() {
             </div>
           </div>
         </div>
-      </div>
     </section>
   );
 }

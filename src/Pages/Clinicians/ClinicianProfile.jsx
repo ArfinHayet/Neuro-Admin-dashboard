@@ -1,170 +1,171 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import {
-  clinicians,
-  clinicianAssessments,
-  clinicianLeaves,
-} from "../../Components/utils/Data";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import toast from "react-hot-toast";
 import DataTable from "../../Components/Common/DataTable";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { TiDeleteOutline } from "react-icons/ti";
+import { getUserById, getLeaves, getAvailability } from "../../api/user";
+import { MdOutlineMailOutline } from "react-icons/md";
+import { LuPhone } from "react-icons/lu";
+import { FaRegAddressCard } from "react-icons/fa";
+
 
 const ClinicianProfile = () => {
   const { id } = useParams();
-  const clinician = clinicians.find((c) => c.id.toString() === id);
-
-  const leavesData = clinicianLeaves[id] || [];
-  const [leaves, setLeaves] = useState(leavesData);
+  const [clinician, setClinician] = useState(null);
+  const navigate = useNavigate();
+  const [leaves, setLeaves] = useState([]);
+  const [availability, setAvailability] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLeaves(leavesData);
-  }, [id, leavesData]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const userData = await getUserById(id);
+        if (!userData.payload) {
+          setClinician(null);
+          return;
+        }
+        setClinician(userData.payload);
 
-  const assessments = clinicianAssessments[id] || [];
+        const allLeaves = await getLeaves();
+        const userLeaves = allLeaves.payload.filter((l) => 
+          String(l.userId) === String(id));
+        setLeaves(userLeaves);
 
-  const handleApprove = useCallback(
-    (leaveId) => {
-      setLeaves((prev) =>
-        prev.map((l) => (l.id === leaveId ? { ...l, status: "Approved" } : l))
-      );
-      toast.success("Leave approved");
-    },
-    [setLeaves]
-  );
+        const allAvailability = await getAvailability();
+        const userAvailability = allAvailability.payload.filter((a) => 
+          String(a.userId) === String(id));
+        setAvailability(userAvailability);
 
-  const handleReject = useCallback(
-    (leaveId) => {
-      setLeaves((prev) =>
-        prev.map((l) => (l.id === leaveId ? { ...l, status: "Rejected" } : l))
-      );
-      toast.error("Leave rejected");
-    },
-    [setLeaves]
-  );
+      } catch (err) {
+        console.error(err);
+        setClinician(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const assessmentColumns = useMemo(
+    fetchData();
+  }, [id]);
+
+ const leaveColumns = useMemo(
     () => [
-      {
-        accessorKey: "assessmentName",
-        header: "Assessment Name",
+      { 
+        accessorKey: "startDate", 
+        header: "Start Date", 
+        cell: (info) => new Date(info.getValue()).toLocaleDateString("en-GB") 
       },
-      {
-        accessorKey: "patientName",
-        header: "Patient Name",
+      { 
+        accessorKey: "endDate", 
+        header: "End Date", 
+        cell: (info) => new Date(info.getValue()).toLocaleDateString("en-GB") },
+      { 
+        accessorKey: "leaveType", 
+        header: "Type" },
+      { 
+        accessorKey: "status", 
+        header: "Status" },
+    ],
+    []
+  );
+
+  const availabilityColumns = useMemo(
+    () => [
+      { 
+        accessorKey: "day", 
+        header: "Day" 
       },
-      {
-        accessorKey: "dateTaken",
-        header: "Date Taken",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString("en-GB"),
+      { 
+        accessorKey: "time", 
+        header: "Time" 
+      },
+      { 
+        accessorKey: "availabilityType", 
+        header: "Type" 
       },
     ],
     []
   );
 
-  const leaveColumns = useMemo(
-    () => [
-      {
-        accessorKey: "start",
-        header: "Start Date",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString("en-GB"),
-      },
-      {
-        accessorKey: "end",
-        header: "End Date",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString("en-GB"),
-      },
-      { accessorKey: "reason", header: "Reason" },
-      { accessorKey: "status", header: "Status" },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-          if (row.original.status !== "Pending") return null;
-          return (
-            <div className="flex gap-2 ml-2">
-              <button
-                className="text-green-600 hover:underline "
-                onClick={() => handleApprove(row.original.id)}
-              >
-                <FaRegCheckCircle size={17} />
-              </button>
-              <button
-                className="text-red-600 hover:underline "
-                onClick={() => handleReject(row.original.id)}
-              >
-                <TiDeleteOutline size={22} />
-              </button>
-            </div>
-          );
-        },
-      },
-    ],
-    [handleApprove, handleReject]
-  );
-
-  const assessmentTable = useReactTable({
-    data: assessments,
-    columns: assessmentColumns,
-    getCoreRowModel: getCoreRowModel(),
+  const leaveTable = useReactTable(
+    { data: leaves, 
+      columns: leaveColumns, 
+      getCoreRowModel: getCoreRowModel() 
+    });
+  const availabilityTable = useReactTable({ 
+    data: availability, 
+    columns: availabilityColumns, 
+    getCoreRowModel: getCoreRowModel() 
   });
 
-  const leaveTable = useReactTable({
-    data: leaves,
-    columns: leaveColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+    if (loading) {
+    return (
+      <div className="flex justify-center items-center  text-gray-500">
+        Loading clinician details...
+      </div>
+    );
+  }
+  if (!clinician) {
+    return (
+      <div className="p-6 ">
+        <h2>User not found</h2>
+        <button
+          onClick={() => navigate("/clinicians")}
+          className="mt-4 px-4 py-2 bg-gray-200 rounded"
+        >
+          Back to User List
+        </button>
+      </div>
+    );
+  }
 
-  if (!clinician) return <p className="p-4">Clinician not found.</p>;
+
 
   return (
-       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
-        <div className="flex items-center gap-6 mb-4">
-          <img
-            src={clinician.image}
-            alt={clinician.name}
-            className="w-24 h-24 rounded-full"
-          />
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold ">{clinician.name}</h2>
-            <p className="text-sm text-gray-500">
-              Joined on{" "}
-              {new Date(clinician.joinedDate).toLocaleDateString("en-GB")}
-            </p>
+      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <h2 className="text-xl font-semibold mb-4">{clinician.name}'s Details</h2>
+     <div className="space-y-4">
+      <div className="">
+          <h2 className=" font-semibold mb-2">Login Information</h2>
+        <p className="flex gap-2 items-center justify-start text-sm mb-1">
+               <MdOutlineMailOutline size={18} /> {clinician.email}
+             </p>
+             <p className="flex gap-2 items-center justify-start text-sm">
+               <LuPhone size={16} /> {clinician.phone}
+             </p>
+       </div> 
 
-            {clinician.specialities && (
-              <p className="text-sm text-gray-500 ">
-                <strong className="text-gray-700">Specialties </strong>{" "}
-                {clinician.specialities.join(", ")}
-              </p>
-            )}
-            {clinician.registrationInfo && (
-              <p className="text-sm text-gray-500 ">
-                <strong className="text-gray-700">Registered in </strong>{" "}
-                {clinician.registrationInfo}
-              </p>
-            )}
-            {clinician.bio && (
-              <p className="text-sm text-gray-700 max-w-xl">{clinician.bio}</p>
-            )}
+       <div className="space-y-1">
+          <h2 className=" font-semibold mb-1">Personal Information</h2>
+          
+          <p className="flex gap-2 items-center text-sm">
+            <FaRegAddressCard size={16} /> {clinician.street}
+          </p>
+
           </div>
-        </div>
 
-        <div className="mt-4">
-          <h3 className="text-lg font-medium mb-1">Ongoing Assessments</h3>
-          <div className="bg-white p-2 rounded-lg">
-            <DataTable table={assessmentTable} />
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-lg font-medium mb-1">Leave Management</h3>
-          <div className="bg-white p-2 rounded-lg">
+      <div className="">
+        <h3 className=" font-semibold mb-2">Leaves</h3>
+        {leaves.length === 0 ? (
+          <p className="text-gray-500 text-sm">No leave records.</p>
+        ) : (
+          <div className=" py-2 max-w-[70vw]">
             <DataTable table={leaveTable} />
           </div>
-        </div>
+        )}
+      </div>
 
+      <div className="">
+        <h3 className=" font-semibold mb-2">Availability</h3>
+        {availability.length === 0 ? (
+          <p className="text-sm text-gray-500">No availability records.</p>
+        ) : (
+          <div className=" py-2 max-w-[70vw]">
+            <DataTable table={availabilityTable} />
+          </div>
+        )}
+      </div>
+      </div>
     </section>
   );
 };
