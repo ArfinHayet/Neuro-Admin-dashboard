@@ -4,54 +4,67 @@ import DataTable from "../../Components/Common/DataTable";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { getAssessments } from "../../api/assessments";
+import { getAllSubmissions } from "../../api/submissions";
 import { getUsers } from "../../api/user";
+import { getAssessments } from "../../api/assessments";
 
 export default function TransactionLogs() {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [selectedClinician, setSelectedClinician] = useState("all");
   const [clinicians, setClinicians] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [assessments, setAssessments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchClinicians = async () => {
+    const fetchData = async () => {
       try {
-        const res = await getUsers();
-        const clinicianUsers = res.payload.filter(
+        const usersRes = await getUsers();
+        const clinicianUsers = usersRes.payload.filter(
           (u) => u.role === "clinician"
         );
         setClinicians(clinicianUsers);
+
+        const assessmentsRes = await getAssessments();
+        setAssessments(assessmentsRes.payload || []);
       } catch (err) {
-        console.error("Error fetching clinicians:", err);
+        console.error("Error fetching data:", err);
       }
     };
-    fetchClinicians();
+    fetchData();
   }, []);
 
-  // Generate invoices from assessments
   useEffect(() => {
-    const fetchAssessments = async () => {
+    const fetchSubmissions = async () => {
       try {
-        const res = await getAssessments();
-        const assessments = res.payload || [];
+        const res = await getAllSubmissions();
+        const submissions = res.payload || [];
 
-        const grouped = assessments.reduce((acc, a) => {
-          const clinicianId = a.userId; // assuming assessment.userId = clinician
+        // Group submissions by clinicianId
+        const grouped = submissions.reduce((acc, submission) => {
+          const clinicianId = submission.clinicianId || submission.userId;
           if (!clinicianId) return acc;
 
           if (!acc[clinicianId]) acc[clinicianId] = [];
-          acc[clinicianId].push(a);
+          acc[clinicianId].push(submission);
           return acc;
         }, {});
 
         const newInvoices = Object.keys(grouped).map((clinicianId, index) => {
-          const logs = grouped[clinicianId];
-          const totalAmount = logs.reduce(
-            (sum, a) => sum + (parseFloat(a.price) || 0),
-            0
-          );
-          const clinicianShare = totalAmount * 0.2;
+          const submissions = grouped[clinicianId];
+          
+          let totalAmount = 0;
+          let clinicianShare = 0;
+          
+          submissions.forEach(submission => {
+            const assessment = assessments.find(a => a.id === submission.assessmentId);
+            if (assessment && assessment.price) {
+              const price = parseFloat(assessment.price) || 0;
+              totalAmount += price;
+              clinicianShare += price * 0.2;
+            }
+          });
+
           const clinician = clinicians.find((c) => c.id === Number(clinicianId));
 
           return {
@@ -59,11 +72,11 @@ export default function TransactionLogs() {
             clinician: clinician ? clinician.name : `Clinician #${clinicianId}`,
             clinicianId,
             date: new Date().toISOString().slice(0, 10),
-            assessmentsCount: logs.length,
+            assessmentsCount: submissions.length,
             totalAmount,
             clinicianShare,
             status: "Unpaid",
-            assessments: logs,
+            submissions,
           };
         });
 
@@ -73,8 +86,10 @@ export default function TransactionLogs() {
       }
     };
 
-    if (clinicians.length > 0) fetchAssessments();
-  }, [clinicians]);
+    if (clinicians.length > 0 && assessments.length > 0) {
+      fetchSubmissions();
+    }
+  }, [clinicians, assessments]);
 
   const handleMarkAsPaid = (invoiceId) => {
     setInvoices((prev) =>
@@ -89,7 +104,6 @@ export default function TransactionLogs() {
     navigate(`/finances/invoices/${invoice.id}`, { state: { invoice } });
   };
 
-  // Filtered data
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {
       const matchesClinician =
@@ -125,17 +139,13 @@ export default function TransactionLogs() {
   const columns = [
     { accessorKey: "date", header: "Date" },
     { accessorKey: "clinician", header: "Clinician" },
-    { accessorKey: "assessmentsCount", header: "# Assessments" },
+    { accessorKey: "assessmentsCount", header: "Assessments" },
     {
       accessorKey: "totalAmount",
       header: "Total Amount",
-      cell: (info) => `£${info.getValue()}`,
+      cell: (info) => `£${info.getValue().toFixed(2)}`,
     },
-    {
-      accessorKey: "clinicianShare",
-      header: "Clinician Share",
-      cell: (info) => `£${info.getValue()}`,
-    },
+   
    
     {
       accessorKey: "status",
@@ -186,7 +196,6 @@ export default function TransactionLogs() {
         Track earnings, commission splits, and manage invoices
       </p>
 
-      {/* Filters */}
       <div className="flex gap-10 mb-4">
         {/* Month Filter */}
         <div className="flex items-center gap-2">

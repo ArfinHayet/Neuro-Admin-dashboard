@@ -16,16 +16,34 @@ const createSubmission = async (obj) => {
   return data;
 };
 
-const getAllSubmissions = async (page = 1, limit = 5) => {
-  const response = await fetch(`${domain}/submissions?page=${page}&limit=${limit}`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
+const getAllSubmissions = async () => {
+  let allSubmissions = [];
+  let page = 1;
+  const limit = 100; 
 
-  const data = await response.json();
-  return data;
+  while (true) {
+    const response = await fetch(
+      `${domain}/submissions?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.payload) || data.payload.length === 0) {
+      break; 
+    }
+
+    allSubmissions = [...allSubmissions, ...data.payload];
+    page += 1;
+  }
+
+  return { payload: allSubmissions };
 };
+
 
 export { createSubmission, getAllSubmissions };
