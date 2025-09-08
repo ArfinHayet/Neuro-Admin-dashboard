@@ -3,24 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
-import { getAllSubmissions } from "../../api/submissions";
-import { getAnswersByAssessmentId } from "../../api/answers";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { getSubmissionsPage, getAllSubmissions } from "../../api/submissions";
 
 const SubmittedOnDemand = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const limit = 20;
 
+  // fetch paginated submissions
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      const data = await getAllSubmissions();
+      const data = await getSubmissionsPage(page, limit);
       const submissionsData = data?.payload || [];
 
       const onDemandSubmissions = submissionsData.filter(
         (submission) => submission.assessmentId !== 12
       );
-      //  console.log(" submissions list:", onDemandSubmissions);
 
       setSubmissions(onDemandSubmissions);
     } catch (err) {
@@ -30,12 +33,31 @@ const SubmittedOnDemand = () => {
       setLoading(false);
     }
   };
+
+  // fetch total count across all pages
+  const fetchTotal = async () => {
+    try {
+      const all = await getAllSubmissions();
+      const filtered = all?.payload?.filter(
+        (submission) => submission.assessmentId !== 12
+      );
+      setTotalSubmissions(filtered.length);
+    } catch (err) {
+      console.error("Failed to fetch total submissions:", err);
+      setTotalSubmissions(0);
+    }
+  };
+
   useEffect(() => {
     fetchSubmissions();
+  }, [page]);
+
+  useEffect(() => {
+    fetchTotal();
   }, []);
 
-  const onView = (id) => {
-    navigate(`/submitted-assessments/on-demand/${id.assessmentId}`);
+  const onView = (submission) => {
+    navigate(`/submitted-assessments/on-demand/${submission.assessmentId}`);
   };
 
   const data = useMemo(() => submissions, [submissions]);
@@ -50,17 +72,13 @@ const SubmittedOnDemand = () => {
         header: "Child Name",
         accessorFn: (row) => row.patient?.name || "Unknown Child",
       },
-      // {
-      //   header: "Assessment Name",
-      //   accessorFn: (row) => row.assessment?.name || "Unknown Assessment",
-      // },
       {
         header: "Category",
         accessorFn: (row) => row.assessment?.category || "N/A",
       },
       {
         header: "Score",
-        accessorFn: (row) => row.score || "N/A",
+        accessorFn: (row) => row.score ?? "N/A",
       },
       {
         header: "Date Taken",
@@ -88,11 +106,12 @@ const SubmittedOnDemand = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.id.toString(),
   });
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
-      <h1 className="text-xl font-semibold ">Submitted On-Demand Assessments</h1>
+      <h1 className="text-xl font-semibold">Submitted On-Demand Assessments</h1>
       <p className="text-sm mb-4 text-secondary">
         Access and Review Detailed Records of Every Submitted Assessment.
       </p>
@@ -103,13 +122,43 @@ const SubmittedOnDemand = () => {
         </p>
       ) : (
         <>
-          <p className="mb-2 ">Total submitted: {submissions?.length}</p>
-          <div className="bg-white rounded border border-opacity-30 ">
+          <p className="mb-2">
+            Total Showing{" "}
+            {submissions.length}
+          </p>
+          <div className="relative  w-[78vw] h-[70vh] bg-white  overflow-x-auto">
             <DataTable table={table} />
+          </div>
+
+
+          {/* pagination */}
+          <div className="flex justify-end items-center gap-1 right-10 bottom-8">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowBack size={18} />
+            </button>
+
+            <span className="text-sm p-2">Page {page}</span>
+
+            <button
+              onClick={() =>
+                setPage((prev) =>
+                  submissions.length < limit ? prev : prev + 1
+                )
+              }
+              disabled={submissions.length < limit}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowForward size={18} />
+            </button>
           </div>
         </>
       )}
     </section>
   );
 };
+
 export default SubmittedOnDemand;

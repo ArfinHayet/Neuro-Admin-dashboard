@@ -300,7 +300,7 @@ const Dashboard = () => {
             {latestClinicians.length === 0 ? (
               <p className="text-gray-500">No clinicians found.</p>
             ) : (
-              <ul className="overflow-y-auto max-h-[400px]">
+              <ul className="overflow-y-auto h-[400px]">
                 {latestClinicians.map((clinician) => (
                   <li
                     key={clinician.id}
@@ -324,7 +324,7 @@ const Dashboard = () => {
             {latestUsers.length === 0 ? (
               <p className="text-gray-500">No new users found.</p>
             ) : (
-              <ul className="overflow-y-auto max-h-fit">
+              <ul className="overflow-y-auto h-[400px]">
                 {latestUsers.map((user) => (
                   <li key={user.id} className="border-b py-2 last:border-none">
                     <p className="text-xs">{user.name}</p>
@@ -341,15 +341,14 @@ const Dashboard = () => {
 
         {/* Middle Column */}
         <div className="space-y-4">
-          {/* Top Clinicians Last 30 Days */}
-          {/* Top Clinicians by Submissions */}
+          {/* Top Clinicians by Submissions in 30 days */}
           <div className="bg-white rounded-lg border border-gray-200 p-4 ">
             <h2 className="font-semibold mb-2 text-sm">Top Clinicians</h2>
 
             {topClinicians.length === 0 ? (
               <p className="text-gray-500">No clinician submissions found.</p>
             ) : (
-              <ul className="space-y-2 overflow-y-auto">
+              <ul className="space-y-2 h-[400px] overflow-y-auto">
                 {topClinicians.map((entry, index) => (
                   <li
                     key={index}
@@ -388,7 +387,7 @@ const Dashboard = () => {
                 View All →
               </button>
             </div>
-            <div className="space-y-2 overflow-y-auto max-h-[200px]">
+            <div className="space-y-2 overflow-y-auto h-[300px]">
               {onDemandAssessmentsData.map((assessment) => (
                 <div
                   key={assessment.id}

@@ -1,17 +1,17 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getUsers } from "../../api/user";
-import { IoIosArrowBack, IoIosArrowForward  } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const PatientPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const limit = 30; 
+  const limit = 30;
 
   useEffect(() => {
     fetchUsers();
@@ -55,7 +55,7 @@ const PatientPage = () => {
       accessorKey: "country",
       cell: (info) => info.row.original.country || "N/A",
     },
-    
+
     {
       header: "Role",
       accessorKey: "role",
@@ -80,7 +80,7 @@ const PatientPage = () => {
       cell: ({ row }) => (
         <div className="text-left">
           <button
-            onClick={() => navigate(`/patients/${row.original.id}`)} 
+            onClick={() => navigate(`/patients/${row.original.id}`)}
             className="text-primary  text-lg ml-3"
             aria-label={`View profile of ${row.original.name}`}
           >
@@ -109,35 +109,36 @@ const PatientPage = () => {
           Loading users...
         </div>
       ) : (
-       <> <div className="relative p-2 w-[78vw] bg-white rounded-xl overflow-x-auto">
-          <DataTable table={table} />
-        </div>
-     
-       {/* pagination */}
-               <div className=" flex justify-end items-center gap-1 right-10 bottom-4">
-                 <button
-                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                   disabled={page === 1}
-                   className="py-1 rounded bg-gray-200 disabled:opacity-60"
-                 >
-                   <IoIosArrowBack size={18} />
-                 </button>
-     
-                 <span className="text-sm p-2">Page {page}</span>
-     
-                 <button
-                   onClick={() =>
-                     setPage((prev) => (users.length < limit ? prev : prev + 1))
-                   }
-                   disabled={users.length < limit}
-                   className="py-1 rounded bg-gray-200 disabled:opacity-60"
-                 >
-                   <IoIosArrowForward size={18} />
-                 </button>
-               </div>
+        <>
+          {" "}
+          <div className="relative w-[79vw] h-[70vh] bg-white overflow-x-auto">
+            <DataTable table={table} />
+          </div>
+
+          {/* pagination */}
+          <div className=" flex justify-end items-center gap-1 right-10 bottom-8">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowBack size={18} />
+            </button>
+
+            <span className="text-sm p-2">Page {page}</span>
+
+            <button
+              onClick={() =>
+                setPage((prev) => (users.length < limit ? prev : prev + 1))
+              }
+              disabled={users.length < limit}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowForward size={18} />
+            </button>
+          </div>
         </>
-      )}  
-     
+      )}
     </section>
   );
 };
