@@ -119,38 +119,39 @@ const AssessmentDetails = () => {
         <p className="mb-4 text-gray-700 text-sm">
           <strong>Price </strong>£{assessment?.priceId || "N/A"}
         </p>
-        
-        <h3 className="font-medium my-3">Question List</h3>
-        <table className="w-full text-sm text-left text-gray-700">
-          <thead className="bg-[#f3f1f1] font-light">
-            <tr>
-              <th className="pl-4">#</th>
-              <th className="p-2">Question</th>
-              <th className="p-2">Order</th>
-              <th className="p-2">Answer Type</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map((q, i) => (
-              <QuestionArrangement
-                key={q.id}
-                index={i}
-                question={q}
-                onChange={(id, field, value) =>
-                  setQuestions((prev) =>
-                    prev.map((ques) =>
-                      ques.id === id ? { ...ques, [field]: value } : ques
-                    )
-                  )
-                }
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </tbody>
-        </table>
 
+        <h3 className="font-medium my-3">Question List</h3>
+        <div className="h-[60vh] overflow-y-auto">
+          <table className="w-full h-[50vh]  text-sm text-left text-gray-700 ">
+            <thead className="bg-[#f3f1f1] font-light">
+              <tr>
+                <th className="pl-4">#</th>
+                <th className="p-2">Question</th>
+                <th className="p-2">Order</th>
+                <th className="p-2">Answer Type</th>
+                <th className="p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {questions.map((q, i) => (
+                <QuestionArrangement
+                  key={q.id}
+                  index={i}
+                  question={q}
+                  onChange={(id, field, value) =>
+                    setQuestions((prev) =>
+                      prev.map((ques) =>
+                        ques.id === id ? { ...ques, [field]: value } : ques
+                      )
+                    )
+                  }
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
         <OnDemandQuestionModal
           isOpen={isModalOpen}
           onClose={() => {
