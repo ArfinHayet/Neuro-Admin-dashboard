@@ -47,11 +47,11 @@ const Blogs = () => {
   const BlogDetails = ({ blog, onEdit, onDelete }) => {
     return (
       <div className="p-4 border rounded-lg shadow-sm bg-white flex flex-col gap-1">
-        <img
+        {/* <img
           src={blog.image}
           alt={blog.title}
           className="w-full h-40 object-cover rounded"
-        />
+        /> */}
         <h3 className="text-sm font-semibold">{blog.title}</h3>
         <p className="text-gray-700 text-xs">{blog.content.slice(0, 50)}...</p>
         <div className="flex gap-2 mt-2">

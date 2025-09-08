@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
-  users,
   clinicians,
-  transactionLogs,
 } from "../../Components/utils/Data";
 import { LuUsers } from "react-icons/lu";
 import { MdOutlineCurrencyPound } from "react-icons/md";
@@ -22,14 +20,13 @@ const Stats = () => {
     const fetchData = async () => {
       try {
         // Fetch users
-        const usersData = await getUsers(1, 1000);
+        const usersData = await getUsers();
         const usersCount = Array.isArray(usersData.payload)
           ? usersData.payload.length
           : 0;
         setTotalUsers(usersCount);
 
-        // Fetch submissions
-        const submissionsData = await getAllSubmissions(1, 1000);
+        const submissionsData = await getAllSubmissions();
         const submissions = Array.isArray(submissionsData.payload)
           ? submissionsData.payload
           : [];

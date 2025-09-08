@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
-//import { onDemandAssessments } from "../utils/Data";
 
 const OnDemandQuestionModal = ({
   isOpen,
@@ -12,7 +11,7 @@ const OnDemandQuestionModal = ({
 }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
-    questions: "",
+    question: "",
     questionOrder: "",
     answerType: "Yes/No",
     options: ["Yes", "No"],
@@ -20,24 +19,31 @@ const OnDemandQuestionModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  //const { id } = useParams();
-  // const assessment = onDemandAssessments.find(
-  //   (item) => item.id.toString() === id
-  // );
-
   useEffect(() => {
     if (editingQuestion) {
+      let options = ["Yes", "No"];
+
+      if (Array.isArray(editingQuestion.options)) {
+        options = editingQuestion.options;
+      } else if (typeof editingQuestion.options === "string") {
+        try {
+          options = JSON.parse(editingQuestion.options);
+        } catch {
+          options = ["Yes", "No"];
+        }
+      }
+
       setFormData({
         type: defaultType,
-        questions: editingQuestion.questions || "",
+        question: editingQuestion.questions || "",
         questionOrder: editingQuestion.order || "",
         answerType: editingQuestion.answerType || "Yes/No",
-        options: editingQuestion.options || ["Yes", "No"],
+        options: options,
       });
     } else {
       setFormData({
         type: defaultType,
-        questions: "",
+        question: "",
         questionOrder: "",
         answerType: "Yes/No",
         options: ["Yes", "No"],
@@ -57,7 +63,7 @@ const OnDemandQuestionModal = ({
       } else if (value === "Text") {
         options = ["Text"];
       } else if (value === "MultipleChoice") {
-        options = ["Option A"];
+        options = [""];
       }
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
@@ -66,33 +72,32 @@ const OnDemandQuestionModal = ({
   };
 
   const handleOptionChange = (index, value) => {
-    const updated = [...formData.options];
-    if (formData.answerType === "MultipleChoice") {
-      updated[index].label = value;
-    } else {
+    if (formData.answerType !== "MultipleChoice") return;
+
+    setFormData((prev) => {
+      const updated = [...prev.options];
       updated[index] = value;
-    }
-    setFormData((prev) => ({ ...prev, options: updated }));
+      return { ...prev, options: updated };
+    });
   };
 
   const addOption = () => {
     setFormData((prev) => ({
       ...prev,
-      options: [...prev.options, `Option ${prev.options.length + 1}`],
+      options: [...prev.options, ""],
     }));
   };
 
   const removeOption = (index) => {
-    const updated = formData.options.filter((_, i) => i !== index);
-    setFormData((prev) => ({
-      ...prev,
-      options: updated.length ? updated : ["Option A"],
-    }));
+    setFormData((prev) => {
+      const updated = prev.options.filter((_, i) => i !== index);
+      return { ...prev, options: updated.length ? updated : [""] };
+    });
   };
 
   const validateForm = () => {
-    if (!formData.questions.trim()) {
-      setError("Question(s) is required");
+    if (!formData.question.trim()) {
+      setError("Question is required");
       return false;
     }
     if (!formData.questionOrder) {
@@ -101,7 +106,7 @@ const OnDemandQuestionModal = ({
     }
     if (
       formData.answerType === "MultipleChoice" &&
-      formData.options.some((o) => !o.label.trim())
+      formData.options.some((o) => !o || !o.toString().trim())
     ) {
       setError("All options must have labels");
       return false;
@@ -121,7 +126,7 @@ const OnDemandQuestionModal = ({
     try {
       const payload = {
         assessmentId: assessment.id,
-        questions: formData.questions,
+        questions: formData.question.trim(),
         order: Number(formData.questionOrder),
         answerType: formData.answerType,
         options: formData.options,
@@ -165,30 +170,22 @@ const OnDemandQuestionModal = ({
             : "Add On-Demand Assessment Question"}
         </h2>
 
-        {/* Assessment Name (Fixed) */}
-        {/* <label className="block text-xs mb-1">Assessment Name</label>
-        <p className="w-full border px-3 py-2 rounded mb-3 text-xs">
-          {assessment?.category || ""}
-        </p> */}
-
-        {/* Assessment Type */}
         <label className="block text-xs mb-3 font-medium text-gray-700">
-          Assessment Type
+          Assessment
         </label>
         <div className="w-full border px-3 py-2 rounded mb-4 text-xs text-gray-600">
-          <p>On-Demand Assessment</p>
+          <p>{assessment?.name || "On-Demand Assessment"}</p>
         </div>
 
-        {/* Question */}
         <label className="block text-xs mb-1">Question</label>
         <textarea
           className="w-full border px-3 py-2 rounded mb-3 text-xs"
           rows={2}
-          value={formData.questions}
-          onChange={(e) => handleChange("questions", e.target.value)}
+          value={formData.question}
+          onChange={(e) => handleChange("question", e.target.value)}
+          placeholder="Enter question"
         />
 
-        {/* Question Order */}
         <label className="block text-xs mb-1">Question Order</label>
         <input
           type="text"
@@ -198,7 +195,6 @@ const OnDemandQuestionModal = ({
           placeholder="Enter question order (number)"
         />
 
-        {/* Answer Type */}
         <label className="block text-xs mb-1">Answer Type</label>
         <select
           className="w-full border px-3 py-2 rounded mb-3 text-xs"

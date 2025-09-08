@@ -32,7 +32,7 @@ const QuestionArrangement = ({
     <>
       <tr className="border-b bg-white ">
         <td className="pl-4">{index + 1}</td>
-        <td className="p-2 text-sm">
+        <td className="p-2 text-sm w-[40vw]">
           {question.questions || question.question}
         </td>
         <td className="p-2">

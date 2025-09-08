@@ -47,15 +47,18 @@ const InitialAssessment = () => {
           id: q.id || i + 1,
           question: q.questions || q.question || "",
           order: q.order || i + 1,
-          answerType: q.answerType === "MultipleChoice" 
-          ? "multiple" 
-          : q.answerType === "YesNo" 
-          ? "yesno" 
-          : "text",
-        answers: q.options ? q.options.map(option => ({ 
-          label: option, 
-          score: 0 ,
-        })) : []
+          answerType:
+            q.answerType === "MultipleChoice"
+              ? "multiple"
+              : q.answerType === "YesNo"
+              ? "yesno"
+              : "text",
+          answers: q.options
+            ? q.options.map((option) => ({
+                label: option,
+                score: 0,
+              }))
+            : [],
         }));
 
         setQuestions(questionsArray);
@@ -67,28 +70,28 @@ const InitialAssessment = () => {
     }
   };
 
- const handleSave = (savedQuestion) => {
-  console.log("Saved question received:", savedQuestion);
-  
-  const newQ = {
-    id: savedQuestion.id , 
-    questions: savedQuestion.questions || savedQuestion.question,
-    order: savedQuestion.order,
-    answerType: savedQuestion.answerType,
-    answers: savedQuestion.answers || savedQuestion.options || []
-  };
+  const handleSave = (savedQuestion) => {
+    console.log("Saved question received:", savedQuestion);
 
-  if (editingQuestion) {
-    setQuestions(prev => prev.map(q => 
-      q.id === editingQuestion.id ? newQ : q
-    ));
-  } else {
-    setQuestions(prev => [...prev, newQ]);
-  }
-  
-  setIsModalOpen(false);
-  setEditingQuestion(null);
-};
+    const newQ = {
+      id: savedQuestion.id,
+      questions: savedQuestion.questions || savedQuestion.question,
+      order: savedQuestion.order,
+      answerType: savedQuestion.answerType,
+      answers: savedQuestion.answers || savedQuestion.options || [],
+    };
+
+    if (editingQuestion) {
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === editingQuestion.id ? newQ : q))
+      );
+    } else {
+      setQuestions((prev) => [...prev, newQ]);
+    }
+
+    setIsModalOpen(false);
+    setEditingQuestion(null);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -132,35 +135,37 @@ const InitialAssessment = () => {
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
-      <table className="w-full text-sm text-left text-gray-700">
-        <thead className="bg-[#f3f1f1] font-light">
-          <tr>
-            <th className="pl-4">#</th>
-            <th className="p-2">Question</th>
-            <th className="p-2">Order</th>
-            <th className="p-2">Answer Type</th>
-            <th className="p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions?.map((q, i) => (
-            <QuestionArrangement
-              key={q.id}
-              index={i}
-              question={q}
-              onChange={(id, field, value) => {
-                setQuestions((prev) =>
-                  prev.map((ques) =>
-                    ques.id === id ? { ...ques, [field]: value } : ques
-                  )
-                );
-              }}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="h-[70vh] overflow-y-auto">
+        <table className="w-full text-sm text-left text-gray-700">
+          <thead className="bg-[#f3f1f1] font-light">
+            <tr>
+              <th className="pl-4">#</th>
+              <th className="p-2">Question</th>
+              <th className="p-2">Order</th>
+              <th className="p-2">Answer Type</th>
+              <th className="p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {questions?.map((q, i) => (
+              <QuestionArrangement
+                key={q.id}
+                index={i}
+                question={q}
+                onChange={(id, field, value) => {
+                  setQuestions((prev) =>
+                    prev.map((ques) =>
+                      ques.id === id ? { ...ques, [field]: value } : ques
+                    )
+                  );
+                }}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <InitialModal
         isOpen={isModalOpen}

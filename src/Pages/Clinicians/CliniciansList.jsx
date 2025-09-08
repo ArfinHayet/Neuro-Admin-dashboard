@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useReactTable,
-  getCoreRowModel,
-} from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getUsers } from "../../api/user";
@@ -98,11 +95,12 @@ const CliniciansList = () => {
         </div>
       ) : (
         <>
-          <div className="p-2 w-[75vw] bg-white rounded-xl overflow-x-auto">
+          <div className="relative  w-[79vw] h-[70vh] bg-white overflow-x-auto">
             <DataTable table={table} />
           </div>
+
           {/* pagination */}
-          <div className="absolute flex justify-end items-center gap-1 right-10 bottom-8">
+          <div className=" flex justify-end items-center gap-1 right-10 bottom-8">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}

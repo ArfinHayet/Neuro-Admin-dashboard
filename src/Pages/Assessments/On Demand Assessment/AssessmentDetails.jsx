@@ -98,7 +98,7 @@ const AssessmentDetails = () => {
     <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-4 ">
       <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">{assessment?.category}</h2>
+          <h2 className="text-xl font-semibold">{assessment?.name}</h2>
           <button
             className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
             onClick={() => {
@@ -115,42 +115,48 @@ const AssessmentDetails = () => {
         </p>
         <p className="mb-1 text-gray-700 text-sm">
           <strong>Duration </strong>
+          {assessment?.category || "N/A"}
+        </p>
+        <p className="mb-1 text-gray-700 text-sm">
+          <strong>Duration </strong>
           {assessment?.totalTime || "N/A"}
         </p>
         <p className="mb-4 text-gray-700 text-sm">
           <strong>Price </strong>£{assessment?.priceId || "N/A"}
         </p>
-        <h3 className="font-medium my-3">Question List</h3>
-        <table className="w-full text-sm text-left text-gray-700">
-          <thead className="bg-[#f3f1f1] font-light">
-            <tr>
-              <th className="pl-4">#</th>
-              <th className="p-2">Question</th>
-              <th className="p-2">Order</th>
-              <th className="p-2">Answer Type</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map((q, i) => (
-              <QuestionArrangement
-                key={q.id}
-                index={i}
-                question={q}
-                onChange={(id, field, value) =>
-                  setQuestions((prev) =>
-                    prev.map((ques) =>
-                      ques.id === id ? { ...ques, [field]: value } : ques
-                    )
-                  )
-                }
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </tbody>
-        </table>
 
+        <h3 className="font-medium my-3">Question List</h3>
+        <div className="h-[60vh] overflow-y-auto">
+          <table className="w-full h-[50vh]  text-sm text-left text-gray-700 ">
+            <thead className="bg-[#f3f1f1] font-light">
+              <tr>
+                <th className="pl-4">#</th>
+                <th className="p-2">Question</th>
+                <th className="p-2">Order</th>
+                <th className="p-2">Answer Type</th>
+                <th className="p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {questions.map((q, i) => (
+                <QuestionArrangement
+                  key={q.id}
+                  index={i}
+                  question={q}
+                  onChange={(id, field, value) =>
+                    setQuestions((prev) =>
+                      prev.map((ques) =>
+                        ques.id === id ? { ...ques, [field]: value } : ques
+                      )
+                    )
+                  }
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
         <OnDemandQuestionModal
           isOpen={isModalOpen}
           onClose={() => {

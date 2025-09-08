@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext,useState } from "react";
+import { createContext,useEffect,useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -9,10 +9,26 @@ const AuthProvider = ({ children }) => {
 
   console.log("333", userData?.name)
 
+    useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    if (storedUser) {
+      setUserData(JSON.parse(storedUser));
+    }
+  }, []);
+
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userData");
     setUserData(null);
   };
+
+
+  useEffect(() => {
+    if (userData) {
+      localStorage.setItem("userData", JSON.stringify(userData));
+    }
+  }, [userData]);
 
   // Context Data
   const authInfo = {

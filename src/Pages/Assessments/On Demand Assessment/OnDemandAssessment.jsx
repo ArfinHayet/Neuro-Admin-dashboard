@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { FaRegClock } from "react-icons/fa6";
 import { FiEdit3, FiTrash2 } from "react-icons/fi";
 import {
-  createAssessment,
   getAssessments,
   deleteAssessment,
 } from "../../../api/assessments";
@@ -86,8 +85,9 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
         </div>
 
         <div className="flex flex-col gap-2 justify-center items-center  mt-2">
+         <p className="text-xs text-center">{category.category}</p>
           <h2 className=" font-semibold  text-center text-sm">
-            {category.category}
+            {category.name}
           </h2>
           <p className="text-xs text-secondary  text-center">
             {category?.description.slice(0, 40)}
@@ -98,7 +98,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
             <p className="text-xs text-center">{category.totalTime}</p>
           </span>
           <p className="text-xs  capitalize">{category.type}</p>
-          <p className="text-xs  ">£ {category?.stripeInfo?.unit_amount}</p>
+          <p className="text-sm ">£ {category.priceId}</p>
 
           <div className="flex justify-center">
             <button

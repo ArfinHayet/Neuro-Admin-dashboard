@@ -31,18 +31,35 @@ const addUser = async (obj) => {
   return data;
 };
 
-const getUsers = async (page = 1, limit = 5 ) => {
-  const response = await fetch(`${domain}/users?page=${page}&limit=${limit}`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
+const getUsers = async () => {
+  let page = 1;
+  const limit = 100;
+  let allUsers = [];
+  let hasMore = true;
 
-  const data = await response.json();
-  return data;
+  while (hasMore) {
+    const response = await fetch(
+      `${domain}/users?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (Array.isArray(data.payload) && data.payload.length > 0) {
+      allUsers = [...allUsers, ...data.payload];
+      page++;
+    } else {
+      hasMore = false;
+    }
+  }
+
+  return { payload: allUsers };
 };
-
 
 const login = async (obj) => {
   // //console.log(obj);
@@ -50,7 +67,7 @@ const login = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      credentials: 'include'
+      credentials: "include",
       // authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
     body: JSON.stringify(obj),
@@ -61,8 +78,6 @@ const login = async (obj) => {
 
   return data;
 };
-
-
 
 const deleteUser = async (id) => {
   const response = await fetch(`${domain}/users/${id}`, {
@@ -112,7 +127,12 @@ const getAvailability = async () => {
   return data;
 };
 
- 
-export { addUser, getUsers, login, deleteUser, getUserById, getLeaves, getAvailability };
-
-
+export {
+  addUser,
+  getUsers,
+  login,
+  deleteUser,
+  getUserById,
+  getLeaves,
+  getAvailability,
+};

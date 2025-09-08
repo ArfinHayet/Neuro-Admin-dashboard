@@ -1,31 +1,28 @@
 import React, { useMemo, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
-import { getAllSubmissions } from "../../api/submissions";
-import { getAnswersByAssessmentId } from "../../api/answers";
-  import { IoIosArrowBack, IoIosArrowForward  } from "react-icons/io";
-
+import { getAllSubmissions, getSubmissionsPage } from "../../api/submissions";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const SubmittedInitialList = () => {
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const limit = 30; 
-
+  const limit = 20;
 
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      const data = await getAllSubmissions(page, limit);
+      const data = await getSubmissionsPage(page, limit); // ✅ paged API
       const submissionsData = data?.payload || [];
 
-      const initialSubmissions = (submissionsData || []).filter(
+      const initialSubmissions = submissionsData.filter(
         (submission) => submission.assessment?.type === "free"
       );
-      // console.log(" submissions from initial:", initialSubmissions);
+
       setSubmissions(initialSubmissions);
     } catch (err) {
       console.error("Failed to fetch submissions:", err);
@@ -34,14 +31,14 @@ const SubmittedInitialList = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchSubmissions();
   }, [page]);
 
-const onView = (submission) => {
-  navigate(`/submitted-assessments/initial/${submission.id}`);
-};
-
+  const onView = (submission) => {
+    navigate(`/submitted-assessments/initial/${submission.id}`);
+  };
 
   const data = useMemo(() => submissions, [submissions]);
 
@@ -66,9 +63,10 @@ const onView = (submission) => {
       {
         accessorKey: "score",
         header: "Score",
-        cell: (info) => `${info.row.original.score}` || "N/A",
+        cell: (info) =>
+          info.row.original.score !== null ? info.row.original.score : "N/A",
       },
- {
+      {
         header: "Actions",
         id: "actions",
         cell: ({ row }) => (
@@ -89,11 +87,12 @@ const onView = (submission) => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.id.toString(),
   });
 
   return (
     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
-      <h1 className="text-xl font-semibold ">Submitted Initial Assessments</h1>
+      <h1 className="text-xl font-semibold">Submitted Initial Assessments</h1>
       <p className="text-sm mb-4 text-secondary">
         Access and Review Detailed Records of Every Submitted Assessment.
       </p>
@@ -103,9 +102,34 @@ const onView = (submission) => {
         </p>
       ) : (
         <>
-          <p className="mb-2">Total submitted: {submissions?.length}</p>
-          <div className="bg-white rounded border border-opacity-30 ">
+          <p className="mb-2">Total shown {submissions.length}</p>
+          <div className="relative w-[78vw] h-[70vh] bg-white  overflow-x-auto">
             <DataTable table={table} />
+          </div>
+
+          {/* pagination */}
+          <div className=" flex justify-end items-center gap-1 right-10 bottom-8">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowBack size={18} />
+            </button>
+
+            <span className="text-sm p-2">Page {page}</span>
+
+            <button
+              onClick={() =>
+                setPage((prev) =>
+                  submissions.length < limit ? prev : prev + 1
+                )
+              }
+              disabled={submissions.length < limit}
+              className="py-1 rounded bg-gray-200 disabled:opacity-60"
+            >
+              <IoIosArrowForward size={18} />
+            </button>
           </div>
         </>
       )}
