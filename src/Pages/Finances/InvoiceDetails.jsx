@@ -74,7 +74,7 @@ export default function InvoiceDetails() {
   });
 
   return (
-     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+     <section className=" ">
         <h2 className="text-xl font-semibold text-primary mb-1">
           Monthly Invoice {monthYear}
         </h2>

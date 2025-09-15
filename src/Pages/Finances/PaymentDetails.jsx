@@ -40,7 +40,7 @@ const PaymentDetails = () => {
   if (!payment) return <p className="p-4">Payment not found.</p>;
 
   return (
-     <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+     <section className=" ">
       <h1 className="text-xl font-semibold mb-4">Payment Details</h1>
 
       <div className="space-y-3 text-sm">

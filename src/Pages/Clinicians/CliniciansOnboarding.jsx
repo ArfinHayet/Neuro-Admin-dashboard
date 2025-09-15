@@ -43,7 +43,7 @@ const CliniciansOnboarding = () => {
   };
 
   return (
-       <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+       <section className=" ">
 
         <h1 className="font-semibold text-xl ">Clinicians Onboarding</h1>
         <p className="text-secondary text-sm ">Send invitation to new clinicians to onboard them into the system.</p>

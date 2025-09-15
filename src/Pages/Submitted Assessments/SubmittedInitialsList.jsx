@@ -91,7 +91,7 @@ const SubmittedInitialList = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className=" ">
       <h1 className="text-xl font-semibold">Submitted Initial Assessments</h1>
       <p className="text-sm mb-4 text-secondary">
         Access and Review Detailed Records of Every Submitted Assessment.

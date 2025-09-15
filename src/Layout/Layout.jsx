@@ -13,8 +13,11 @@ const Layout = () => {
         <div className="fixed top-0 left-0 h-full w-[17%]">
           <Sidebar />
         </div>
-        <div className="flex-1 px-4 mt-[9vh]  ml-[16%] ">
-          <Outlet />
+        <div className="flex-1 px-4 mt-[9vh]  ml-[16%]  ">
+          <div className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-6 pt-6">
+            <Outlet /> 
+          </div>
+         
         </div>
       </div>
     </div>

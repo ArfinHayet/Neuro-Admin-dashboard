@@ -74,7 +74,7 @@ const PatientDetails = () => {
 
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className=" ">
       <h1 className="font-semibold text-xl mb-4">{user.name}'s Details</h1>
       <div className="space-y-4 mb-6">
         <section className=" pr-4 border-e-2 ">

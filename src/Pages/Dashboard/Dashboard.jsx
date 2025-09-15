@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [monthlyGrowthData, setMonthlyGrowthData] = useState([]);
   const [popularAssessments, setPopularAssessments] = useState([]);
   const [topClinicians, setTopClinicians] = useState([]);
+  const [loading, setLoading] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -244,9 +245,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTopClinicians = async () => {
       try {
-        const data = await getAllSubmissions(); // your API
+        const data = await getAllSubmissions();
         if (data && Array.isArray(data.payload)) {
-          // group submissions by clinicianId
           const clinicianCounts = {};
           data.payload.forEach((s) => {
             if (s.clinicianId) {
@@ -278,10 +278,12 @@ const Dashboard = () => {
     fetchTopClinicians();
   }, []);
 
+  
+
   const COLORS = ["#82ca9d", "#ffc658"];
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className="">
       <h1 className="text-xl font-semibold mb-0">Dashboard</h1>
       <p className="text-sm mb-4 text-secondary">
         Get an overview of your platform’s performance, user engagement, and

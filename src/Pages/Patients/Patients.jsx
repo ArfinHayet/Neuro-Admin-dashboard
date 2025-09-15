@@ -99,7 +99,7 @@ const PatientPage = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4 ">
+    <section className=" ">
       <h1 className="font-semibold text-xl ">Users List</h1>
       <p className="text-secondary text-sm mb-4">
         Manage and view all registered platform users.

@@ -226,7 +226,7 @@ const OnDemandAssessment = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className=" ">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
         <button

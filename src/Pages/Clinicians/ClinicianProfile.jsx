@@ -122,7 +122,7 @@ const ClinicianProfile = () => {
 
 
   return (
-      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+      <section className=" ">
       <h2 className="text-xl font-semibold mb-4">{clinician.name}'s Details</h2>
      <div className="space-y-4">
       <div className="">

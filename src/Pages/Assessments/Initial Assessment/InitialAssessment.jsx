@@ -116,7 +116,7 @@ const InitialAssessment = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className="">
       <div className="flex justify-between items-center ">
         <h2 className="text-xl font-semibold ">Initial Assessment</h2>
         <button
