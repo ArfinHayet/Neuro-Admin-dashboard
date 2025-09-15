@@ -122,17 +122,12 @@ const SubmittedOnDemand = () => {
         </p>
       ) : (
         <>
-          <p className="mb-2">
-            Total Showing{" "}
-            {submissions.length}
-          </p>
-          <div className="relative  w-[78vw] h-[70vh] bg-white  overflow-x-auto">
+          <div className="relative  w-[78vw] h-[73vh] bg-white  overflow-x-auto">
             <DataTable table={table} />
           </div>
 
-
           {/* pagination */}
-          <div className="flex justify-end items-center gap-1 right-10 bottom-8">
+          <div className="absolute flex justify-end items-center gap-1 right-10 bottom-3">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}

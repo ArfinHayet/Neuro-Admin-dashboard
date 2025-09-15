@@ -38,7 +38,7 @@ const QuestionArrangement = ({
         <td className="p-2">
           <input
             type="number"
-            value={question.order || 1}
+            value={question.order}
             onChange={handleOrderChange}
             className="border w-12 p-1 rounded text-center"
             min={1}

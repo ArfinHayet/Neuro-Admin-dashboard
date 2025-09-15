@@ -11,8 +11,8 @@ const OnDemandQuestionModal = ({
 }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
-    question: "",
-    questionOrder: "",
+    questions: "",
+    order: "",
     answerType: "Yes/No",
     options: ["Yes", "No"],
   });
@@ -35,16 +35,16 @@ const OnDemandQuestionModal = ({
 
       setFormData({
         type: defaultType,
-        question: editingQuestion.questions || "",
-        questionOrder: editingQuestion.order || "",
-        answerType: editingQuestion.answerType || "Yes/No",
+        questions: editingQuestion.questions || "",
+        order: editingQuestion.order || "",
+        answerType: editingQuestion.answerType || "",
         options: options,
       });
     } else {
       setFormData({
         type: defaultType,
-        question: "",
-        questionOrder: "",
+        questions: "",
+        order: "",
         answerType: "Yes/No",
         options: ["Yes", "No"],
       });
@@ -96,11 +96,11 @@ const OnDemandQuestionModal = ({
   };
 
   const validateForm = () => {
-    if (!formData.question.trim()) {
+    if (!formData.questions.trim()) {
       setError("Question is required");
       return false;
     }
-    if (!formData.questionOrder) {
+    if (!formData.order) {
       setError("Question order is required");
       return false;
     }
@@ -126,8 +126,8 @@ const OnDemandQuestionModal = ({
     try {
       const payload = {
         assessmentId: assessment.id,
-        questions: formData.question.trim(),
-        order: Number(formData.questionOrder),
+        questions: formData.questions.trim(),
+        order: Number(formData.order),
         answerType: formData.answerType,
         options: formData.options,
       };
@@ -179,8 +179,8 @@ const OnDemandQuestionModal = ({
         <textarea
           className="w-full border px-3 py-2 rounded mb-3 text-xs"
           rows={2}
-          value={formData.question}
-          onChange={(e) => handleChange("question", e.target.value)}
+          value={formData.questions}
+          onChange={(e) => handleChange("questions", e.target.value)}
           placeholder="Enter question"
         />
 
@@ -188,8 +188,8 @@ const OnDemandQuestionModal = ({
         <input
           type="text"
           className="w-full border px-3 py-2 rounded mb-4 text-xs"
-          value={formData.questionOrder}
-          onChange={(e) => handleChange("questionOrder", e.target.value)}
+          value={formData.order}
+          onChange={(e) => handleChange("order", e.target.value)}
           placeholder="Enter question order (number)"
         />
 
