@@ -10,8 +10,9 @@ import {
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import toast, { Toaster } from "react-hot-toast";
+import { getProducts } from "../../../api/products";
 
-const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
+const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const menuRef = useRef(null);
@@ -85,7 +86,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
         </div>
 
         <div className="flex flex-col gap-2 justify-center items-center  mt-2">
-         <p className="text-xs text-center">{category.category}</p>
+          <p className="text-xs text-center">{category.category}</p>
           <h2 className=" font-semibold  text-center text-sm">
             {category.name}
           </h2>
@@ -98,7 +99,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
             <p className="text-xs text-center">{category.totalTime}</p>
           </span>
           <p className="text-xs  capitalize">{category.type}</p>
-          <p className="text-sm ">£ {category.priceId}</p>
+          <p className="text-sm">£{priceMap[category.priceId] ?? "null"}</p>
 
           <div className="flex justify-center">
             <button
@@ -144,6 +145,29 @@ const OnDemandAssessment = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [priceMap, setPriceMap] = useState({});
+
+ const fetchPrices = async () => {
+   try {
+     const data = await getProducts();
+     console.log("price",data)
+
+     if (data) {
+       const map = {};
+       data.forEach((product) => {
+         (product.prices || []).forEach((p) => {
+           // ensure priceId matches exactly with what comes in assessment
+           map[p.priceId] = p.unit_amount;
+         });
+       });
+       console.log("[[",map)
+       setPriceMap(map);
+     }
+   } catch (err) {
+     console.error("Error fetching prices", err);
+   }
+ };
+
 
   const fetchAssessments = async () => {
     try {
@@ -153,7 +177,7 @@ const OnDemandAssessment = () => {
       const filtered = Array.isArray(data)
         ? data.filter((a) => a.type !== "free")
         : [];
-      console.log("Assessments data:", filtered);
+      // console.log("Assessments data:", filtered);
       setAssessments(Array.isArray(filtered) ? filtered : []);
     } catch (err) {
       setError("Failed to load assessments");
@@ -164,6 +188,7 @@ const OnDemandAssessment = () => {
   };
 
   useEffect(() => {
+    fetchPrices()
     fetchAssessments();
   }, []);
 
@@ -227,7 +252,7 @@ const OnDemandAssessment = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className=" ">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
         <button
@@ -253,6 +278,7 @@ const OnDemandAssessment = () => {
             onEdit={handleEditingAssessments}
             onSelect={handleCardClick}
             onDelete={handleDeleteAssessments}
+            priceMap={priceMap}
           />
         ))}
       </div>

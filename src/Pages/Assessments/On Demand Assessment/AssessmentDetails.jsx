@@ -37,13 +37,11 @@ const AssessmentDetails = () => {
       const questionsResponse = await getQuestionsByAssessmentId(
         thisAssessment.id
       );
-
-      console.log("999",questionsResponse)
-
+      console.log("reponse", questionsResponse)
       const questionsData = questionsResponse?.payload || [];
       setQuestions(questionsData);
     } catch (err) {
-      console.error("Failed to fetch assessment details:", err);
+      console.error("Failed to fetch assessment details", err);
       setError("Failed to load assessment details");
     } finally {
       setIsLoading(false);
@@ -95,8 +93,8 @@ const AssessmentDetails = () => {
   }
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-4 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+    <section className="">
+      <div className="">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">{assessment?.name}</h2>
           <button
@@ -114,7 +112,7 @@ const AssessmentDetails = () => {
           {assessment?.description}
         </p>
         <p className="mb-1 text-gray-700 text-sm">
-          <strong>Duration </strong>
+          <strong>Category </strong>
           {assessment?.category || "N/A"}
         </p>
         <p className="mb-1 text-gray-700 text-sm">
@@ -127,10 +125,10 @@ const AssessmentDetails = () => {
 
         <h3 className="font-medium my-3">Question List</h3>
         <div className="h-[60vh] overflow-y-auto">
-          <table className="w-full h-[50vh]  text-sm text-left text-gray-700 ">
+          <table className="w-full max-h-[50vh]  text-sm text-left text-gray-700 ">
             <thead className="bg-[#f3f1f1] font-light">
               <tr>
-                <th className="pl-4">#</th>
+                <th className="pl-4">Sl</th>
                 <th className="p-2">Question</th>
                 <th className="p-2">Order</th>
                 <th className="p-2">Answer Type</th>

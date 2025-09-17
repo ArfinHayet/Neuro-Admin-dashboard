@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [monthlyGrowthData, setMonthlyGrowthData] = useState([]);
   const [popularAssessments, setPopularAssessments] = useState([]);
   const [topClinicians, setTopClinicians] = useState([]);
+  const [loading, setLoading] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -244,9 +245,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTopClinicians = async () => {
       try {
-        const data = await getAllSubmissions(); // your API
+        const data = await getAllSubmissions();
         if (data && Array.isArray(data.payload)) {
-          // group submissions by clinicianId
           const clinicianCounts = {};
           data.payload.forEach((s) => {
             if (s.clinicianId) {
@@ -281,7 +281,7 @@ const Dashboard = () => {
   const COLORS = ["#82ca9d", "#ffc658"];
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+    <section className="pb-4">
       <h1 className="text-xl font-semibold mb-0">Dashboard</h1>
       <p className="text-sm mb-4 text-secondary">
         Get an overview of your platform’s performance, user engagement, and
@@ -295,8 +295,16 @@ const Dashboard = () => {
         {/* Left Column */}
         <div className="space-y-4">
           {/* New Clinicians */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 ">
-            <h2 className="text-sm font-semibold ">New Clinicians</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh] ">
+            <div className="flex justify-between items-start">
+              <h2 className="text-sm font-semibold ">New Clinicians</h2>
+              <button
+                className="text-primary hover:text-opacity-50 text-xs font-medium"
+                onClick={() => navigate("/clinicians")}
+              >
+                View All →
+              </button>
+            </div>
             {latestClinicians.length === 0 ? (
               <p className="text-gray-500">No clinicians found.</p>
             ) : (
@@ -319,8 +327,16 @@ const Dashboard = () => {
           </div>
 
           {/* new users */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 ">
-            <h2 className="text-sm font-semibold ">New Users</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh] overflow-hidden">
+            <div className="flex justify-between items-start">
+              <h2 className="text-sm font-semibold ">New Users</h2>
+              <button
+                className="text-primary hover:text-opacity-50 text-xs font-medium"
+                onClick={() => navigate("/patients")}
+              >
+                View All →
+              </button>
+            </div>
             {latestUsers.length === 0 ? (
               <p className="text-gray-500">No new users found.</p>
             ) : (
@@ -342,7 +358,7 @@ const Dashboard = () => {
         {/* Middle Column */}
         <div className="space-y-4">
           {/* Top Clinicians by Submissions in 30 days */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 ">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh]">
             <h2 className="font-semibold mb-2 text-sm">Top Clinicians</h2>
 
             {topClinicians.length === 0 ? (
@@ -375,7 +391,7 @@ const Dashboard = () => {
           </div>
 
           {/* On-demand Assessments */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 ">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh]">
             <div className="flex justify-between items-start">
               <h2 className="font-semibold mb-2 text-sm">
                 On-demand Assessments
@@ -414,11 +430,11 @@ const Dashboard = () => {
         {/* Right Column */}
         <div className="space-y-4">
           {/* Monthly Assessments Chart */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200 h-fit">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 h-[40vh]">
             <h2 className="text-sm font-semibold mb-2">
               Monthly Assessments Completed
             </h2>
-            <div className="h-[260px]">
+            <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -448,7 +464,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[24vh]">
             <h2 className="text-sm font-semibold mb-1">Popular Assessments</h2>
             <div className="divide-y max-h-[200px] overflow-y-auto">
               {popularAssessments.map((assessment) => (
@@ -476,12 +492,12 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-lg border border-gray-200 mt-4">
-            <h2 className="text-sm font-semibold mb-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200  h-[40vh]">
+            <h2 className="text-sm font-semibold mb-2">
               Monthly Platform Growth
             </h2>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="95%">
                 <AreaChart data={monthlyGrowthData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />

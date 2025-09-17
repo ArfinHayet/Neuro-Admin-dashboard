@@ -73,8 +73,7 @@ const Blogs = () => {
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-[#F6F7F9] p-2 ">
-      <div className="bg-white p-2 rounded-md h-[88vh] overflow-y-auto">
+    <section className="  ">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold ">Article List</h2>
           <button
@@ -146,7 +145,7 @@ const Blogs = () => {
             </div>
           </div>
         )}
-      </div>
+    
     </section>
   );
 };

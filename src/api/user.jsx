@@ -33,7 +33,7 @@ const addUser = async (obj) => {
 
 const getUsers = async () => {
   let page = 1;
-  const limit = 100;
+  let limit = 100;
   let allUsers = [];
   let hasMore = true;
 

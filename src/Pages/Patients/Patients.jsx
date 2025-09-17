@@ -99,7 +99,7 @@ const PatientPage = () => {
   });
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4 ">
+    <section className=" ">
       <h1 className="font-semibold text-xl ">Users List</h1>
       <p className="text-secondary text-sm mb-4">
         Manage and view all registered platform users.
@@ -111,12 +111,11 @@ const PatientPage = () => {
       ) : (
         <>
           {" "}
-          <div className="relative w-[79vw] h-[70vh] bg-white overflow-x-auto">
+          <div className="relative w-[78vw] h-[76vh] bg-white overflow-x-auto">
             <DataTable table={table} />
           </div>
-
           {/* pagination */}
-          <div className=" flex justify-end items-center gap-1 right-10 bottom-8">
+          <div className="absolute flex justify-end items-center gap-1 right-10 bottom-6">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
