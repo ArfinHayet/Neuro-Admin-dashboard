@@ -9,8 +9,9 @@ import {
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import toast, { Toaster } from "react-hot-toast";
+import { getProducts } from "../../../api/products";
 
-const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
+const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const menuRef = useRef(null);
@@ -84,7 +85,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
         </div>
 
         <div className="flex flex-col gap-2 justify-center items-center  mt-2">
-         <p className="text-xs text-center">{category.category}</p>
+          <p className="text-xs text-center">{category.category}</p>
           <h2 className=" font-semibold  text-center text-sm">
             {category.name}
           </h2>
@@ -97,7 +98,12 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect }) => {
             <p className="text-xs text-center">{category.totalTime}</p>
           </span>
           <p className="text-xs  capitalize">{category.type}</p>
-          <p className="text-sm ">£ {category.priceId}</p>
+          <p className="text-sm ">
+            £{" "}
+            {priceMap[category.priceId] !== undefined
+              ? priceMap[category.priceId]
+              : "null"}
+          </p>
 
           <div className="flex justify-center">
             <button
@@ -143,6 +149,28 @@ const OnDemandAssessment = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [priceMap, setPriceMap] = useState({});
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const data = await getProducts();
+        if (data.payload) {
+          const map = {};
+          data.payload.forEach((product) => {
+            (product.prices || []).forEach((p) => {
+              map[p.priceId] = p.unit_amount;
+            });
+          });
+          setPriceMap(map);
+        }
+      } catch (err) {
+        console.error("Error fetching prices", err);
+      }
+    };
+
+    fetchPrices();
+  }, []);
 
   const fetchAssessments = async () => {
     try {
@@ -252,6 +280,7 @@ const OnDemandAssessment = () => {
             onEdit={handleEditingAssessments}
             onSelect={handleCardClick}
             onDelete={handleDeleteAssessments}
+            priceMap={priceMap}
           />
         ))}
       </div>

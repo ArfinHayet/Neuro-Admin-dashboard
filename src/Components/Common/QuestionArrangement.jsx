@@ -46,7 +46,7 @@ const QuestionArrangement = ({
         </td>
         <td className="p-2 text-xs">
           <select
-            value={question.answerType}
+            value={question.answerType??  ""}
             onChange={handleAnswerTypeChange}
             className="border p-1 rounded w-28 text-xs"
           >

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createAssessment } from "../../api/assessments";
+import { getProducts } from "../../api/products";
 
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [category, setCategory] = useState("");
@@ -10,7 +11,28 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [priceId, setPriceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [prices, setPrices] = useState([]);
 
+  // Fetch all prices from backend
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const data = await getProducts();
+        if (data.payload && data.payload.length > 0) {
+          const allPrices = data.payload.flatMap(
+            (product) => product.prices || []
+          );
+          setPrices(allPrices);
+        }
+      } catch (err) {
+        console.error("Error fetching products", err);
+      }
+    };
+
+    fetchPrices();
+  }, []);
+
+  // Populate form when editing
   useEffect(() => {
     if (defaultCategory) {
       setName(defaultCategory.name || "");
@@ -36,24 +58,12 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
     e.preventDefault();
     setError(null);
 
-    if (!name.trim()) {
-      setError("Name is required");
-      return;
-    }
-    if (!category.trim()) {
-      setError("Category is required");
-      return;
-    }
-
-    if (!totalTime || parseInt(totalTime) <= 0) {
-      setError("Completion time is required");
-      return;
-    }
-
-    if (!type) {
-      setError("Assessment type is required");
-      return;
-    }
+    if (!name.trim()) return setError("Name is required");
+    if (!category.trim()) return setError("Category is required");
+    if (!totalTime || parseInt(totalTime) <= 0)
+      return setError("Completion time is required");
+    if (!type) return setError("Assessment type is required");
+    if (!priceId) return setError("Price is required");
 
     setIsSubmitting(true);
 
@@ -64,21 +74,15 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
         type: type,
         totalTime: `${totalTime} minutes`,
         category: category.trim(),
-        priceId: priceId.trim(),
+        priceId: priceId, // send priceId to backend
       };
 
-      console.log("saving data", assessmentData);
-
       const response = await createAssessment(assessmentData);
+      if (response.error) throw new Error(response.error);
 
-      if (response.error) {
-        throw new Error(response.error);
-      }
+      if (onSave) await onSave(response.payload);
 
-      if (onSave) {
-        await onSave(response.payload);
-      }
-
+      // Reset form
       setName("");
       setDescription("");
       setTotalTime("");
@@ -108,13 +112,13 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 min-w-[480px]  max-w-full">
+      <div className="bg-white rounded-lg p-6 min-w-[480px] max-w-full">
         <h2 className="text-lg font-semibold text-center mb-4">
-  {defaultCategory ? "Edit Assessment" : "Add New Assessment"}
+          {defaultCategory ? "Edit Assessment" : "Add New Assessment"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-           <div>
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div>
             <label className="block mb-1 text-xs">Assessment Name</label>
             <input
               type="text"
@@ -125,6 +129,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               required
             />
           </div>
+
           <div>
             <label className="block mb-1 text-xs">Category Name</label>
             <input
@@ -157,11 +162,12 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter description "
+              placeholder="Enter description"
               className="w-full border rounded px-3 py-2 resize-none text-xs"
               rows={2}
             />
           </div>
+
           <div>
             <label className="block mb-1 text-xs">Assessment Type</label>
             <select
@@ -174,18 +180,25 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               <option value="premium">Premium</option>
             </select>
           </div>
+
           <div>
             <label className="block mb-1 text-xs">Price</label>
-            <input
-              type="price"
-              min={1}
+            <select
               value={priceId}
               onChange={(e) => setPriceId(e.target.value)}
-              placeholder="Enter price"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border rounded px-3 py-2 text-xs"
               required
-            />
+            >
+              <option value="">Select Price</option>
+              {prices.map((p) => (
+                <option key={p.priceId} value={p.priceId}>
+                  {p.unit_amount} {p.currency?.toUpperCase()}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {error && <p className="text-red-500 text-xs">{error}</p>}
 
           <div className="flex justify-between gap-3">
             <button
