@@ -98,12 +98,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
             <p className="text-xs text-center">{category.totalTime}</p>
           </span>
           <p className="text-xs  capitalize">{category.type}</p>
-          <p className="text-sm ">
-            £{" "}
-            {priceMap[category.priceId] !== undefined
-              ? priceMap[category.priceId]
-              : "null"}
-          </p>
+          <p className="text-sm">£{priceMap[category.priceId] ?? "null"}</p>
 
           <div className="flex justify-center">
             <button
@@ -151,26 +146,24 @@ const OnDemandAssessment = () => {
   const navigate = useNavigate();
   const [priceMap, setPriceMap] = useState({});
 
-  useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const data = await getProducts();
-        if (data.payload) {
-          const map = {};
-          data.payload.forEach((product) => {
-            (product.prices || []).forEach((p) => {
-              map[p.priceId] = p.unit_amount;
-            });
-          });
-          setPriceMap(map);
-        }
-      } catch (err) {
-        console.error("Error fetching prices", err);
-      }
-    };
+ const fetchPrices = async () => {
+   try {
+     const data = await getProducts();
+     if (data.payload) {
+       const map = {};
+       data.payload.forEach((product) => {
+         (product.prices || []).forEach((p) => {
+           // ensure priceId matches exactly with what comes in assessment
+           map[p.priceId] = p.unit_amount;
+         });
+       });
+       setPriceMap(map);
+     }
+   } catch (err) {
+     console.error("Error fetching prices", err);
+   }
+ };
 
-    fetchPrices();
-  }, []);
 
   const fetchAssessments = async () => {
     try {
