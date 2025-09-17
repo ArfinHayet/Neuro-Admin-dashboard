@@ -37,7 +37,7 @@ const Login = () => {
         const userData = result.payload.filteredUser;
         
         setUserData(userData);
-         localStorage.setItem("userData", JSON.stringify(userData));
+         localStorage.setItem("userInfo", JSON.stringify(userData));
         navigate("/");
       }
     

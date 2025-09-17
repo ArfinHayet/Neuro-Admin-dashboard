@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
   console.log("333", userData?.name)
 
     useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
+    const storedUser = localStorage.getItem("userInfo");
     if (storedUser) {
       setUserData(JSON.parse(storedUser));
     }
@@ -19,14 +19,14 @@ const AuthProvider = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("userData");
+    localStorage.removeItem("userInfo");
     setUserData(null);
   };
 
 
   useEffect(() => {
     if (userData) {
-      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("userInfo", JSON.stringify(userData));
     }
   }, [userData]);
 
