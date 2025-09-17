@@ -73,7 +73,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
         name: name.trim(),
         description: description.trim(),
         type: type,
-        totalTime: `${totalTime} minutes`,
+        totalTime: totalTime,
         category: category.trim(),
         priceId: priceId, // send priceId to backend
       };

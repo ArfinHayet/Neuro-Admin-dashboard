@@ -193,7 +193,10 @@ const OnDemandAssessment = () => {
   }, []);
 
   const handleCardClick = (category) => {
-    navigate(`/ondemandassessment/${category.id}`);
+    navigate(`/ondemandassessment/${category.id}`, {
+      state: { priceMap },
+    });
+     
   };
 
   const handleEditingAssessments = (category) => {

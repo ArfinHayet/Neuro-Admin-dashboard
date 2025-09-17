@@ -9,8 +9,13 @@ import {
 } from "../../../api/questionnaires";
 import { getAssessments } from "../../../api/assessments";
 
+import { useLocation } from "react-router-dom";
+
 const AssessmentDetails = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const priceMap = location.state?.priceMap || {};
+
 
   const [assessment, setAssessment] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -120,7 +125,7 @@ const AssessmentDetails = () => {
           {assessment?.totalTime || "N/A"}
         </p>
         <p className="mb-4 text-gray-700 text-sm">
-          <strong>Price </strong>£{assessment?.priceId || "N/A"}
+          <strong>Price </strong>£{priceMap[assessment?.priceId] ?? "N/A"}
         </p>
 
         <h3 className="font-medium my-3">Question List</h3>
