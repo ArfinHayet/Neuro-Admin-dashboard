@@ -41,10 +41,10 @@ export const router = createBrowserRouter([
 
     //     errorElement: <ErrorPage />,
     children: [
-      {
-        path: "/role",
-        element: <Role />,
-      },
+      // {
+      //   path: "/role",
+      //   element: <Role />,
+      // },
       {
         path: "/addPrivilege/:id",
         element: <AddPrivilege />,

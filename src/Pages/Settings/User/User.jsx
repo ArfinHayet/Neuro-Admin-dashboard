@@ -10,7 +10,7 @@ import { addUser, deleteUser, getUsers } from "../../../api/user";
 import { RxCross2 } from "react-icons/rx";
 import ConfirmDeleteModal from "../../../Components/Common/DeleteModal";
 
-const roles = ["Admin"]; // static roles
+const roles = ["Admin"];
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -108,14 +108,15 @@ const User = () => {
       toast.success(result?.message);
       fetchUsers();
     } else {
-      toast.error(result?.message);
+      console.error(result?.message);
     }
   };
 
   return (
-    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-      <Header title="User Settings" />
-
+    <section className="">
+      {" "}
+      <h1 className="font-semibold text-xl ">User Settings</h1>
+      {/* <Header className="font-bold text-xl " title="User Settings" /> */}
       <div className="flex gap-10 mt-6">
         {/* Left Form */}
         <div className="h-auto border-r w-3/12 pr-8 flex flex-col justify-between">
@@ -131,7 +132,6 @@ const User = () => {
               }))}
               placeholder="Select a user"
             />
-          
 
             <TextInput
               label="Phone"
@@ -176,7 +176,6 @@ const User = () => {
           </div>
         </div>
       </div>
-
       {/* Delete Confirmation */}
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}

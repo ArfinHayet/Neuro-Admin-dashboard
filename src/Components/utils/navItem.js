@@ -86,7 +86,7 @@ export const navItem = [
     icon: p4,
     routes: [
       { label: "User", path: "/user" },
-      { label: "Role", path: "/role" },
+      // { label: "Role", path: "/role" },
       // { label: "Employee", path: "/employee" },
     ],
   },
