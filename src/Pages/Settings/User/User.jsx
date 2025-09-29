@@ -9,27 +9,37 @@ import toast from "react-hot-toast";
 import { addUser, deleteUser, getUsers } from "../../../api/user";
 import { RxCross2 } from "react-icons/rx";
 import ConfirmDeleteModal from "../../../Components/Common/DeleteModal";
-import { getRoles } from "../../../api/role";
+
+const roles = ["Admin"]; // static roles
 
 const User = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 30;
   const [data, setData] = useState([]);
   const [roleData, setRoleData] = useState([]);
-  const getUser = async () => {
-    const data = await getUsers();
-    // console.log(data?.usersData);
-    setData(data?.usersData);
-  };
-
-  const RolesData = async () => {
-    const data = await getRoles();
-    // console.log(data?.data);
-    setRoleData(data?.data);
-  };
 
   useEffect(() => {
-    RolesData();
-    getUser();
-  }, []);
+    fetchUsers();
+  }, [page]);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await getUsers(page, limit);
+
+      const filteredUsers = (data.payload || []).filter(
+        (user) => user.role === "admin"
+      );
+
+      setUsers(filteredUsers);
+    } catch (err) {
+      console.error("Error loading users:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -39,7 +49,6 @@ const User = () => {
   };
 
   const handleDelete = (id) => {
-    // console.log(id);
     setDeleteId(id);
     setIsDeleteModalOpen(true);
   };
@@ -48,7 +57,7 @@ const User = () => {
     const data = await deleteUser(deleteId);
     if (data?.success) {
       toast.success("User Deleted Successfully");
-      getUser();
+      fetchUsers();
       setIsDeleteModalOpen(false);
     } else {
       toast.error("Failed to delete");
@@ -65,47 +74,14 @@ const User = () => {
         accessorKey: "user_id",
         header: "User_Id",
       },
-
       {
         accessorKey: "name",
         header: "Name",
       },
       {
         accessorKey: "role",
-        cell: (info) => {
-          const expenseHeadId = info?.row?.original?.role;
-          const matchedHead = roleData?.find(
-            (head) => String(head?.id) === String(expenseHeadId)
-          );
-
-          return `${matchedHead?.role ?? ""}`;
-        },
         header: "Role",
-      },
-
-      {
-        accessorKey: "department",
-        header: "Department",
-      },
-      {
-        accessorKey: "designation",
-        header: "Designation",
-      },
-
-      {
-        accessorKey: "actions",
-        header: "Actions",
-
-        cell: ({ row }) => (
-          <div className="flex gap-3">
-            {/* <Link to={`invoice/${row.id}`}> */}
-            {/* <Link to="/invoice/p"> */}
-            <button onClick={() => handleDelete(row?.original?.id)}>
-              <RxCross2 className="cursor-pointer text-sm ml-3 text-red-600" />
-            </button>
-            {/* </Link> */}
-          </div>
-        ),
+        cell: (info) => info?.row?.original?.role || "",
       },
     ],
     []
@@ -114,7 +90,6 @@ const User = () => {
   const table = useReactTable({
     data,
     columns,
-    // onRowSelectionChange: handleRowClick(),
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -122,134 +97,92 @@ const User = () => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
-    const phone_no = form.phone_no.value;
-    const role = form.role.value;
-    const department = form.department.value;
-    const designation = form.designation.value;
+    const phone = form.phone.value;
     const email = form.email.value;
-    const user_name = form.user_name.value;
-    const password = form.password.value;
+    const role = form.role.value;
 
-    const obj = {
-      name,
-      phone_no,
-      role,
-      department,
-      designation,
-      email,
-      user_name,
-      password,
-    };
-    // console.log(obj);
+    const obj = { name, phone, email, role };
 
     const result = await addUser(obj);
     if (result && result.success) {
       toast.success(result?.message);
-      getUser();
+      fetchUsers();
     } else {
       toast.error(result?.message);
     }
   };
 
   return (
-          <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
-        <Header
-          title="User Settings"
-          // subtitle="You can onboard customers, see their info and status"
-        />
+    <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-5">
+      <Header title="User Settings" />
 
-        <div className="flex gap-10 mt-6">
-          <div className="h-auto border-r w-3/12 pr-8 flex flex-col justify-between">
-            <form onSubmit={handleAddUser} className="flex flex-col gap-4">
-              <TextInput
-                label="Name"
-                required
-                placeholder="Write name here...."
-                type="text"
-                name="name"
-              />
-              <TextInput
-                label="Phone"
-                required
-                placeholder="Write phone no"
-                type="tel"
-                name="phone_no"
-              />
+      <div className="flex gap-10 mt-6">
+        {/* Left Form */}
+        <div className="h-auto border-r w-3/12 pr-8 flex flex-col justify-between">
+          <form onSubmit={handleAddUser} className="flex flex-col gap-2">
+            <SelectInput
+              label="Name"
+              required
+              name="name"
+              options={users?.map((i) => ({
+                key: i?.id,
+                label: i?.name,
+                value: i?.name,
+              }))}
+              placeholder="Select a user"
+            />
+          
 
-              <SelectInput
-                label="Department"
-                name="department"
-                options={[
-                  { label: "Merchandise", value: "Merchandise" },
-                  { label: "IT", value: "IT" },
-                  { label: "Accounts", value: "Accounts" },
-                  { label: "Admin", value: "Admin" },
-                  { label: "Cutting", value: "Cutting" },
-                  { label: "Fabric Store", value: "Fabric Store" },
-                  { label: "Accessories Store", value: "Accessories Store" },
-                  { label: "Maintenance", value: "Maintenance" },
-                  { label: "Commercial", value: "Commercial" },
-                  { label: "Production", value: "Production" },
-                  { label: "Managing Director", value: "Managing Director" },
-                ]}
-              />
+            <TextInput
+              label="Phone"
+              required
+              placeholder="phone no"
+              type="tel"
+              name="phone"
+            />
 
-              <SelectInput
-                label="Designation"
-                name="designation"
-                options={[
-                  { label: "Managing Director", value: "Managing Director" },
-                  { label: "Manager", value: "Manager" },
-                  { label: "Executive", value: "Executive" },
-                  { label: "Issuer", value: "Issuer" },
-                ]}
-              />
-              <SelectInput
-                label="Role"
-                name="role"
-                options={roleData?.map((i) => ({
-                  key: i?.id,
-                  label: i?.role,
-                }))}
-              />
+            <TextInput
+              label="Email"
+              type="email"
+              name="email"
+              placeholder="Write email"
+            />
 
-              <TextInput label="Email" type="email" name="email" />
+            <SelectInput
+              label="Role"
+              name="role"
+              options={roles.map((role, idx) => ({
+                key: idx,
+                label: role,
+                value: role,
+              }))}
+              placeholder="Select a role"
+            />
 
-              <TextInput
-                label="User Name"
-                type="text"
-                name="user_name"
-                placeholder="Write section here"
-              />
-              <TextInput
-                label="Password"
-                type="password"
-                name="password"
-                placeholder="Write section here"
-              />
-
-              <PrimaryButton
-                text="Add User"
-                className="text-xs font-medium  py-[2px] mt-3 h-[35px]"
-              />
-            </form>
-          </div>
-
-          <div className="flex-1">
-            <h2 className="font-bold text-xs text-[#3B3B3B] ml-3 mb-3">
-              User List
-            </h2>
-            <div className="w-full">
-              <DataTable table={table} />
-            </div>
-          </div>
+            <PrimaryButton
+              text="Add User"
+              className="text-xs font-medium py-[2px] mt-3 h-[35px]"
+            />
+          </form>
         </div>
 
-        <ConfirmDeleteModal
-          isOpen={isDeleteModalOpen}
-          closeModal={closeDeleteModal}
-          onConfirm={handleDeleteDoctor}
-        />
+        {/* Right Table */}
+        <div className="flex-1">
+          <h2 className="font-bold text-xs text-[#3B3B3B] ml-3 mb-3">
+            User List
+          </h2>
+          <div className="w-full">
+            <DataTable table={table} />
+          </div>
+        </div>
+      </div>
+
+      {/* Delete Confirmation */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        closeModal={closeDeleteModal}
+        onConfirm={handleDeleteDoctor}
+      />
     </section>
   );
 };
