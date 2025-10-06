@@ -62,7 +62,7 @@ const Login = () => {
             className="block text-[#6C6C6C] text-sm font-normal mb-2"
             htmlFor="phone"
           >
-            Username / Mobile Number
+            Username / Mobile Number / Email
           </label>
           <input
             className="border outline-none bg-[#F7F7F7] rounded w-[309px] h-[47px] px-3 "
