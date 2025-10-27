@@ -22,6 +22,7 @@ import CliniciansOnboarding from "./Pages/Clinicians/CliniciansOnboarding";
 import PrivateRoute from "./PrivateRoute";
 import InvoiceDetails from "./Pages/Finances/InvoiceDetails";
 import PaymentDetails from "./Pages/Finances/PaymentDetails";
+import CategoryBasedQuestionList from "./Pages/Assessments/On Demand Assessment/CategoryBasedQuestionList";
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
       {
         path: "/ondemandassessment/:id",
         element: <AssessmentDetails />,
+      },
+      {
+        path: "/ondemandassessment/:id/category/:categoryId",
+        element: <CategoryBasedQuestionList />,
       },
 
       {

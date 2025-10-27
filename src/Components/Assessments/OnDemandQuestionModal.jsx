@@ -8,6 +8,8 @@ const OnDemandQuestionModal = ({
   defaultType = "ondemand",
   editingQuestion,
   assessment,
+  categoryId,
+  categoryName,
 }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
@@ -15,6 +17,7 @@ const OnDemandQuestionModal = ({
     order: "",
     answerType: "Yes/No",
     options: ["Yes", "No"],
+    questiontypeid: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -39,6 +42,7 @@ const OnDemandQuestionModal = ({
         order: editingQuestion.order || "",
         answerType: editingQuestion.answerType || "",
         options: options,
+        questiontypeid: editingQuestion.questiontypeid || "",
       });
     } else {
       setFormData({
@@ -47,24 +51,21 @@ const OnDemandQuestionModal = ({
         order: "",
         answerType: "Yes/No",
         options: ["Yes", "No"],
+        questiontypeid: "",
       });
     }
   }, [editingQuestion, defaultType]);
 
   const handleChange = (field, value) => {
-    if (field === "questionOrder") {
+    if (field === "order") {
       if (value === "" || /^\d+$/.test(value)) {
         setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else if (field === "answerType") {
       let options = [];
-      if (value === "Yes/No") {
-        options = ["Yes", "No"];
-      } else if (value === "Text") {
-        options = ["Text"];
-      } else if (value === "MultipleChoice") {
-        options = [""];
-      }
+      if (value === "Yes/No") options = ["Yes", "No"];
+      else if (value === "Text") options = ["Text"];
+      else if (value === "MultipleChoice") options = [""];
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
@@ -73,7 +74,6 @@ const OnDemandQuestionModal = ({
 
   const handleOptionChange = (index, value) => {
     if (formData.answerType !== "MultipleChoice") return;
-
     setFormData((prev) => {
       const updated = [...prev.options];
       updated[index] = value;
@@ -81,19 +81,14 @@ const OnDemandQuestionModal = ({
     });
   };
 
-  const addOption = () => {
-    setFormData((prev) => ({
-      ...prev,
-      options: [...prev.options, ""],
-    }));
-  };
+  const addOption = () =>
+    setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
 
-  const removeOption = (index) => {
+  const removeOption = (index) =>
     setFormData((prev) => {
       const updated = prev.options.filter((_, i) => i !== index);
       return { ...prev, options: updated.length ? updated : [""] };
     });
-  };
 
   const validateForm = () => {
     if (!formData.questions.trim()) {
@@ -124,15 +119,23 @@ const OnDemandQuestionModal = ({
 
     setIsSubmitting(true);
     try {
-      const payload = {
-        assessmentId: assessment.id,
-        questions: formData.questions.trim(),
-        order: Number(formData.order),
-        answerType: formData.answerType,
-        options: formData.options,
-      };
+      // const payload = {
+      //   assessmentId: assessment.id,
+      //   questions: formData.questions.trim(),
+      //   order: Number(formData.order),
+      //   answerType: formData.answerType,
+      //   options: formData.options,
+      //   questiontypeid: Number(categoryId),
+      // };
+     const payload = {
+       assessmentId: assessment.id,
+       questions: formData.questions.trim(),
+       order: Number(formData.order),
+       answerType: formData.answerType,
+       options: formData.options,
+       questiontypeid: categoryId, // pass the category id here
+     };
 
-      
 
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
@@ -170,11 +173,18 @@ const OnDemandQuestionModal = ({
             : "Add On-Demand Assessment Question"}
         </h2>
 
-        <label className="block text-xs mb-3 font-medium text-gray-700">
+        <label className="block text-xs mb-1 font-medium text-gray-700">
           Assessment
         </label>
         <div className="w-full border px-3 py-2 rounded mb-4 text-xs text-gray-600">
           <p>{assessment?.name || "On-Demand Assessment"}</p>
+        </div>
+
+        <label className="block text-xs mb-1 font-medium text-gray-700">
+          Question Category
+        </label>
+        <div className="w-full border px-3 py-2 rounded mb-4 text-xs text-gray-600">
+          <p>{categoryName || "N/A"}</p>
         </div>
 
         <label className="block text-xs mb-1">Question</label>
@@ -247,18 +257,18 @@ const OnDemandQuestionModal = ({
 
         <div className="flex justify-between gap-3">
           <button
-            className="px-4 py-2 rounded-full bg-gray-200"
+            className="px-4 py-2 rounded-full bg-gray-200 text-sm"
             onClick={onClose}
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 rounded-full bg-[#114654] text-white"
+            className="px-4 py-2 rounded-full bg-[#114654] text-white text-sm"
             onClick={handleSave}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Adding..." : "Add"}
+            {isSubmitting ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
