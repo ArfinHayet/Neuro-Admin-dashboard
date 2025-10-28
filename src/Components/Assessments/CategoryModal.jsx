@@ -22,11 +22,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
           const allPrices = data.flatMap(
             (product) => product.prices || []
           );
-<<<<<<< Updated upstream
           console.log("categoru",allPrices)
-=======
-          console.log("nn",allPrices);
->>>>>>> Stashed changes
           setPrices(allPrices);
 
         }
