@@ -119,22 +119,25 @@ const OnDemandQuestionModal = ({
 
     setIsSubmitting(true);
     try {
-      // const payload = {
-      //   assessmentId: assessment.id,
-      //   questions: formData.questions.trim(),
-      //   order: Number(formData.order),
-      //   answerType: formData.answerType,
-      //   options: formData.options,
-      //   questiontypeid: Number(categoryId),
-      // };
+   
      const payload = {
-       assessmentId: assessment.id,
+       assessmentId: Number(assessment.id) ,
        questions: formData.questions.trim(),
        order: Number(formData.order),
        answerType: formData.answerType,
        options: formData.options,
-       questiontypeid: categoryId, // pass the category id here
+       questiontypeid: Number(categoryId), // pass the category id here
      };
+      
+      console.log("Payload to send:", {
+        assessmentId: Number(assessment.id),
+        questions: formData.questions,
+        order: Number(formData.order),
+        answerType: formData.answerType,
+        options: formData.options,
+        questiontypeid: Number(categoryId), // pass the category id here
+      });
+
 
 
       const savedQuestion = editingQuestion

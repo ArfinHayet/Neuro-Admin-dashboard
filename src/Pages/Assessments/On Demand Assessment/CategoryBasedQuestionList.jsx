@@ -23,20 +23,41 @@ const assessmentID = location.state?.assessmentId || paramId;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchQuestions = async () => {
-    try {
-      setIsLoading(true);
-      const res = await getQuestionsByAssessmentId(assessmentID);
-      const data = res?.payload || [];
-      // later we can filter by categoryId once backend supports it
-      setQuestions(data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch questions");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchQuestions = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const res = await getQuestionsByAssessmentId(assessmentID);
+  //     const data = res?.payload || [];
+  //     // later we can filter by categoryId once backend supports it
+  //     setQuestions(data);
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("Failed to fetch questions");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+ const fetchQuestions = async () => {
+   try {
+     setIsLoading(true);
+     const res = await getQuestionsByAssessmentId(assessmentID);
+     const allQuestions = res?.payload || [];
+
+     // ✅ Filter only the questions that belong to this category
+     const filtered = allQuestions.filter(
+       (q) => q.question_category?.id?.toString() === categoryId?.toString()
+     );
+
+     setQuestions(filtered);
+   } catch (err) {
+     console.error(err);
+     setError("Failed to fetch questions");
+   } finally {
+     setIsLoading(false);
+   }
+ };
+
 
   useEffect(() => {
     fetchQuestions();
@@ -89,7 +110,7 @@ const assessmentID = location.state?.assessmentId || paramId;
       <div className="flex justify-between items-center mb-3">
         <div>
           <h2 className="font-semibold ">{assessmentName}</h2>
-          <h2 className="text-sm font-semibold mb-1">{categoryName}</h2>
+          <h2 className="text-sm  mb-1">Question Category:<span className="font-semibold"> {categoryName}</span>  </h2>
           <p className="text-sm text-gray-500">
             Total Questions: {questions.length}
           </p>
