@@ -31,7 +31,7 @@ const ExternalUserSubmissionPage = () => {
     <section className="bg-[#114654] h-screen flex flex-col">
       {/* Sticky header */}
       <div className="bg-white flex justify-between items-center py-3 px-6 shadow-md sticky top-0 z-10">
-        <img src={logo} alt="Logo" className="w-[200px]" />
+        <img src={logo} alt="Logo" className="w-[220px]" />
         <h2 className="font-semibold text-xl">ASRS Category Assessment</h2>
         <button className="bg-[#114654] px-4 py-2 text-white rounded-md text-sm mr-2">
           Submit
