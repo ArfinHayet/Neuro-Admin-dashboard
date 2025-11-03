@@ -23,6 +23,7 @@ import PrivateRoute from "./PrivateRoute";
 import InvoiceDetails from "./Pages/Finances/InvoiceDetails";
 import PaymentDetails from "./Pages/Finances/PaymentDetails";
 import CategoryBasedQuestionList from "./Pages/Assessments/On Demand Assessment/CategoryBasedQuestionList";
+import ExternalUserSubmissionPage from "./Pages/External User Page/ExternalUserSubmissionPage";
 
 export const router = createBrowserRouter([
   {
@@ -32,9 +33,8 @@ export const router = createBrowserRouter([
 
   {
     path: "/",
-    element: 
-    //<Layout />,
-    (
+    element: (
+      //<Layout />,
       <PrivateRoute>
         <Layout />
       </PrivateRoute>
@@ -131,5 +131,9 @@ export const router = createBrowserRouter([
         element: <PaymentDetails />,
       },
     ],
+  },
+  {
+    path: "external_reviewer",
+    element: <ExternalUserSubmissionPage />,
   },
 ]);

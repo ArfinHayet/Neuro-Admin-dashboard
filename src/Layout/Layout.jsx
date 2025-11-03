@@ -14,7 +14,7 @@ const Layout = () => {
           <Sidebar />
         </div>
         <div className="flex-1 px-4 mt-[9vh]  ml-[16%]  ">
-          <div className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
+          <div className="h-[90vh]  overflow-y-auto bg-white rounded-2xl px-4 pt-4">
             <Outlet /> 
           </div>
          
