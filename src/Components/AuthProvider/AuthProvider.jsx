@@ -47,6 +47,7 @@
 
 // export default AuthProvider;
 
+
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useEffect, useState } from "react";
 
@@ -62,10 +63,10 @@ const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUserData(JSON.parse(storedUser));
     }
-    setLoading(false); // mark loading done
+    setLoading(false); 
   }, []);
 
-  // Keep userData in sync with localStorage
+
   useEffect(() => {
     if (userData) {
       localStorage.setItem("userInfo", JSON.stringify(userData));
@@ -95,7 +96,7 @@ const AuthProvider = ({ children }) => {
     setUserData,
   };
 
-  // Optional: show loader while rehydrating auth
+
   if (loading) {
     return <div>Loading...</div>;
   }

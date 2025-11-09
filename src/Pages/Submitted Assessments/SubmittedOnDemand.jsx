@@ -26,7 +26,9 @@ const SubmittedOnDemand = () => {
       );
 
       setSubmissions(onDemandSubmissions);
+      console.log(onDemandSubmissions);
     } catch (err) {
+     
       console.error("Failed to fetch submissions:", err);
       setSubmissions([]);
     } finally {

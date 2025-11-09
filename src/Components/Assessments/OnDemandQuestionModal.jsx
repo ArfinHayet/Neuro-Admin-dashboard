@@ -16,15 +16,16 @@ const OnDemandQuestionModal = ({
     questions: "",
     order: "",
     answerType: "Yes/No",
-    options: ["Yes", "No"],
+    options: ["yes", "no"],
     questiontypeid: "",
+    variant: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (editingQuestion) {
-      let options = ["Yes", "No"];
+      let options = ["yes", "no"];
 
       if (Array.isArray(editingQuestion.options)) {
         options = editingQuestion.options;
@@ -32,7 +33,7 @@ const OnDemandQuestionModal = ({
         try {
           options = JSON.parse(editingQuestion.options);
         } catch {
-          options = ["Yes", "No"];
+          options = ["yes", "no"];
         }
       }
 
@@ -43,6 +44,7 @@ const OnDemandQuestionModal = ({
         answerType: editingQuestion.answerType || "",
         options: options,
         questiontypeid: editingQuestion.questiontypeid || "",
+        variant: editingQuestion.variant || "",
       });
     } else {
       setFormData({
@@ -50,8 +52,9 @@ const OnDemandQuestionModal = ({
         questions: "",
         order: "",
         answerType: "Yes/No",
-        options: ["Yes", "No"],
+        options: ["yes", "no"],
         questiontypeid: "",
+        variant: "",
       });
     }
   }, [editingQuestion, defaultType]);
@@ -63,8 +66,8 @@ const OnDemandQuestionModal = ({
       }
     } else if (field === "answerType") {
       let options = [];
-      if (value === "Yes/No") options = ["Yes", "No"];
-      else if (value === "Text") options = ["Text"];
+      if (value === "Yes/No") options = ["yes", "no"];
+      else if (value === "Text") options = [""];
       else if (value === "MultipleChoice") options = [""];
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
@@ -121,12 +124,13 @@ const OnDemandQuestionModal = ({
     try {
    
      const payload = {
-       assessmentId: Number(assessment.id) ,
+       assessmentId: Number(assessment.id),
        questions: formData.questions.trim(),
        order: Number(formData.order),
        answerType: formData.answerType,
        options: formData.options,
        questiontypeid: Number(categoryId), // pass the category id here
+       variant: formData.variant,
      };
       
       console.log("Payload to send:", {
@@ -136,6 +140,7 @@ const OnDemandQuestionModal = ({
         answerType: formData.answerType,
         options: formData.options,
         questiontypeid: Number(categoryId), // pass the category id here
+        variant: formData.variant,
       });
 
 
@@ -198,6 +203,17 @@ const OnDemandQuestionModal = ({
           onChange={(e) => handleChange("questions", e.target.value)}
           placeholder="Enter question"
         />
+
+        <label className="block text-xs mb-1">Question Variant </label>
+        <select
+          className="w-full border px-3 py-2 rounded mb-3 text-xs"
+          value={formData.variant}
+          onChange={(e) => handleChange("variant", e.target.value)}
+        >
+          <option value="" >Select Variant</option>
+          <option value="internal" >Internal</option>
+          <option value="external" >External</option>
+        </select>
 
         <label className="block text-xs mb-1">Question Order</label>
         <input
@@ -267,6 +283,7 @@ const OnDemandQuestionModal = ({
             Cancel
           </button>
           <button
+            type="button"
             className="px-4 py-2 rounded-full bg-[#114654] text-white text-sm"
             onClick={handleSave}
             disabled={isSubmitting}

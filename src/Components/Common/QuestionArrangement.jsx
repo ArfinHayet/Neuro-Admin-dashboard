@@ -44,17 +44,18 @@ const QuestionArrangement = ({
             min={1}
           />
         </td>
-        <td className="p-2 text-xs">
-          <select
-            value={question.answerType??  ""}
+        <td className="px-6 text-xs w-32">{question.answerType??  ""}
+          {/* <select
+            value=
             onChange={handleAnswerTypeChange}
             className="border p-1 rounded w-28 text-xs"
           >
             <option value="yesno">Yes/No</option>
             <option value="text">Text</option>
             <option value="multiple">Multiple Choice</option>
-          </select>
+          </select> */}
         </td>
+        <td className="px-2 text-xs">{question.variant}</td>
         <td className="p-2 space-x-2">
           <button className="" onClick={() => onEdit(question)}>
             <FiEdit3 className="text-gray-500" size={18} />
