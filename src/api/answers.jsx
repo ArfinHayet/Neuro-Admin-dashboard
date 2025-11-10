@@ -41,6 +41,21 @@ const getAnswersByAssessmentId = async (assessmentId) => {
 };
 
 
+// ✅ Now supports both patientId and assessmentId together
+const getAnswersByPatientAndAssessment = async (patientId, assessmentId) => {
+  const response = await fetch(
+    `${domain}/answers?patientId=${patientId}&assessmentId=${assessmentId}`,
+    {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+  return data;
+};
 
 
-export { createAnswer, getAllAnswers, getAnswersByAssessmentId };
+export { createAnswer, getAllAnswers, getAnswersByAssessmentId , getAnswersByPatientAndAssessment   };

@@ -59,13 +59,19 @@ const SubmittedOnDemand = () => {
   }, []);
 
   const onView = (submission) => {
-    navigate(`/submitted-assessments/on-demand/${submission.assessmentId}`);
+   navigate(`/submitted-assessments/on-demand/${submission.id}`, {
+     state: { submission }, // pass full payload
+   });
   };
 
   const data = useMemo(() => submissions, [submissions]);
 
   const columns = useMemo(
     () => [
+      {
+        header: "id",
+        accessorFn: (row) => row.id || "id",
+    },
       {
         header: "User Name",
         accessorFn: (row) => row.user?.name || "Unknown User",
@@ -81,6 +87,10 @@ const SubmittedOnDemand = () => {
       {
         header: "Score",
         accessorFn: (row) => row.score ?? "N/A",
+      },
+      {
+        header: "questionType",
+        accessorFn: (row) => row.questionType ?? "N/A",
       },
       {
         header: "Date Taken",
