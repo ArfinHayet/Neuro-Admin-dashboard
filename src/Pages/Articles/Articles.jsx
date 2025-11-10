@@ -97,12 +97,12 @@ const Blogs = () => {
         <button className="text-teal-800" onClick={() => onView(blog)}>
           <IoEye />
         </button>
-        <button
+        {/* <button
           className="text-red-600 text-sm font-medium"
           onClick={() => onDelete(blog.id)}
         >
           Delete
-        </button>
+        </button> */}
       </div>
     </div>
   );
