@@ -14,7 +14,23 @@ const SubmittedOnDemand = () => {
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const limit = 20;
 
-  // fetch paginated submissions
+  // Group submissions by assessmentId + patientId
+  const groupSubmissions = (submissions) => {
+    const map = new Map();
+
+    submissions.forEach((sub) => {
+      const key = `${sub.assessmentId}_${sub.patientId}`;
+      if (!map.has(key)) {
+        map.set(key, { ...sub, grouped: [sub] });
+      } else {
+        map.get(key).grouped.push(sub);
+      }
+    });
+
+    return Array.from(map.values());
+  };
+
+  // Fetch paginated submissions
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
@@ -22,13 +38,14 @@ const SubmittedOnDemand = () => {
       const submissionsData = data?.payload || [];
 
       const onDemandSubmissions = submissionsData.filter(
-        (submission) => submission.assessmentId !== 12
+        (submission) => submission.assessment?.type !== "free"
       );
 
-      setSubmissions(onDemandSubmissions);
-      console.log(onDemandSubmissions);
+      const grouped = groupSubmissions(onDemandSubmissions);
+
+      setSubmissions(grouped);
+      console.log(grouped);
     } catch (err) {
-     
       console.error("Failed to fetch submissions:", err);
       setSubmissions([]);
     } finally {
@@ -36,14 +53,15 @@ const SubmittedOnDemand = () => {
     }
   };
 
-  // fetch total count across all pages
+  // Fetch total count across all pages
   const fetchTotal = async () => {
     try {
       const all = await getAllSubmissions();
       const filtered = all?.payload?.filter(
-        (submission) => submission.assessmentId !== 12
+        (submission) => submission.assessmentId !== 31
       );
       setTotalSubmissions(filtered.length);
+
     } catch (err) {
       console.error("Failed to fetch total submissions:", err);
       setTotalSubmissions(0);
@@ -58,20 +76,19 @@ const SubmittedOnDemand = () => {
     fetchTotal();
   }, []);
 
-  const onView = (submission) => {
-   navigate(`/submitted-assessments/on-demand/${submission.id}`, {
-     state: { submission }, // pass full payload
-   });
+  const onView = (row) => {
+    navigate(
+      `/submitted-assessments/on-demand/${row.assessmentId}_${row.patientId}`,
+      {
+        state: { submissions: row.grouped }, // pass all grouped submissions
+      }
+    );
   };
 
   const data = useMemo(() => submissions, [submissions]);
 
   const columns = useMemo(
     () => [
-      {
-        header: "id",
-        accessorFn: (row) => row.id || "id",
-    },
       {
         header: "User Name",
         accessorFn: (row) => row.user?.name || "Unknown User",
@@ -86,7 +103,13 @@ const SubmittedOnDemand = () => {
       },
       {
         header: "Score",
-        accessorFn: (row) => row.score ?? "N/A",
+        accessorFn: (row) => {
+          const scores = row.grouped
+            .map((s) => s.score)
+            .filter((s) => s != null);
+          if (!scores.length) return "N/A";
+          return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
+        },
       },
       {
         header: "questionType",
@@ -118,7 +141,7 @@ const SubmittedOnDemand = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => `${row.assessmentId}_${row.patientId}`,
   });
 
   return (
@@ -134,7 +157,7 @@ const SubmittedOnDemand = () => {
         </p>
       ) : (
         <>
-          <div className="relative  w-[78vw] h-[73vh] bg-white  overflow-x-auto">
+          <div className="relative w-[78vw] h-[73vh] bg-white overflow-x-auto">
             <DataTable table={table} />
           </div>
 
@@ -169,3 +192,6 @@ const SubmittedOnDemand = () => {
 };
 
 export default SubmittedOnDemand;
+
+
+

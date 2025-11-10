@@ -5,39 +5,58 @@ import { getAnswersByPatientAndAssessment } from "../../api/answers";
 const OnDemandDetails = () => {
   const { id } = useParams();
   const { state } = useLocation();
-  const passedSubmission = state?.submission || null;
-
-  const [assessment, setAssessment] = useState(passedSubmission);
-  const [answers, setAnswers] = useState([]);
+  const passedSubmissions = state?.submissions || []; // note: array of submissions
+  const [selectedSubmission, setSelectedSubmission] = useState(
+    passedSubmissions[0] || null
+  );
+  const [groupedAnswers, setGroupedAnswers] = useState({});
+  const [selectedType, setSelectedType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [allAnswers, setAllAnswers] = useState({});
 
-  const fetchAnswers = async (patientId, assessmentId) => {
-    try {
-      const res = await getAnswersByPatientAndAssessment(
-        patientId,
-        assessmentId
-      );
-      setAnswers(res?.payload || []);
-    } catch (err) {
-      console.error("Error fetching answers:", err);
-      setAnswers([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   useEffect(() => {
-    if (passedSubmission) {
-      const patientId = passedSubmission.patient?.id;
-      const assessmentId = passedSubmission.assessmentId;
+    const fetchAllAnswers = async () => {
+      if (!passedSubmissions.length) return;
 
-      if (patientId && assessmentId) {
-        fetchAnswers(patientId, assessmentId);
-      } else {
-        setIsLoading(false);
-      }
-    }
-  }, [id]);
+      const answersMap = {};
+
+      await Promise.all(
+        passedSubmissions.map(async (sub) => {
+          try {
+            const res = await getAnswersByPatientAndAssessment(
+              sub.patient.id,
+              sub.assessmentId,
+              { limit: 100 }
+            );
+            const ans = res?.payload || [];
+
+            const grouped = ans.reduce((acc, item) => {
+              const type = sub.questionType || "Unknown";
+              if (!acc[type]) acc[type] = [];
+              acc[type].push(item);
+              return acc;
+            }, {});
+
+            answersMap[sub.id] = grouped;
+          } catch (err) {
+            console.error("Error fetching answers for submission", sub.id, err);
+            answersMap[sub.id] = {};
+          }
+        })
+      );
+
+      setAllAnswers(answersMap);
+      setGroupedAnswers(answersMap[selectedSubmission.id] || {});
+      setSelectedType(
+        Object.keys(answersMap[selectedSubmission.id] || {})[0] || null
+      );
+      setIsLoading(false);
+    };
+
+    fetchAllAnswers();
+  }, []);
 
   if (isLoading)
     return (
@@ -48,64 +67,120 @@ const OnDemandDetails = () => {
       </section>
     );
 
-  if (!assessment) return <p>Assessment not found.</p>;
+  if (!selectedSubmission) return <p>Submission not found.</p>;
+
+  const questionTypes = Object.keys(groupedAnswers);
 
   return (
-    <section>
-      <h1 className="text-xl font-semibold mb-4">
-        {assessment.assessment?.category || "Assessment"} Assessment Submission
+    <section className="space-y-2">
+      <h1 className="text-xl font-semibold ">
+        {selectedSubmission.assessment?.category || "Assessment"} Submission
         Details
       </h1>
 
-      <div className="text-sm space-y-1">
+      {/* Basic info */}
+      <div className="text-sm space-y-1 pb-2">
         <p>
-          <span className="font-semibold">User Name: </span>
-          {assessment.user?.name}
+          <span className="font-semibold">User Name </span>
+          {selectedSubmission.user?.name}
         </p>
         <p>
-          <span className="font-semibold">Patient Name: </span>
-          {assessment.patient?.name}
+          <span className="font-semibold">Patient Name </span>
+          {selectedSubmission.patient?.name}
         </p>
         <p>
-          <span className="font-semibold">Clinician: </span>
-          {assessment.clinicianId ? "Assigned" : "Not assigned"}
+          <span className="font-semibold">Clinician </span>
+          {selectedSubmission.clinicianId ? "Assigned" : "Not assigned"}
         </p>
         <p>
-          <span className="font-semibold">Question Type: </span>
-          {assessment.questionType}
+          <span className="font-semibold">Status </span>
+          {selectedSubmission.status}
         </p>
+        {/* <p>
+          <span className="font-semibold">Ratings: </span>
+          {selectedSubmission.ratings}
+        </p> */}
       </div>
 
-      <div className="mt-6 space-y-4">
-        {answers.length > 0 ? (
-          answers.map((ans, i) => (
+      {/* Switch between multiple submissions if parent passes grouped */}
+      {passedSubmissions.length > 1 && (
+        <div className="mt-6 flex gap-2 flex-wrap">
+          {passedSubmissions.map((sub, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setSelectedSubmission(sub);
+                setGroupedAnswers(allAnswers[sub.id] || {});
+                setSelectedType(
+                  Object.keys(allAnswers[sub.id] || {})[0] || null
+                );
+              }}
+              className={`px-4 py-1 rounded-full text-sm font-medium ${
+                selectedSubmission.id === sub.id
+                  ? "bg-[#114654] text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {sub.questionType ||
+                sub.assessment?.name ||
+                `Submission ${i + 1}`}
+            </button>
+
+          
+          ))}
+        </div>
+      )}
+      {/* QuestionType buttons */}
+      {/* <div className="flex gap-2 mt-6 flex-wrap">
+        {questionTypes.map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            className={`px-4 py-1 rounded-full text-sm font-medium ${
+              selectedType === type
+                ? "bg-[#114654] text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            {type}
+          </button>
+        ))}
+      </div> */}
+
+      {/* Questions & answers for selected type */}
+      {/* <div className="mt-4 space-y-4 text-xs">
+        {selectedType && groupedAnswers[selectedType]?.length > 0 ? (
+          groupedAnswers[selectedType].map((ans, i) => (
             <div
               key={i}
               className="flex items-start gap-3 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl"
             >
               <div>
                 <p className="font-medium text-gray-800">
-                  {ans.question?.questions}
+                  {ans.question?.questions || "No question text"}
                 </p>
                 <div className="flex gap-2 items-center">
                   <div className="w-3 h-3 rounded-full bg-primary mt-1"></div>
-                  <p className="text-secondary mt-1">{ans.answer}</p>
+                  <p className="text-secondary mt-1">
+                    {ans.answer || "No answer"}
+                  </p>
                 </div>
               </div>
             </div>
           ))
         ) : (
           <p className="text-center text-gray-500 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl">
-            No answers submitted yet.
+            No answers submitted yet for this question type.
           </p>
         )}
-      </div>
+      </div> */}
 
-      <div className="p-4 bg-white rounded-md mt-6">
-        <h2 className="text-lg font-semibold mb-2">AI Summary</h2>
-        <p className="mt-1 text-gray-700 whitespace-pre-line">
-          {assessment.summary
-            ? assessment.summary.replace(/\*/g, "")
+      {/* Summary */}
+      <div className="py-4 bg-white rounded-md mt-6 max-w-4xl">
+        <h2 className=" font-semibold mb-2">AI Summary</h2>
+        <p className="mt-1 text-gray-700 whitespace-pre-line text-xs">
+          {selectedSubmission.summary
+            ? selectedSubmission.summary.replace(/\*/g, "")
             : "No summary available."}
         </p>
       </div>
@@ -114,4 +189,3 @@ const OnDemandDetails = () => {
 };
 
 export default OnDemandDetails;
-
