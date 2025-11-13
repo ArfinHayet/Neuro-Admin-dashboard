@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { createBlog, getAllBlogs } from "../../api/blogs";
+import { createBlog, getAllBlogs, deleteBlogs } from "../../api/blogs";
 import toast from "react-hot-toast";
 import { IoEye } from "react-icons/io5";
 import { AiFillEdit } from "react-icons/ai";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // ✅ Quill CSS
+import "react-quill/dist/quill.snow.css"; 
+import { RiDeleteBin2Fill } from "react-icons/ri";
+
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,6 +14,10 @@ const Blogs = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [blogToEdit, setBlogToEdit] = useState(null);
   const [blogToView, setBlogToView] = useState(null);
+
+   const [showDeleteModal, setShowDeleteModal] = useState(false);
+   const [deleteId, setDeleteId] = useState(null);
+   const [deleteTitle, setDeleteTitle] = useState("");
 
   const [blog, setBlog] = useState({
     heading: "",
@@ -48,24 +54,32 @@ const Blogs = () => {
       toast.error("Please fill all fields");
       return;
     }
+
     try {
       if (blog.id) {
+
         setBlogs((prev) => prev.map((b) => (b.id === blog.id ? blog : b)));
-        toast.success("Blog updated locally (API update coming soon)");
+        toast.success("Blog updated locally ");
       } else {
-        await createBlog(blog);
+        await createBlog(blog); 
         toast.success("Blog created successfully");
         fetchBlogs();
       }
+
       setIsModalOpen(false);
+
+      setBlog({ heading: "", description: "" });
+      setBlogToEdit(null);
     } catch (err) {
       console.error(err);
       toast.error("Failed to save blog");
     }
   };
 
+
   const handleAdd = () => {
     setBlogToEdit(null);
+    setBlog({ heading: "", description: "" }); 
     setIsModalOpen(true);
   };
 
@@ -74,10 +88,37 @@ const Blogs = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    setBlogs((prev) => prev.filter((b) => b.id !== id));
-    toast.success("Blog deleted locally (API delete coming soon)");
+  const handleDeleteClick = (blog) => {
+    setDeleteId(blog.id || blog._id);
+    setDeleteTitle(blog.heading);
+    setShowDeleteModal(true);
   };
+
+ const handleConfirmDelete = async () => {
+   try {
+     const res = await deleteBlogs(deleteId);
+
+     if (res.statusCode === 200 || res.message?.includes("deleted")) {
+       setBlogs((prev) =>
+         prev.filter(
+           (b) =>
+             b._id?.toString() !== deleteId?.toString() && b.id !== deleteId
+         )
+       );
+       toast.success("Blog deleted successfully");
+     } else {
+       toast.error(res.message || "Failed to delete blog");
+     }
+   } catch (err) {
+     console.error(err);
+     toast.error("Error deleting blog");
+   } finally {
+     setShowDeleteModal(false);
+     setDeleteId(null);
+   }
+ };
+
+
 
   const handleView = (blog) => {
     setBlogToView(blog);
@@ -85,10 +126,10 @@ const Blogs = () => {
   };
 
   const BlogDetails = ({ blog, onEdit, onDelete, onView }) => (
-    <div className="relative p-3 border rounded-lg shadow-sm bg-white flex flex-col gap-1">
+    <div className="relative p-3 h-[150px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
       <h3 className="text-sm font-semibold">{blog.heading}</h3>
       <p className="text-gray-700 text-xs">
-        {blog.description?.slice(0, 120)}...
+        {blog.description?.slice(0, 100)}...
       </p>
       <div className="flex gap-2 right-2 absolute bottom-2">
         <button className="text-blue-600" onClick={() => onEdit(blog)}>
@@ -97,12 +138,12 @@ const Blogs = () => {
         <button className="text-teal-800" onClick={() => onView(blog)}>
           <IoEye />
         </button>
-        {/* <button
+        <button
           className="text-red-600 text-sm font-medium"
-          onClick={() => onDelete(blog.id)}
+          onClick={() => onDelete(blog)}
         >
-          Delete
-        </button> */}
+          <RiDeleteBin2Fill />
+        </button>
       </div>
     </div>
   );
@@ -128,11 +169,39 @@ const Blogs = () => {
             key={blog.id || blog._id}
             blog={blog}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteClick}
             onView={handleView}
           />
         ))}
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 pt-10 flex items-start justify-center bg-black bg-opacity-20 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+            <p className="text-sm mb-4">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-red-600">
+                "{deleteTitle}"
+              </span>
+              ?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleConfirmDelete}
+                className="bg-[#114654] text-white px-4 py-1 rounded hover:bg-opacity-80 text-sm"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400 text-sm"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
@@ -150,7 +219,9 @@ const Blogs = () => {
               placeholder="Heading"
               className="w-full p-2 border rounded mb-2 text-sm"
             />
-            <label htmlFor="" className="text-xs pb-1">Description</label>
+            <label htmlFor="" className="text-xs pb-1">
+              Description
+            </label>
             <ReactQuill
               theme="snow"
               value={blog.description}

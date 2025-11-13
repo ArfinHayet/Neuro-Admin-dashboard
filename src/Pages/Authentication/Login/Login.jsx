@@ -34,7 +34,12 @@ const Login = () => {
 
       if (result && result?.payload?.token?.access_token) {
         localStorage.setItem("accessToken", result.payload.token.access_token);
-        const userData = result.payload.filteredUser;
+            const token = result.payload.token.access_token;
+
+        const userData = {
+          ...result.payload.filteredUser,
+          token,
+        };
         setUserData(userData);
         setLoading(false);
         navigate("/");

@@ -28,4 +28,16 @@ const getAllBlogs = async () => {
   return data.payload || [];
 };
 
-export { createBlog, getAllBlogs };
+const deleteBlogs = async (id) => {
+  const response = await fetch(`${domain}/blogs/${id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+   const data = await response.json();
+
+  return data;
+}
+
+export { createBlog, getAllBlogs, deleteBlogs };
