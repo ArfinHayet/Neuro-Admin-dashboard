@@ -4,12 +4,15 @@ import { addQuestionCategory, updateQuestionCategory } from "../../api/questionc
 
 const QuestionCategoryAddModal = ({ isOpen, onClose, onSave, editingCategory }) => {
   const [name, setName] = useState("");
+  const [variant, setVariant] = useState("");
 
   useEffect(() => {
     if (editingCategory) {
       setName(editingCategory.name || "");
+      setVariant(editingCategory.variant || "");
     } else {
       setName("");
+      setVariant("");
     }
   }, [editingCategory]);
 
@@ -18,9 +21,9 @@ const QuestionCategoryAddModal = ({ isOpen, onClose, onSave, editingCategory }) 
     try {
       let response;
       if (editingCategory) {
-        response = await updateQuestionCategory(editingCategory.id, { name });
+        response = await updateQuestionCategory(editingCategory.id, { name, variant });
       } else {
-        response = await addQuestionCategory({ name });
+        response = await addQuestionCategory({ name, variant });
       }
 
       if (response?.payload || response?.success) {
@@ -47,6 +50,14 @@ const QuestionCategoryAddModal = ({ isOpen, onClose, onSave, editingCategory }) 
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Enter category Variant"
+            value={variant}
+            onChange={(e) => setVariant(e.target.value)}
+            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
             required
           />
           <div className="flex justify-end gap-2 mt-4">

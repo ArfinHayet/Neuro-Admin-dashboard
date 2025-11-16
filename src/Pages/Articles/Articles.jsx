@@ -128,13 +128,14 @@ const Blogs = () => {
   const BlogDetails = ({ blog, onEdit, onDelete, onView }) => (
     <div className="relative p-3 h-[150px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
       <h3 className="text-sm font-semibold">{blog.heading}</h3>
+
       <p className="text-gray-700 text-xs">
-        {blog.description?.slice(0, 100)}...
+        {/* {blog.description?.slice(0, 100)}... */}
       </p>
       <div className="flex gap-2 right-2 absolute bottom-2">
-        <button className="text-blue-600" onClick={() => onEdit(blog)}>
+        {/* <button className="text-blue-600" onClick={() => onEdit(blog)}>
           <AiFillEdit />
-        </button>
+        </button> */}
         <button className="text-teal-800" onClick={() => onView(blog)}>
           <IoEye />
         </button>
@@ -249,14 +250,14 @@ const Blogs = () => {
       {/* View Modal */}
       {viewModalOpen && blogToView && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-lg max-h-[80vh] overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg w-[60vw] shadow-lg max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-4">{blogToView.heading}</h2>
             <div
               dangerouslySetInnerHTML={{ __html: blogToView.description }}
-              className="text-gray-700"
+              className="text-gray-700 text-sm"
             />
             <button
-              className="mt-4 px-4 py-2 bg-gray-200 rounded"
+              className="mt-4 px-4 py-1 bg-gray-200 rounded text-sm"
               onClick={() => setViewModalOpen(false)}
             >
               Close

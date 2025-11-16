@@ -66,9 +66,10 @@ const OnDemandQuestionModal = ({
       }
     } else if (field === "answerType") {
       let options = [];
-      if (value === "Yes/No") options = ["yes", "no"];
+      if (value === "Yes/No") options = [""];
       else if (value === "Text") options = [""];
       else if (value === "MultipleChoice") options = [""];
+      // else if (value === "SingleChoice") options = [""];
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
@@ -76,7 +77,7 @@ const OnDemandQuestionModal = ({
   };
 
   const handleOptionChange = (index, value) => {
-    if (formData.answerType !== "MultipleChoice") return;
+    if (formData.answerType !== "MultipleChoice" && formData.answerType !== "Yes/No") return;
     setFormData((prev) => {
       const updated = [...prev.options];
       updated[index] = value;
@@ -103,7 +104,7 @@ const OnDemandQuestionModal = ({
       return false;
     }
     if (
-      formData.answerType === "MultipleChoice" &&
+      (formData.answerType === "MultipleChoice" || formData.answerType === "Yes/No" ) &&
       formData.options.some((o) => !o || !o.toString().trim())
     ) {
       setError("All options must have labels");
@@ -232,10 +233,11 @@ const OnDemandQuestionModal = ({
         >
           <option value="Yes/No">Yes / No</option>
           <option value="MultipleChoice">Multiple Choice</option>
+          {/* <option value="SingleChoice">Single Choice</option> */}
           <option value="Text">Text</option>
         </select>
 
-        {formData.answerType === "MultipleChoice" && (
+        {(formData.answerType === "MultipleChoice" || formData.answerType === "Yes/No" ) && (
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
               <label className="text-xs font-medium">Options</label>

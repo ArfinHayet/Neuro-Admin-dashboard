@@ -85,7 +85,7 @@ const InitialModal = ({
     } else if (field === "answerType") {
       let options = [];
       if (value === "Yes/No") {
-        options = ["Yes", "No"];
+        options = ["Yes", "No" ];
       } else if (value === "Text") {
         options = ["Text"];
       } else if (value === "MultipleChoice") {
