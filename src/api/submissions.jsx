@@ -7,7 +7,7 @@ const createSubmission = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -23,7 +23,7 @@ const getSubmissionsPage = async (page = 1, limit = 20) => {
     {
       method: "GET",
       headers: {
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token()}`,
       },
     }
   );
@@ -44,7 +44,7 @@ const getAllSubmissions = async () => {
       {
         method: "GET",
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token()}`,
         },
       }
     );

@@ -7,7 +7,7 @@ const addQuestionCategory = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -28,7 +28,7 @@ const getAllQuestionCategories = async () => {
       {
         method: "GET",
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token()}`,
         },
       }
     );
@@ -53,7 +53,7 @@ const deleteQuestionCategory = async (id) => {
   const response = await fetch(`${domain}/question-categories/${id}`, {
     method: "DELETE",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -70,7 +70,7 @@ const updateQuestionCategory = async (id, obj) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -78,4 +78,9 @@ const updateQuestionCategory = async (id, obj) => {
   return await response.json();
 };
 
-export { addQuestionCategory, getAllQuestionCategories,  deleteQuestionCategory, updateQuestionCategory   };
+export {
+  addQuestionCategory,
+  getAllQuestionCategories,
+  deleteQuestionCategory,
+  updateQuestionCategory,
+};

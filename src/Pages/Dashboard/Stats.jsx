@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import {
-  clinicians,
-} from "../../Components/utils/Data";
 import { LuUsers } from "react-icons/lu";
 import { MdOutlineCurrencyPound } from "react-icons/md";
 import { MdOutlineMedicalServices } from "react-icons/md";
@@ -12,50 +9,73 @@ import { MdOutlineAssessment } from "react-icons/md";
 
 const Stats = () => {
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalClinicians, setTotalClinicians] =  useState(0);
   const [loading, setLoading] = useState(true);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [lastMonthSubmissions, setLastMonthSubmissions] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // Fetch users
-        const usersData = await getUsers();
-        const usersCount = Array.isArray(usersData.payload)
-          ? usersData.payload.length
-          : 0;
-        setTotalUsers(usersCount);
+      // try {
+      //   // Fetch users
+      //   const usersData = await getUsers();
+      //   console.log(usersData);
+      //   const usersCount = Array.isArray(usersData.payload)
+      //     ? usersData.payload.length
+      //     : 0;
+      //   setTotalUsers(usersCount);
 
-        const submissionsData = await getAllSubmissions();
-        const submissions = Array.isArray(submissionsData.payload)
-          ? submissionsData.payload
-          : [];
-        setTotalSubmissions(submissions.length);
+       try {
+         // Fetch users
+         const usersData = await getUsers();
+         console.log("Fetched users:", usersData);
 
-        // Last month submissions
-        const now = new Date();
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(now.getMonth() - 1);
+         const usersArray = Array.isArray(usersData.payload)
+           ? usersData.payload
+           : [];
 
-        const lastMonthCount = submissions.filter(
-          (s) => new Date(s.createdAt) >= oneMonthAgo
-        ).length;
+         // Count clinicians
+         const clinicianCount = usersArray.filter(
+           (u) => u.role === "clinician"
+         ).length;
 
-        setLastMonthSubmissions(lastMonthCount);
-      } catch (error) {
-        console.error("Error fetching data", error);
-        setTotalUsers(0);
-        setTotalSubmissions(0);
-        setLastMonthSubmissions(0);
-      } finally {
-        setLoading(false);
-      }
+         // Count regular users (exclude admin and clinicians)
+         const regularUserCount = usersArray.filter(
+           (u) => u.role !== "admin" && u.role !== "clinician"
+         ).length;
+
+         setTotalUsers(regularUserCount);
+         setTotalClinicians(clinicianCount);
+
+         const submissionsData = await getAllSubmissions();
+         const submissions = Array.isArray(submissionsData.payload)
+           ? submissionsData.payload
+           : [];
+         setTotalSubmissions(submissions.length);
+
+         // Last month submissions
+         const now = new Date();
+         const oneMonthAgo = new Date();
+         oneMonthAgo.setMonth(now.getMonth() - 1);
+
+         const lastMonthCount = submissions.filter(
+           (s) => new Date(s.createdAt) >= oneMonthAgo
+         ).length;
+
+         setLastMonthSubmissions(lastMonthCount);
+       } catch (error) {
+         console.error("Error fetching data", error);
+         setTotalUsers(0);
+         setTotalSubmissions(0);
+         setLastMonthSubmissions(0);
+       } finally {
+         setLoading(false);
+       }
     };
 
     fetchData();
   }, []);
 
-  const totalClinicians = clinicians.length;
 
   //if (loading) return <p>Loading stats...</p>;
 

@@ -6,7 +6,7 @@ const addUser = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify({
       name: obj.name,
@@ -43,7 +43,7 @@ const getUsers = async () => {
       {
         method: "GET",
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token()}`,
         },
       }
     );
@@ -97,7 +97,7 @@ const getUserById = async (id) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -109,7 +109,7 @@ const getLeaves = async () => {
   const response = await fetch(`${domain}/leaves`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
   const data = await response.json();
@@ -120,7 +120,7 @@ const getAvailability = async () => {
   const response = await fetch(`${domain}/availabilities`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
   const data = await response.json();

@@ -6,7 +6,7 @@ const createBlog = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -19,7 +19,7 @@ const getAllBlogs = async () => {
   const response = await fetch(`${domain}/blogs`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -32,12 +32,12 @@ const deleteBlogs = async (id) => {
   const response = await fetch(`${domain}/blogs/${id}`, {
     method: "DELETE",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
-   const data = await response.json();
+  const data = await response.json();
 
   return data;
-}
+};
 
 export { createBlog, getAllBlogs, deleteBlogs };

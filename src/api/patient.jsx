@@ -6,7 +6,7 @@ const addPatient = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify({
       name: String(obj.name),
@@ -27,7 +27,7 @@ const getPatients = async () => {
   const response = await fetch(`${domain}/patient`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -39,7 +39,7 @@ const getPatientById = async (id) => {
   const response = await fetch(`${domain}/patient/${id}`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -52,7 +52,7 @@ const updatePatient = async (id, obj) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -66,7 +66,7 @@ const deletePatient = async (id) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 

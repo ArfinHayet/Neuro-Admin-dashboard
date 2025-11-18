@@ -6,7 +6,7 @@ const addQuestion = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -26,7 +26,7 @@ const getQuestionsByAssessmentId = async (assessmentId) => {
       {
         method: "GET",
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token()}`,
         },
       }
     );
@@ -56,7 +56,7 @@ const getAllQuestions = async () => {
       {
         method: "GET",
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token()}`,
         },
       }
     );
@@ -79,7 +79,7 @@ const updateQuestion = async (id, obj) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -92,11 +92,17 @@ const deleteQuestion = async (id) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
   return await response.json();
 };
 
-export { addQuestion, getAllQuestions, getQuestionsByAssessmentId, updateQuestion, deleteQuestion };
+export {
+  addQuestion,
+  getAllQuestions,
+  getQuestionsByAssessmentId,
+  updateQuestion,
+  deleteQuestion,
+};

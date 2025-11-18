@@ -7,7 +7,7 @@ const createAnswer = async (obj) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -20,7 +20,7 @@ const getAllAnswers = async () => {
   const response = await fetch(`${domain}/answers`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -29,26 +29,12 @@ const getAllAnswers = async () => {
 };
 
 const getAnswersByAssessmentId = async (assessmentId) => {
-  const response = await fetch(`${domain}/answers?assessmentId=${assessmentId}`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-
-  const data = await response.json();
-  return data;
-};
-
-
-// ✅ Now supports both patientId and assessmentId together
-const getAnswersByPatientAndAssessment = async (patientId, assessmentId) => {
   const response = await fetch(
-    `${domain}/answers?patientId=${patientId}&assessmentId=${assessmentId}`,
+    `${domain}/answers?assessmentId=${assessmentId}`,
     {
       method: "GET",
       headers: {
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token()}`,
       },
     }
   );
@@ -57,5 +43,25 @@ const getAnswersByPatientAndAssessment = async (patientId, assessmentId) => {
   return data;
 };
 
+// ✅ Now supports both patientId and assessmentId together
+const getAnswersByPatientAndAssessment = async (patientId, assessmentId) => {
+  const response = await fetch(
+    `${domain}/answers?patientId=${patientId}&assessmentId=${assessmentId}`,
+    {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token()}`,
+      },
+    }
+  );
 
-export { createAnswer, getAllAnswers, getAnswersByAssessmentId , getAnswersByPatientAndAssessment   };
+  const data = await response.json();
+  return data;
+};
+
+export {
+  createAnswer,
+  getAllAnswers,
+  getAnswersByAssessmentId,
+  getAnswersByPatientAndAssessment,
+};

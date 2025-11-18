@@ -7,7 +7,7 @@ export async function createAssessment(obj) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
     body: JSON.stringify(obj),
   });
@@ -26,7 +26,7 @@ export async function getAssessments() {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
@@ -36,12 +36,12 @@ export async function getAssessments() {
 }
 
 export async function deleteAssessment(id) {
-  console.log(id)
+  console.log(id);
   const res = await fetch(`${domain}/assessments/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token()}`,
     },
   });
 
