@@ -12,6 +12,9 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 
+import { domain } from "../../../credential";
+import { uploadFile } from "../../api/uploadfiles";
+
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -50,72 +53,68 @@ const Blogs = () => {
     }
   };
 
-  useEffect(() => {
-    if (blogToEdit) {
-      console.log("Editing blog:", blogToEdit);
-      setBlog({
-        heading: blogToEdit.heading || "",
-        description: blogToEdit.description || "",
-        image: blogToEdit.image || "",
-        id: blogToEdit.id || blogToEdit._id || null,
-      });
-    
+ useEffect(() => {
+   if (blogToEdit) {
+     setBlog({
+       heading: blogToEdit.heading || "",
+       description: blogToEdit.description || "",
+       image: blogToEdit.image || "", // this will be a filename string when editing
+       id: blogToEdit.id || blogToEdit._id || null,
+     });
+   } else {
+     setBlog({ heading: "", description: "", image: "" });
+   }
+ }, [blogToEdit]);
 
-    } else {
-      setBlog({ heading: "", description: "", image: "" });
-    }
-  }, [blogToEdit]);
 
 
   const handleModalChange = (e) => {
     setBlog({ ...blog, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    // validation
-    if (!blog.heading || !blog.description || !blog.image) {
-      toast.error("Please fill all fields");
-      return;
-    }
+ const handleSave = async () => {
+   if (!blog.heading || !blog.description || !blog.image) {
+     toast.error("Please fill all fields");
+     return;
+   }
 
-    try {
-      // build JSON payload (backend only accepts JSON)
-      const payload = {
-        heading: blog.heading,
-        description: blog.description,
-        image: blog.image, // this must be a string (filename)
-      };
+   try {
+     // Step 1: upload if needed
+     let filename = blog.image;
+     if (blog.image instanceof File) {
+       filename = await uploadFile(blog.image);
+     }
 
-      console.log(payload)
+     // Step 2: build JSON payload with filename
+     const payload = {
+       heading: blog.heading,
+       description: blog.description,
+       image: filename, // string filename only
+     };
 
-      let response;
-      if (blog.id || blog._id) {
-        // update existing blog
-        response = await updateBlog(blog.id || blog._id, payload);
-      } else {
-        // create new blog
-        response = await createBlog(payload);
-      }
+     // Step 3: call blog APIs (JSON)
+     let response;
+     if (blog.id || blog._id) {
+       response = await updateBlog(blog.id || blog._id, payload);
+     } else {
+       response = await createBlog(payload);
+     }
 
-      // handle response
-      if (
-        response.statusCode === 200 ||
-        response.message?.includes("success")
-      ) {
-        toast.success(
-          blog.id ? "Blog updated successfully" : "Blog created successfully"
-        );
-        setIsModalOpen(false);
-        setBlog({ heading: "", description: "", image: "" });
-        fetchBlogs();
-      } else {
-        toast.error(response.message || "Failed to save blog");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to save blog");
-    }
-  };
+     if (response.statusCode === 200 || response.message?.includes("success")) {
+       toast.success(
+         blog.id ? "Blog updated successfully" : "Blog created successfully"
+       );
+       setIsModalOpen(false);
+       setBlog({ heading: "", description: "", image: "" });
+       fetchBlogs();
+     } else {
+       toast.error(response.message || "Failed to save blog");
+     }
+   } catch (err) {
+     console.error(err);
+     toast.error(err.message || "Failed to save blog");
+   }
+ };
 
 
   const handleAdd = () => {
@@ -166,7 +165,7 @@ const Blogs = () => {
   };
 
   const BlogDetails = ({ blog, onEdit, onDelete, onView }) => (
-    <div className="relative p-3 h-[150px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
+    <div className="relative p-3 h-[120px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
       <h3 className="text-sm font-semibold">{blog.heading}</h3>
 
       {/* <p className="text-gray-700 text-xs">
@@ -279,7 +278,7 @@ const Blogs = () => {
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
-                  setBlog({ ...blog, image: file.name }); 
+                  setBlog({ ...blog, image: file });
                 }
               }}
             />
@@ -315,12 +314,25 @@ const Blogs = () => {
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-[60vw] shadow-lg max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-4">{blogToView.heading}</h2>
-            <img
-              src={blogToView.image}
-              alt="Blog"
-              className="object-cover rounded h-32 w-[90%] mx-auto border"
-            />
-         
+          
+            
+            {blogToView?.image &&
+              (() => {
+                let imgData;
+                try {
+                  imgData = JSON.parse(blogToView.image); // parse JSON string
+                } catch (e) {
+                  imgData = null;
+                }
+
+                return imgData?.payload?.path ? (
+                  <img
+                    src={`${domain}/${imgData.payload.path}`}
+                    alt="Blog"
+                    className="object-cover rounded h-32 w-[90%] mx-auto border"
+                  />
+                ) : null;
+              })()}
             <div
               dangerouslySetInnerHTML={{ __html: blogToView.description }}
               className="text-gray-700 text-sm"
