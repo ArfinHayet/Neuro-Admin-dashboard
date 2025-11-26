@@ -169,9 +169,9 @@ const Blogs = () => {
     <div className="relative p-3 h-[150px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
       <h3 className="text-sm font-semibold">{blog.heading}</h3>
 
-      <p className="text-gray-700 text-xs">
+      {/* <p className="text-gray-700 text-xs">
         {blog.description?.slice(0, 100)}...
-      </p>
+      </p> */}
       <div className="flex gap-2 right-2 absolute bottom-2">
         <button className="text-blue-600" onClick={() => onEdit(blog)}>
           <AiFillEdit />
@@ -256,8 +256,8 @@ const Blogs = () => {
               type="text"
               name="heading"
               value={blog?.heading}
-              // onChange={(e) => setBlog({ ...blog, heading: e.target.value })}
-              onChange={handleModalChange}
+              onChange={(e) => setBlog({ ...blog, heading: e.target.value })}
+              // onChange={handleModalChange}
               placeholder="Heading"
               className="w-full p-2 border rounded mb-2 text-sm"
             />
