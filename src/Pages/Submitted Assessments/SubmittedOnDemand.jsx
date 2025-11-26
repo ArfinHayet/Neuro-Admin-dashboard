@@ -112,6 +112,11 @@ const SubmittedOnDemand = () => {
         },
       },
       {
+        header: "id",
+        accessorFn: (row) => row.id,
+      },
+     
+      {
         header: "questionType",
         accessorFn: (row) => row.questionType ?? "N/A",
       },

@@ -28,6 +28,21 @@ const getAllBlogs = async () => {
   return data.payload || [];
 };
 
+const updateBlog = async (id, obj) => {
+  const response = await fetch(`${domain}/blogs/${id}`, {
+    method: "PUT", 
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token()}`,
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+
 const deleteBlogs = async (id) => {
   const response = await fetch(`${domain}/blogs/${id}`, {
     method: "DELETE",
@@ -40,4 +55,4 @@ const deleteBlogs = async (id) => {
   return data;
 };
 
-export { createBlog, getAllBlogs, deleteBlogs };
+export { createBlog, getAllBlogs, deleteBlogs, updateBlog };

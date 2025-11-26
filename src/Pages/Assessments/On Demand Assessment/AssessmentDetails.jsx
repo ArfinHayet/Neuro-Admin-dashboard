@@ -135,13 +135,13 @@ const AssessmentDetails = () => {
     return <p> {error} </p>;
   }
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-        <p>Loading assessments...</p>
-      </section>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+  //       <p>Loading assessments...</p>
+  //     </section>
+  //   );
+  // }
 
   return (
     <section className="">
@@ -209,9 +209,9 @@ const AssessmentDetails = () => {
                 />
               </div>
 
-              <p className="text-xs text-gray-500 mb-2">
+              {/* <p className="text-xs text-gray-500 mb-2">
                 Questions: <span className="font-medium">0</span>
-              </p>
+              </p> */}
               <button
                 onClick={() =>
                   navigate(

@@ -151,6 +151,7 @@ const OnDemandQuestionModal = ({
         : await addQuestion(payload);
 
       onSave(savedQuestion);
+      
       onClose();
     } catch (err) {
       console.error("Failed to save question", err);

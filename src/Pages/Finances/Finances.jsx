@@ -5,7 +5,7 @@ import PurchaseHistory from "./PurchaseHistory";
 
 const tabs = [
   { id: "purchases", label: "History" },
-  { id: "commissions", label: "Clinician Commissions" },
+  { id: "commissions", label: " Commissions" },
   { id: "transactions", label: "Transaction Logs" },
 ];
 

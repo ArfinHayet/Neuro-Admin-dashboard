@@ -44,7 +44,7 @@ const QuestionArrangement = ({
             min={1}
           />
         </td>
-        <td className="px-6 text-xs w-32">{question.answerType??  ""}
+        <td className="px-6 text-xs w-32">{question.answerType}
           {/* <select
             value=
             onChange={handleAnswerTypeChange}

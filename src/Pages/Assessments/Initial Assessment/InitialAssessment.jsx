@@ -47,6 +47,7 @@ const InitialAssessment = () => {
           id: q.id || i + 1,
           question: q.questions || q.question || "",
           order: q.order || i + 1,
+          variant: q.variant,
           answerType:
             q.answerType === "MultipleChoice"
               ? "multiple"
@@ -139,15 +140,16 @@ const InitialAssessment = () => {
         <table className="w-full text-sm text-left text-gray-700">
           <thead className="bg-[#f3f1f1] font-light">
             <tr>
-              <th className="pl-4">#</th>
+              <th className="pl-4">Sl</th>
               <th className="p-2">Question</th>
               <th className="p-2">Order</th>
               <th className="p-2">Answer Type</th>
+              <th className="p-2">Variant</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {questions?.map((q, i) => (
+            {questions.map((q, i) => (
               <QuestionArrangement
                 key={q.id}
                 index={i}

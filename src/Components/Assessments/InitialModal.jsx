@@ -9,13 +9,17 @@ const InitialModal = ({
   defaultType = "initial",
   editingQuestion,
   fetchQuestions,
+  categoryId,
+  categoryName,
 }) => {
   const [formData, setFormData] = useState({
     type: defaultType,
-    question: "",
-    questionOrder: "",
+    questions: "",
+    order: "",
     answerType: "Yes/No",
-    options: ["Yes", "No"],
+    options: ["yes", "no"],
+    questiontypeid: "",
+    variant: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,47 +51,52 @@ const InitialModal = ({
 
   useEffect(() => {
     if (editingQuestion) {
-      // Ensure options is always an array
-      let options = ["Yes", "No"];
-      
+      let options = ["yes", "no"];
+
       if (Array.isArray(editingQuestion.options)) {
         options = editingQuestion.options;
-      } else if (typeof editingQuestion.options === 'string') {
+      } else if (typeof editingQuestion.options === "string") {
         try {
           options = JSON.parse(editingQuestion.options);
-        } catch (e) {
-          options = ["Yes", "No"];
+        } catch {
+          options = ["yes", "no"];
         }
       }
+
       setFormData({
         type: defaultType,
-        question: editingQuestion.questions || "",
-        questionOrder: editingQuestion.order || "",
-        answerType: editingQuestion.answerType || "Yes/No",
+        questions: editingQuestion.questions || "",
+        order: editingQuestion.order || "",
+        answerType: editingQuestion.answerType || "",
         options: options,
+        questiontypeid: editingQuestion.questiontypeid || "",
+        variant: editingQuestion.variant || "",
       });
     } else {
       setFormData({
         type: defaultType,
-        question: "",
-        questionOrder: "",
+        questions: "",
+        order: "",
         answerType: "Yes/No",
-        options: ["Yes", "No"],
+        options: [""],
+        questiontypeid: "",
+        variant: "",
       });
     }
   }, [editingQuestion, defaultType]);
 
+
   const handleChange = (field, value) => {
-    if (field === "questionOrder") {
+    if (field === "order") {
       if (value === "" || /^\d+$/.test(value)) {
         setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else if (field === "answerType") {
       let options = [];
       if (value === "Yes/No") {
-        options = ["Yes", "No" ];
+        options = ["" ];
       } else if (value === "Text") {
-        options = ["Text"];
+        options = [""];
       } else if (value === "MultipleChoice") {
         options = [""];
       }
@@ -98,51 +107,46 @@ const InitialModal = ({
     }
   };
 
-  const handleAnswerChange = (index, value) => {
-    if (formData.answerType !== "MultipleChoice") return;
+ const handleOptionChange = (index, value) => {
+   if (
+     formData.answerType !== "MultipleChoice" &&
+     formData.answerType !== "Yes/No"
+   )
+     return;
+   setFormData((prev) => {
+     const updated = [...prev.options];
+     updated[index] = value;
+     return { ...prev, options: updated };
+   });
+ };
 
-    setFormData((prev) => {
-      const updated = [...prev.options];
-      updated[index] = value;
-      return { ...prev, options: updated };
-    });
-  };
+ const addOption = () =>
+   setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
 
-  const addAnswerOption = () => {
-  setFormData((prev) => ({
-    ...prev,
-    options: [...prev.options, ""], 
-  }));
-};
+ const removeOption = (index) =>
+   setFormData((prev) => {
+     const updated = prev.options.filter((_, i) => i !== index);
+     return { ...prev, options: updated.length ? updated : [""] };
+   });
 
-
- const removeAnswerOption = (index) => {
-  setFormData((prev) => {
-    const updated = prev.options.filter((_, i) => i !== index);
-    return {
-      ...prev,
-      options: updated.length ? updated : [""], 
-    };
-  });
-};
 
   const validateForm = () => {
-    if (!formData.question.trim()) {
+    if (!formData.questions.trim()) {
       setError("Question is required");
       return false;
     }
-    if (!formData.questionOrder) {
+    if (!formData.order) {
       setError("Question order is required");
       return false;
     }
- if (
-  formData.answerType === "MultipleChoice" &&
-  formData.options.some((a) => !a || !a.toString().trim())
-) {
-  setError("All answer options must have labels");
-  return false;
-}
-
+    if (
+      (formData.answerType === "MultipleChoice" ||
+        formData.answerType === "Yes/No") &&
+      formData.options.some((o) => !o || !o.toString().trim())
+    ) {
+      setError("All options must have labels");
+      return false;
+    }
     setError(null);
     return true;
   };
@@ -164,14 +168,24 @@ const InitialModal = ({
 
     try {
       const payload = {
-        assessmentId: assessment.id,
-        questions: formData.question,
-        order: Number(formData.questionOrder),
+        assessmentId: Number(assessment.id),
+        questions: formData.questions.trim(),
+        order: Number(formData.order),
         answerType: formData.answerType,
         options: formData.options,
+        questiontypeid: Number(categoryId), // pass the category id here
+        variant: formData.variant,
       };
 
-      console.log("payload", payload);
+      console.log("Payload to send:", {
+        assessmentId: Number(assessment.id),
+        questions: formData.questions,
+        order: Number(formData.order),
+        answerType: formData.answerType,
+        options: formData.options,
+        questiontypeid: Number(categoryId), // pass the category id here
+        variant: formData.variant,
+      });
 
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
@@ -179,7 +193,8 @@ const InitialModal = ({
       console.log("saved question", savedQuestion);
 
       onSave(savedQuestion);
-      fetchQuestions();
+if (fetchQuestions) fetchQuestions();
+
       onClose();
     } catch (err) {
       console.error("Failed to save question", err);
@@ -209,27 +224,43 @@ const InitialModal = ({
         </h2>
 
         <label className="block text-xs mb-1">Assessment Type</label>
-        <div className="w-full border px-3 py-2 rounded mb-3 text-sm">
-          {/*  <p>{assessment?.name || "Initial Assessment"}</p>*/}
+        <div className="w-full border px-3 py-2 rounded mb-3 text-xs">
+          {/* <p>{assessment?.name || "Initial Assessment"}</p> */}
 
           <p>Initial Assessment</p>
         </div>
+        {/*    <label className="block text-xs mb-1 font-medium text-gray-700">
+          Question Category
+        </label>
+        <div className="w-full border px-3 py-2 rounded mb-4 text-xs text-gray-600">
+          <p>{categoryName || "N/A"}</p>
+        </div> */}
 
         <label className="block text-xs mb-1">Question</label>
         <textarea
-          className="w-full border px-2 py-1 rounded mb-4"
+          className="w-full border px-2 py-1 rounded mb-4 text-xs"
           rows={2}
-          value={formData.question}
-          onChange={(e) => handleChange("question", e.target.value)}
+          value={formData.questions}
+          onChange={(e) => handleChange("questions", e.target.value)}
+          placeholder="Enter Question"
         />
+        <label className="block text-xs mb-1">Question Variant </label>
+        <select
+          className="w-full border px-3 py-2 rounded mb-3 text-xs"
+          value={formData.variant}
+          onChange={(e) => handleChange("variant", e.target.value)}
+        >
+          <option value="">Select Variant</option>
+          <option value="internal">Internal</option>
+        </select>
 
         <label className="block text-xs mb-1">Question Order</label>
         <input
           type="text"
           className="w-full border px-3 py-2 rounded mb-4 text-xs"
-          value={formData.questionOrder}
-          onChange={(e) => handleChange("questionOrder", e.target.value)}
-          placeholder="Enter question order number"
+          value={formData.order}
+          onChange={(e) => handleChange("order", e.target.value)}
+          placeholder="Enter question order (number)"
         />
 
         <label className="block text-xs mb-1">Answer Type</label>
@@ -244,46 +275,34 @@ const InitialModal = ({
         </select>
 
         {/* MultipleChoice Options */}
-        {formData.answerType === "MultipleChoice" && (
+        {(formData.answerType === "MultipleChoice" ||
+          formData.answerType === "Yes/No") && (
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-xs font-medium">Answer Options</label>
+              <label className="text-xs font-medium">Options</label>
               <button
                 type="button"
-                onClick={addAnswerOption}
-                className="text-xs bg-primary bg-opacity-85 px-2 py-1 rounded-full text-white"
+                onClick={addOption}
+                className="text-xs bg-primary px-2 py-1 rounded-full text-white"
               >
                 Add Option
               </button>
             </div>
-            <div className="space-y-2 mb-6 text-xs">
-              {formData.options?.map((option, i) => (
-                <div key={i} className="flex gap-3 items-center">
+            <div className="space-y-2 text-xs">
+              {formData.options.map((opt, i) => (
+                <div key={i} className="flex gap-2 items-center">
                   <input
                     type="text"
-                    value={option}
-                    onChange={(e) => handleAnswerChange(i, e.target.value)}
-                    placeholder={`Option ${i + 1}`}
                     className="flex-1 border px-2 py-1 rounded"
+                    value={opt}
+                    onChange={(e) => handleOptionChange(i, e.target.value)}
+                    placeholder={`Option ${i + 1}`}
                   />
-                  {/* <input
-                    type="number"
-                    min={0}
-                    max={1}
-                    step={1}
-                    value={option.score}
-                    onChange={(e) =>
-                      handleAnswerChange(i, "score", e.target.value)
-                    }
-                    className="w-28 border px-2 py-1 rounded text-center"
-                    placeholder="Score(0 or 1)"
-                  /> */}
                   {formData.options.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => removeAnswerOption(i)}
+                      onClick={() => removeOption(i)}
                       className="text-red-500 font-bold px-2"
-                      title="Remove option"
                     >
                       &times;
                     </button>
@@ -294,7 +313,9 @@ const InitialModal = ({
           </div>
         )}
 
-        <div className="flex justify-between gap-3 ">
+        {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
+
+        <div className="flex justify-between gap-3 text-sm">
           <button
             className="px-4 py-2 rounded-full bg-gray-200"
             onClick={onClose}
@@ -303,8 +324,9 @@ const InitialModal = ({
             Cancel
           </button>
           <button
-            className="px-4 py-2 rounded-full bg-[#114654] text-white"
+            className="px-4 py-2 rounded-full bg-[#114654] text-white text-sm"
             onClick={handleSave}
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

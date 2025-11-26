@@ -19,6 +19,7 @@ import { getUsers } from "../../api/user";
 import { getAssessments } from "../../api/assessments";
 import { useNavigate } from "react-router-dom";
 import { getAllSubmissions } from "../../api/submissions";
+import { getAllBlogs } from "../../api/blogs";
 
 const Dashboard = () => {
   const filterLast30Days = (dateStr) => {
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const [popularAssessments, setPopularAssessments] = useState([]);
   const [topClinicians, setTopClinicians] = useState([]);
   const [loading, setLoading] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -108,6 +110,21 @@ const Dashboard = () => {
     };
 
     fetchSubmissions();
+  }, []);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const data = await getAllBlogs();
+        setBlogs(data);
+        console.log("blog", data);
+      } catch (err) {
+        console.error("Failed to fetch blogs:", err);
+        setBlogs([]);
+      }
+    };
+
+    fetchBlogs();
   }, []);
 
   useEffect(() => {
@@ -358,7 +375,7 @@ const Dashboard = () => {
         {/* Middle Column */}
         <div className="space-y-4">
           {/* Top Clinicians by Submissions in 30 days */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[35vh]">
             <h2 className="font-semibold mb-2 text-sm">Top Clinicians</h2>
 
             {topClinicians.length === 0 ? (
@@ -368,30 +385,45 @@ const Dashboard = () => {
                 {topClinicians.map((entry, index) => (
                   <li
                     key={index}
-                    className="grid grid-cols-3 items-center border-b py-1 last:border-none w-full"
+                    className="grid grid-cols-5 items-center border-b py-1 last:border-none w-full"
                   >
                     <span className="font-semibold text-gray-500">
                       #{index + 1}
                     </span>
-                    <div className="flex flex-col">
-                      <p className="text-xs">
-                        {entry.clinician?.name || "Unknown"}
+                    <div className="flex justify-between col-span-4">
+                      <div className="flex flex-col">
+                        <p className="text-xs">
+                          {entry.clinician?.name || "Unknown"}
+                        </p>
+                        <span className="text-xs text-secondary">
+                          {entry.clinician?.email || ""}
+                        </span>
+                      </div>
+                      <p className="text-xs font-medium text-gray-700 text-end">
+                        {entry.count} assessments
                       </p>
-                      <span className="text-xs text-secondary">
-                        {entry.clinician?.email || ""}
-                      </span>
                     </div>
-                    <p className="text-xs font-medium text-gray-700 text-end">
-                      {entry.count} assessments
-                    </p>
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[34vh]">
+            <h2 className="font-semibold mb-2 text-sm">Articles</h2>
+
+            {blogs.map((blog) => (
+              <div
+                key={blog.id}
+                className="flex items-center justify-between py-2 border-b last:border-none text-xs "
+              >
+                <h2 className="">{blog.heading}</h2>
+              </div>
+            ))}
+          </div>
+
           {/* On-demand Assessments */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[53vh]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[35vh]">
             <div className="flex justify-between items-start">
               <h2 className="font-semibold mb-2 text-sm">
                 On-demand Assessments

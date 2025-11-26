@@ -141,13 +141,13 @@ const assessmentID = location.state?.assessmentId || paramId;
     setIsModalOpen(true);
   };
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-        <p>Loading questions...</p>
-      </section>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
+  //       <p>Loading questions...</p>
+  //     </section>
+  //   );
+  // }
 
   if (error) {
     return <p>{error}</p>;

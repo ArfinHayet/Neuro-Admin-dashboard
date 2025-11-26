@@ -2,11 +2,10 @@ import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
 
-
 // fetch one page (paged API)
-const getSubmissionsPage = async (page = 1, limit = 20) => {
+const getAppointmentsPage = async (page = 1, limit = 20) => {
   const response = await fetch(
-    `${domain}/submissions?page=${page}&limit=${limit}`,
+    `${domain}/appointments?page=${page}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -20,14 +19,14 @@ const getSubmissionsPage = async (page = 1, limit = 20) => {
 };
 
 // fetch ALL submissions across all pages
-const getAllSubmissions = async () => {
-  let allSubmissions = [];
+const getAllAppointments = async () => {
+  let allAppointments = [];
   let page = 1;
   const limit = 100;
 
   while (true) {
     const response = await fetch(
-      `${domain}/submissions?page=${page}&limit=${limit}`,
+      `${domain}/appointments?page=${page}&limit=${limit}`,
       {
         method: "GET",
         headers: {
@@ -39,11 +38,11 @@ const getAllSubmissions = async () => {
     const data = await response.json();
     if (!Array.isArray(data.payload) || data.payload.length === 0) break;
 
-    allSubmissions = [...allSubmissions, ...data.payload];
+    allAppointments = [...allAppointments, ...data.payload];
     page += 1;
   }
 
-  return { payload: allSubmissions };
+  return { payload: allAppointments };
 };
 
-export {  getSubmissionsPage, getAllSubmissions };
+export { getAppointmentsPage, getAllAppointments };
