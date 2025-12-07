@@ -4,6 +4,7 @@ import { RiBarChartBoxFill } from "react-icons/ri";
 import { PiUsersFill, PiArticleFill } from "react-icons/pi";
 import { TbUserFilled } from "react-icons/tb";
 import { PiWalletFill } from "react-icons/pi";
+import { IoMdImage } from "react-icons/io";
 
 import p4 from "../../../public/png/settings.svg";
 
@@ -71,6 +72,13 @@ export const navItem = [
     title: "Articles",
     icon: PiArticleFill,
     path: "/articles",
+    routes: [],
+  },
+ 
+  {
+    title: "Banner",
+    icon: IoMdImage,
+    path: "/banner_img",
     routes: [],
   },
  
