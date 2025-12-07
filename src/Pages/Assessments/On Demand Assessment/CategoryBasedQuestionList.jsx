@@ -67,45 +67,11 @@ const assessmentID = location.state?.assessmentId || paramId;
 
 
 
-  // const handleSave = async (newQ) => {
-  //   try {
-  //     setIsLoading(true);
-  //     // Re-fetch from backend to ensure you have fresh data
-  //     await fetchQuestions();
-  //     toast.success(editingQuestion ? "Question updated" : "Question added", {
-  //       position: "top-right",
-  //     });
-  //   } catch (err) {
-  //     console.error("Error refetching after save:", err);
-  //   } finally {
-  //     setIsLoading(false);
-  //     setEditingQuestion(null);
-  //     setIsModalOpen(false);
-  //   }
-  // };
-
-// const handleSave = (savedQuestion) => {
-//   // If editing, update existing question
-//   if (editingQuestion) {
-//     setQuestions((prev) =>
-//       prev.map((q) => (q.id === savedQuestion.id ? savedQuestion : q))
-//     );
-//     toast.success("Question updated", { position: "top-right" });
-//   } else {
-//     // If adding, append new question to state
-//     setQuestions((prev) => [...prev, savedQuestion]);
-//     toast.success("Question added", { position: "top-right" });
-//   }
-
-//   setEditingQuestion(null);
-//   setIsModalOpen(false);
-  // };
   
   const handleSave = async (savedQuestion) => {
     try {
       setIsLoading(true);
-
-      // Refetch all questions from backend to stay in sync
+      
       await fetchQuestions();
 
       toast.success(editingQuestion ? "Question updated" : "Question added", {
