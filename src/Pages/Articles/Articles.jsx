@@ -45,7 +45,9 @@ const Blogs = () => {
     try {
       const res = await getAllBlogs();
       const list = Array.isArray(res) ? res : res.payload || [];
+     
       console.log(list)
+      
       setBlogs(list);
     } catch (err) {
       console.error(err);
@@ -53,24 +55,23 @@ const Blogs = () => {
     }
   };
 
- useEffect(() => {
-   if (blogToEdit) {
-     setBlog({
-       heading: blogToEdit.heading || "",
-       description: blogToEdit.description || "",
-       image: blogToEdit.image || "", // this will be a filename string when editing
-       id: blogToEdit.id || blogToEdit._id || null,
-     });
-   } else {
-     setBlog({ heading: "", description: "", image: "" });
-   }
- }, [blogToEdit]);
+  useEffect(() => {
+    if (!blogToEdit) return; 
+
+    if (blogToEdit) {
+      setBlog({
+        heading: blogToEdit.heading || "",
+        description: blogToEdit.description || "",
+        image: blogToEdit.image || "", // this will be a filename string when editing
+        id: blogToEdit.id || blogToEdit._id || null,
+      });
+    }
+    // else {
+    //   setBlog({ heading: "", description: "", image: "" });
+    // }
+  }, [blogToEdit]);
 
 
-
-  const handleModalChange = (e) => {
-    setBlog({ ...blog, [e.target.name]: e.target.value });
-  };
 
  const handleSave = async () => {
    if (!blog.heading || !blog.description || !blog.image) {
@@ -81,18 +82,34 @@ const Blogs = () => {
    try {
      // Step 1: upload if needed
      let filename = blog.image;
-     if (blog.image instanceof File) {
-       filename = await uploadFile(blog.image);
+   if (blog.image instanceof File) {
+     const res = await uploadFile(blog.image);
+
+     // If uploadFile returns JSON object
+     filename = res?.payload?.filename;
+     console.log(res.payload)
+
+     // If uploadFile returns stringified JSON
+     if (!filename && typeof res === "string") {
+       try {
+         const parsed = JSON.parse(res);
+         filename = parsed?.payload?.filename;
+       } catch (e) {
+         console.error("Upload response parse error:", e);
+       }
      }
+   }
+
+
 
      // Step 2: build JSON payload with filename
      const payload = {
        heading: blog.heading,
        description: blog.description,
-       image: filename, // string filename only
+       image: filename, 
      };
 
-     // Step 3: call blog APIs (JSON)
+
      let response;
      if (blog.id || blog._id) {
        response = await updateBlog(blog.id || blog._id, payload);
@@ -244,19 +261,20 @@ const Blogs = () => {
       )}
 
       {/* Add/Edit Modal */}
-      {isModalOpen && (
+      {isModalOpen && blog && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 ">
           <div className="bg-white p-5 rounded-lg w-[55vw] shadow-lg h-[85vh] text-sm">
             <h2 className="text-lg font-bold mb-2">
               {blogToEdit ? "Edit Article" : "Add New Article"}
             </h2>
+            {/* <p>{blog?.heading}</p>  */}
             <label className="text-xs pb-1">Heading</label>
+
             <input
               type="text"
               name="heading"
-              value={blog?.heading}
+              value={blog.heading}
               onChange={(e) => setBlog({ ...blog, heading: e.target.value })}
-              // onChange={handleModalChange}
               placeholder="Heading"
               className="w-full p-2 border rounded mb-2 text-sm"
             />
@@ -274,7 +292,6 @@ const Blogs = () => {
 
             <input
               type="file"
-              // accept="image/*"
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -314,25 +331,20 @@ const Blogs = () => {
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-[60vw] shadow-lg max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-bold mb-4">{blogToView.heading}</h2>
-          
-            
-            {blogToView?.image &&
-              (() => {
-                let imgData;
-                try {
-                  imgData = JSON.parse(blogToView.image); // parse JSON string
-                } catch (e) {
-                  imgData = null;
-                }
+            {/* {blogToView?.image && (
+              <img
+                src={`${domain}/uploads/${blogToView.image}`} // 👈 prepend folder + domain
+                alt={blogToView.heading}
+                className="object-cover rounded h-32 w-[90%] mx-auto border"
+              />
+            )} */}
 
-                return imgData?.payload?.path ? (
-                  <img
-                    src={`${domain}/${imgData.payload.path}`}
-                    alt="Blog"
-                    className="object-cover rounded h-32 w-[90%] mx-auto border"
-                  />
-                ) : null;
-              })()}
+            <img
+              src={`${domain.replace(/\/$/, "")}/temp-uploads/${blogToView.image}`}
+              alt={blogToView.heading}
+              className="object-cover rounded h-32 w-[90%] mx-auto border"
+            />
+
             <div
               dangerouslySetInnerHTML={{ __html: blogToView.description }}
               className="text-gray-700 text-sm"

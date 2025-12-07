@@ -68,9 +68,16 @@ const AssessmentDetails = () => {
       //   setIsLoading(false);
       // }
 
-      const categoryResponse = await getAllQuestionCategories();
-      const categoryData = categoryResponse?.payload || [];
-      setCategories(categoryData);
+     const categoryResponse = await getAllQuestionCategories();
+     const categoryData = categoryResponse?.payload || [];
+
+     // filter categories based on current assessment id
+     const filteredCategories = categoryData.filter(
+       (cat) => cat.assessmentId?.toString() === id
+     );
+
+     setCategories(filteredCategories);
+
     } catch (err) {
       console.error("Failed to fetch assessment details", err);
       setError("Failed to load assessment details");
@@ -237,38 +244,9 @@ const AssessmentDetails = () => {
         )}
       </div>
 
-      {/* <h3 className="font-medium my-3">Question List</h3>
-      <div className="h-[60vh] overflow-y-auto">
-        <table className="w-full max-h-[50vh]  text-sm text-left text-gray-700 ">
-          <thead className="bg-[#f3f1f1] font-light">
-            <tr>
-              <th className="pl-4">Sl</th>
-              <th className="p-2">Question</th>
-              <th className="p-2">Order</th>
-              <th className="p-2">Answer Type</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map((q, i) => (
-              <QuestionArrangement
-                key={q.id}
-                index={i}
-                question={q}
-                onChange={(id, field, value) =>
-                  setQuestions((prev) =>
-                    prev.map((ques) =>
-                      ques.id === id ? { ...ques, [field]: value } : ques
-                    )
-                  )
-                }
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div> */}
+     
+      
+      
       <OnDemandQuestionModal
         isOpen={isModalOpen}
         onClose={() => {

@@ -207,15 +207,6 @@ const assessmentID = location.state?.assessmentId || paramId;
         </table>
       </div>
 
-      {/* <OnDemandQuestionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSave}
-        defaultType="ondemand"
-        editingQuestion={editingQuestion}
-        assessment={{ id: assessmentID }}
-        categoryId={categoryId}
-      /> */}
 
       <OnDemandQuestionModal
         isOpen={isModalOpen}

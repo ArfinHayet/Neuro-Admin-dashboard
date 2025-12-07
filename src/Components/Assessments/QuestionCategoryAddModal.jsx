@@ -1,40 +1,75 @@
-
 import { useState, useEffect } from "react";
-import { addQuestionCategory, updateQuestionCategory } from "../../api/questioncategories";
+import {
+  addQuestionCategory,
+  updateQuestionCategory,
+} from "../../api/questioncategories";
+import { getAssessments } from "../../api/assessments";
+import toast from "react-hot-toast";
 
-const QuestionCategoryAddModal = ({ isOpen, onClose, onSave, editingCategory }) => {
+const QuestionCategoryAddModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  editingCategory,
+}) => {
   const [name, setName] = useState("");
   const [variant, setVariant] = useState("");
+  const [assessment, setAssessment] = useState("");
+  const [assessments, setAssessments] = useState([]);
 
+  // Fetch assessments on mount
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      try {
+        const res = await getAssessments();
+        setAssessments(res?.payload || []);
+      } catch (err) {
+        console.error("Failed to fetch assessments", err);
+      }
+    };
+    fetchAssessments();
+  }, []);
+
+  // Populate fields if editing
   useEffect(() => {
     if (editingCategory) {
       setName(editingCategory.name || "");
       setVariant(editingCategory.variant || "");
+      setAssessment(editingCategory.assessmentId || "");
     } else {
       setName("");
       setVariant("");
+      setAssessment("");
     }
   }, [editingCategory]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      let response;
-      if (editingCategory) {
-        response = await updateQuestionCategory(editingCategory.id, { name, variant });
-      } else {
-        response = await addQuestionCategory({ name, variant });
-      }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    let response;
+    const payload = { name, variant, assessmentId: assessment }; // include assessmentId
 
+    if (editingCategory) {
+      response = await updateQuestionCategory(editingCategory.id, payload);
       if (response?.payload || response?.success) {
-        onSave();
-        onClose();
+        toast.success("Category updated successfully!");
       }
-    } catch (err) {
-      console.error("Failed to save category", err);
+    } else {
+      response = await addQuestionCategory(payload);
+      if (response?.payload || response?.success) {
+        toast.success("Category added successfully!");
+      }
     }
-  };
 
+    if (response?.payload || response?.success) {
+      onSave();
+      onClose();
+    }
+  } catch (err) {
+    console.error("Failed to save category", err);
+    toast.error("Failed to save category");
+  }
+};
   if (!isOpen) return null;
 
   return (
@@ -60,6 +95,22 @@ const QuestionCategoryAddModal = ({ isOpen, onClose, onSave, editingCategory }) 
             className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
             required
           />
+          <select
+            value={assessment}
+            onChange={(e) => setAssessment(e.target.value)}
+            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            required
+          >
+            <option value="" disabled>
+              Select assessment
+            </option>
+            {assessments.map((assess) => (
+              <option key={assess.id} value={assess.id}>
+                {assess.name}
+              </option>
+            ))}
+          </select>
+
           <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
