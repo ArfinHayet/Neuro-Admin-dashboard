@@ -62,13 +62,11 @@ const Blogs = () => {
       setBlog({
         heading: blogToEdit.heading || "",
         description: blogToEdit.description || "",
-        image: blogToEdit.image || "", // this will be a filename string when editing
+        image: blogToEdit.image || "", // 
         id: blogToEdit.id || blogToEdit._id || null,
       });
     }
-    // else {
-    //   setBlog({ heading: "", description: "", image: "" });
-    // }
+   
   }, [blogToEdit]);
 
 
@@ -80,7 +78,7 @@ const Blogs = () => {
    }
 
    try {
-     // Step 1: upload if needed
+
      let filename = blog.image;
    if (blog.image instanceof File) {
      const res = await uploadFile(blog.image);
@@ -102,7 +100,7 @@ const Blogs = () => {
 
 
 
-     // Step 2: build JSON payload with filename
+     // JSON payload with filename
      const payload = {
        heading: blog.heading,
        description: blog.description,

@@ -24,6 +24,7 @@ import InvoiceDetails from "./Pages/Finances/InvoiceDetails";
 import PaymentDetails from "./Pages/Finances/PaymentDetails";
 import CategoryBasedQuestionList from "./Pages/Assessments/On Demand Assessment/CategoryBasedQuestionList";
 import ExternalUserSubmissionPage from "./Pages/External User Page/ExternalUserSubmissionPage";
+import BannerImg from "./Pages/Banner/BannerImg";
 
 export const router = createBrowserRouter([
   {
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
       {
         path: "/articles",
         element: <Articles />,
+      },
+      {
+        path: "/banner_img",
+        element: <BannerImg />,
       },
 
       {
