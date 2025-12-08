@@ -87,14 +87,17 @@ const handleSubmit = async (e) => {
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
             required
           />
-          <input
-            type="text"
-            placeholder="Enter category Variant"
-            value={variant}
-            onChange={(e) => setVariant(e.target.value)}
-            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+         
+          <select
             required
-          />
+            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+
+            value={variant}
+            onChange={(e) => setVariant(e.target.value)}>
+            <option>Select Variant</option>
+            <option>internal</option>
+            <option>external</option>
+          </select>
           <select
             value={assessment}
             onChange={(e) => setAssessment(e.target.value)}

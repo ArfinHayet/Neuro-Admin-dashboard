@@ -202,18 +202,18 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
           {error && <p className="text-red-500 text-xs">{error}</p>}
 
-          <div className="flex justify-between gap-3">
+          <div className="flex justify-between gap-3 pt-1">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 border rounded-full bg-gray-100 text-sm"
+              className="px-4 py-1.5 border rounded-full bg-gray-100 text-xs"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary text-white rounded-full text-sm"
+              className="px-4 py-1.5 bg-primary text-white rounded-full text-xs"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Adding..." : "Add"}
