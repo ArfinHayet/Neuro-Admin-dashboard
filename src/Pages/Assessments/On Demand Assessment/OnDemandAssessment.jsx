@@ -67,13 +67,13 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
           {/* Options box */}
           {isMenuOpen && (
             <div className="absolute top-6 right-0 bg-white border border-gray-200 rounded-md z-10 w-28 shadow-md">
-              <button
+              {/* <button
                 onClick={handleEditClick}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
               >
                 <FiEdit3 size={14} />
                 Edit
-              </button>
+              </button> */}
               <button
                 onClick={handleDeleteClick}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"

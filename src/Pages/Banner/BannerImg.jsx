@@ -128,7 +128,7 @@ const BannerImg = () => {
         src={`${domain.replace(/\/$/, "")}/${item.imagePath}`}
         className="w-36 h-16"
       />
-      <div className="flex gap-2 right-2 absolute bottom-2">
+      <div className="flex gap-2 right-2 absolute bottom-2 text-[17px]">
         <button className="text-blue-600" onClick={() => handleView(item)}>
           <IoEye />
         </button>
