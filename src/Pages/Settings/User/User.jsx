@@ -6,7 +6,7 @@ import SelectInput from "../../../Components/Common/SelectInput";
 import PrimaryButton from "../../../Components/Common/PrimaryButton";
 import Header from "../../../Components/Common/Header";
 import toast from "react-hot-toast";
-import { addUser, deleteUser, getUsers } from "../../../api/user";
+import { addUser, deleteUser, getUsers, getUserById } from "../../../api/user";
 import { RxCross2 } from "react-icons/rx";
 import ConfirmDeleteModal from "../../../Components/Common/DeleteModal";
 
@@ -100,6 +100,7 @@ const User = () => {
     const phone = form.phone.value;
     const email = form.email.value;
     const role = form.role.value;
+   
 
     const obj = { name, phone, email, role };
 

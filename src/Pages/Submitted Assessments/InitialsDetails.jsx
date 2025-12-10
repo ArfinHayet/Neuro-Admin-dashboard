@@ -89,22 +89,20 @@ const InitialsDetails = () => {
       </h1>
 
       {/* Basic info */}
-      <div className="text-sm space-y-1 pb-4">
+      <div className="text-sm space-y-0.5 pb-0">
         <p>
-          <strong>Date Taken:</strong>{" "}
+          <strong>Date Taken </strong>{" "}
           {new Date(submission.createdAt).toLocaleDateString()}
         </p>
+       
         <p>
-          <strong>Category:</strong> {submission.assessment?.category || "N/A"}
+          <strong>Score </strong> {submission.score ?? "N/A"}
         </p>
         <p>
-          <strong>Score:</strong> {submission.score ?? "N/A"}
+          <strong>User Name </strong> {submission.user?.name || "Unknown"}
         </p>
         <p>
-          <strong>User Name:</strong> {submission.user?.name || "Unknown"}
-        </p>
-        <p>
-          <strong>Patient Name:</strong> {submission.patient?.name || "Unknown"}
+          <strong>Patient Name </strong> {submission.patient?.name || "Unknown"}
         </p>
       </div>
 
@@ -114,7 +112,7 @@ const InitialsDetails = () => {
           answers.map((ans, i) => (
             <div
               key={i}
-              className="flex flex-col gap-2 border border-gray-300 rounded-xl py-2 px-3 bg-white max-w-4xl"
+              className="flex flex-col gap-2 border-b border-gray-200 p-2  bg-white max-w-4xl"
             >
               <p className="font-medium text-gray-800 text-sm">
                 Q{i + 1}. {ans.question?.questions || "No question text"}

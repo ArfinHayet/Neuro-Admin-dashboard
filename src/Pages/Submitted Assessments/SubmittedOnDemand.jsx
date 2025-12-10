@@ -98,28 +98,23 @@ const SubmittedOnDemand = () => {
         accessorFn: (row) => row.patient?.name || "Unknown Child",
       },
       {
-        header: "Category",
-        accessorFn: (row) => row.assessment?.category || "N/A",
+        header: "Assessment Name",
+        accessorFn: (row) => row.assessment?.name || "N/A",
       },
-      {
-        header: "Score",
-        accessorFn: (row) => {
-          const scores = row.grouped
-            .map((s) => s.score)
-            .filter((s) => s != null);
-          if (!scores.length) return "N/A";
-          return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
-        },
-      },
-      {
-        header: "id",
-        accessorFn: (row) => row.id,
-      },
-     
-      {
-        header: "questionType",
-        accessorFn: (row) => row.questionType ?? "N/A",
-      },
+      // {
+      //   header: "Score",
+      //   accessorFn: (row) => {
+      //     const scores = row.grouped
+      //       .map((s) => s.score)
+      //       .filter((s) => s != null);
+      //     if (!scores.length) return "N/A";
+      //     return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
+      //   },
+      // },
+      // {
+      //   header: "questionType",
+      //   accessorFn: (row) => row.questionType ?? "N/A",
+      // },
       {
         header: "Date Taken",
         accessorFn: (row) =>
