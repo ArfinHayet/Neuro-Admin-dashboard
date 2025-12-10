@@ -30,6 +30,12 @@ const QuestionCategoryAddModal = ({
     fetchAssessments();
   }, []);
 
+   const resetForm = () => {
+     setName("");
+     setVariant("");
+     setAssessment("");
+   };
+
   // Populate fields if editing
   useEffect(() => {
     if (editingCategory) {
@@ -37,9 +43,7 @@ const QuestionCategoryAddModal = ({
       setVariant(editingCategory.variant || "");
       setAssessment(editingCategory.assessmentId || "");
     } else {
-      setName("");
-      setVariant("");
-      setAssessment("");
+       resetForm();
     }
   }, [editingCategory]);
 
@@ -53,6 +57,7 @@ const handleSubmit = async (e) => {
       response = await updateQuestionCategory(editingCategory.id, payload);
       if (response?.payload || response?.success) {
         toast.success("Category updated successfully!");
+          resetForm();
       }
     } else {
       response = await addQuestionCategory(payload);

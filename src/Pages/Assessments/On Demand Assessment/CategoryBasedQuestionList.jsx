@@ -130,7 +130,7 @@ const assessmentID = location.state?.assessmentId || paramId;
           </p>
         </div>
         <button
-          className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
+          className="bg-[#114654] text-white px-4 py-2 rounded-full text-xs"
           onClick={() => {
             setEditingQuestion(null);
             setIsModalOpen(true);

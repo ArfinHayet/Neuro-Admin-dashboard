@@ -8,16 +8,20 @@ import {
   getQuestionsByAssessmentId,
 } from "../../../api/questionnaires";
 import { getAssessments } from "../../../api/assessments";
-import { getAllQuestionCategories, deleteQuestionCategory } from "../../../api/questioncategories";
+import {
+  getAllQuestionCategories,
+  deleteQuestionCategory,
+} from "../../../api/questioncategories";
 
 import { useLocation } from "react-router-dom";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
 
 import QuestionCategoryAddModal from "../../../Components/Assessments/QuestionCategoryAddModal";
 import toast from "react-hot-toast";
+import { PiTrashFill } from "react-icons/pi";
+import { MdOutlineArrowOutward } from "react-icons/md";
 
 import { useNavigate } from "react-router-dom";
-
 
 const AssessmentDetails = () => {
   const { id } = useParams();
@@ -68,16 +72,15 @@ const AssessmentDetails = () => {
       //   setIsLoading(false);
       // }
 
-     const categoryResponse = await getAllQuestionCategories();
-     const categoryData = categoryResponse?.payload || [];
+      const categoryResponse = await getAllQuestionCategories();
+      const categoryData = categoryResponse?.payload || [];
 
-     // filter categories based on current assessment id
-     const filteredCategories = categoryData.filter(
-       (cat) => cat.assessmentId?.toString() === id
-     );
+      // filter categories based on current assessment id
+      const filteredCategories = categoryData.filter(
+        (cat) => cat.assessmentId?.toString() === id
+      );
 
-     setCategories(filteredCategories);
-
+      setCategories(filteredCategories);
     } catch (err) {
       console.error("Failed to fetch assessment details", err);
       setError("Failed to load assessment details");
@@ -125,7 +128,7 @@ const AssessmentDetails = () => {
         position: "top-right",
         duration: 3000,
       });
-      fetchData(); 
+      fetchData();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete category", {
@@ -164,7 +167,7 @@ const AssessmentDetails = () => {
           Add Question
         </button> */}
         <button
-          className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
+          className="bg-[#114654] text-white px-4 py-2 rounded-full text-xs"
           onClick={() => {
             setEditingCategory(null);
             setIsCategoryModalOpen(true);
@@ -188,55 +191,70 @@ const AssessmentDetails = () => {
       <p className="mb-4 text-gray-700 text-sm">
         <strong>Price </strong>£{priceMap[assessment?.priceId] ?? "N/A"}
       </p>
-
+      <hr />
       {/* Category Grid */}
       <h3 className="font-medium my-3">Question Category List</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5  ">
         {categories.length > 0 ? (
           categories.map((cat) => (
             <div
               key={cat.id}
-              className="bg-white relative border rounded-xl shadow-sm p-4 "
+              className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eefafc]"
             >
-              <h4 className="font-semibold text-sm mb-1">{cat.name}</h4>
-              <div className="absolute top-5 right-2 flex gap-1 text-lg">
-                <MdEdit
-                  className="text-blue-800 cursor-pointer"
-                  onClick={() => {
-                    setEditingCategory(cat);
-                    setIsCategoryModalOpen(true);
-                  }}
-                />
-                <MdDeleteOutline
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setShowDeleteModal(true);
-                  }}
-                />
+              <div className="">
+                <h4 className="font-semibold text-sm ">{cat.name}</h4>
+                <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
               </div>
-
-              {/* <p className="text-xs text-gray-500 mb-2">
-                Questions: <span className="font-medium">0</span>
-              </p> */}
-              <button
-                onClick={() =>
-                  navigate(
-                    `/ondemandassessment/${id}/category/${cat.id}`,
-                    {
+              <div className="flex  justify-between  item-center">
+                <button
+                  onClick={() =>
+                    navigate(`/ondemandassessment/${id}/category/${cat.id}`, {
                       state: {
                         assessmentId: id,
                         categoryId: cat.id,
                         categoryName: cat.name,
                         assessment: assessment,
                       },
-                    }
-                  )
-                }
-                className="text-xs bg-[#114654] text-white px-3 py-1.5 rounded-full"
-              >
-                View Category
-              </button>
+                    })
+                  }
+                  className="text-xs bg-[#114654]/80 hover:bg-[#114654] text-white px-2.5 py-1 rounded-full "
+                >
+                  View Category
+                </button>
+                <div className="flex gap-0.5">
+                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border">
+                    <MdEdit
+                      className="text-teal-800 cursor-pointer size-4"
+                      onClick={() => {
+                        setEditingCategory(cat);
+                        setIsCategoryModalOpen(true);
+                      }}
+                    />{" "}
+                  </div>
+                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border">
+                    <PiTrashFill
+                      className="text-red-600 cursor-pointer size-4"
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setShowDeleteModal(true);
+                      }}
+                    />
+                  </div>
+                </div>
+                {/* <div className="bg-gray-100 hover:bg-[#114654]/25 h-8 w-8 rounded-full flex justify-center items-center">
+                  <MdOutlineArrowOutward
+                    className=" cursor-pointer size-5 "
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setShowDeleteModal(true);
+                    }}
+                  />
+                </div> */}
+              </div>
+
+              {/* <p className="text-xs text-gray-500 mb-2">
+                Questions: <span className="font-medium">0</span>
+              </p> */}
             </div>
           ))
         ) : (
@@ -244,9 +262,6 @@ const AssessmentDetails = () => {
         )}
       </div>
 
-     
-      
-      
       <OnDemandQuestionModal
         isOpen={isModalOpen}
         onClose={() => {

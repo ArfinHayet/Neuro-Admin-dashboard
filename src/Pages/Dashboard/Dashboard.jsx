@@ -298,7 +298,7 @@ const Dashboard = () => {
   const COLORS = ["#82ca9d", "#ffc658"];
 
   return (
-    <section className="pb-4">
+    <section className="">
       <h1 className="text-xl font-semibold mb-0">Dashboard</h1>
       <p className="text-sm mb-4 text-secondary">
         Get an overview of your platform’s performance, user engagement, and
@@ -426,7 +426,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-lg border border-gray-200 p-4 h-[35vh]">
             <div className="flex justify-between items-start">
               <h2 className="font-semibold mb-2 text-sm">
-                On-demand Assessments
+                Premium Assessments
               </h2>
               <button
                 className="text-primary hover:text-opacity-50 text-xs font-medium"

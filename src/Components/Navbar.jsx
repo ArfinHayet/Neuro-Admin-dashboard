@@ -15,19 +15,21 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const toInitials = str => 
-    str
-      
-     .split(" ") 
-     .map(c => c.charAt(0).toUpperCase()).join("").concat(str.charAt(1).toUpperCase())
-     .substring(0, 2);
-
+  const toInitials = (str) =>{
+     if (!str) return "";
+  return str
+    .trim()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase())
+    .join("")
+    .substring(0, 2); 
+};
 
   return (
     <div className="navbar bg-[#F6F7F9] px-7">
       <div className="flex-1 gap-[7.5rem]">
         <a href="/">
-          <img height={300} className="h-[30px]" src={p3} alt="logo" />
+          <img height={300} className="h-[34px] -ml-2.5" src={p3} alt="logo" />
         </a>
       </div>
       <div className="flex-none">
@@ -40,13 +42,10 @@ const Navbar = () => {
               {userData?.userData?.designation}
             </p>
           </div>
-         {/* <div className="flex gap-4 justify-center items-center me-3">
-            <img src={m1} height={20} width={20} className="h-[22px]" />
-            <img src={n1} height={20} width={20} className="h-[24px]" />
-          </div>*/}
-          <div tabIndex={0} role="button" className="btn btn-sm  btn-circle">
-            <div className="rounded-full p-2 text-xs border border-gray-400">
-              <p>{toInitials(`${userData?.userData?.name}`)}</p>
+       
+          <div tabIndex={0} role="button" className="">
+            <div className="rounded-full p-2 text-sm font-bold border border-gray-400 hover:bg-gray-200 hover:shadow-lg">
+              <p>{toInitials(`${userData?.name}`)}</p>
             </div>
           </div>
 

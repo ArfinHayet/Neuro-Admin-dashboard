@@ -119,7 +119,8 @@ const InitialAssessment = () => {
   return (
     <section className="">
       <div className="flex justify-between items-center ">
-        <h2 className="text-xl font-semibold ">Initial Assessment</h2>
+        <h2 className="text-xl font-semibold "> {initialAssessment.name}
+        </h2>
         <button
           className="bg-[#114654] text-white px-4 py-2 rounded-full text-sm"
           onClick={() => {
@@ -131,8 +132,7 @@ const InitialAssessment = () => {
         </button>
       </div>
       <p className="text-xs text-secondary">
-        View, Edit and manage questions for the Initial Assessment to ensure
-        accuracy and relevance.
+        {initialAssessment.description}
       </p>
 
       <h3 className="font-medium my-3">Question List</h3>
