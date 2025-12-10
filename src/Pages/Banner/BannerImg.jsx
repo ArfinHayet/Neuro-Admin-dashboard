@@ -122,22 +122,27 @@ const BannerImg = () => {
   };
 
   const BannerCard = ({ item }) => (
-    <div className="relative p-3 h-[120px] border rounded-lg shadow-sm bg-white flex flex-col gap-1">
-      <h3 className="text-sm font-semibold">{item.name}</h3>
+    <div className="relative  overflow-hidden h-[240px] border rounded-lg shadow-sm bg-white flex flex-col justify-between">
+      <h3 className="text-sm font-semibold  p-3">{item.name}</h3>
       <img
         src={`${domain.replace(/\/$/, "")}/${item.imagePath}`}
-        className="w-36 h-16"
+        className="w-full h-[170px] object-cover"
       />
-      <div className="flex gap-2 right-2 absolute bottom-2 text-[17px]">
-        <button className="text-blue-600" onClick={() => handleView(item)}>
+
+      <div className=" flex gap-2 right-2 absolute bottom-2 text-[17px]">
+        <div className="rounded-full w-9 h-9 bg-gray-100/90 hover:bg-white flex justify-center ">
+         <button className="text-blue-600" onClick={() => handleView(item)}>
           <IoEye />
-        </button>
+          </button>
+        </div>
+        <div className="rounded-full w-9 h-9 bg-gray-100/90 hover:bg-white flex justify-center ">
         <button
           className="text-red-600"
           onClick={() => handleDeleteClick(item)}
         >
           <RiDeleteBin2Fill />
-        </button>
+          </button>
+          </div>
       </div>
     </div>
   );
@@ -189,7 +194,7 @@ const BannerImg = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[55vw] shadow-lg h-[70vh] text-sm">
+          <div className="bg-white p-6 rounded-lg w-[55vw] shadow-lg h-[55vh] text-sm">
             <h2 className="text-lg font-bold mb-2">Add New Banner</h2>
 
             <label className="text-xs pb-1">Name</label>
@@ -207,7 +212,7 @@ const BannerImg = () => {
                        theme="snow"
                        value={banner.description}
                        onChange={(value) => setBanner({ ...banner, description: value })}
-                       className="mb-[6%] h-[30vh]"
+                       className="mb-[7%] h-[14vh]"
                      />
 
             <label className="text-sm pb-1 pr-2">Image</label>

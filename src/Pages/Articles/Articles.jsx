@@ -218,7 +218,7 @@ const Blogs = () => {
         View and update all articles to be updated and relevant.
       </p>
 
-      <div className="grid lg:grid-cols-4 gap-4 h-[120px]">
+      <div className="grid lg:grid-cols-4 gap-4 h-[160px]">
         {blogs.map((blog) => (
           <BlogDetails
             key={blog.id || blog._id}
