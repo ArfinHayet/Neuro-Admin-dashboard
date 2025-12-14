@@ -80,17 +80,23 @@ const login = async (obj) => {
 };
 
 const deleteUser = async (id) => {
+  if (!id) throw new Error("User ID missing");
+
   const response = await fetch(`${domain}/users/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      authorization: `Bearer ${token()}`,
     },
-    body: JSON.stringify(),
   });
 
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    throw new Error("Delete failed");
+  }
+
+  return await response.json();
 };
+
 
 const getUserById = async (id) => {
   const response = await fetch(`${domain}/users/${id}`, {

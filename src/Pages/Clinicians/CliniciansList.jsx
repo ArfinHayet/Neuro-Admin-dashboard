@@ -5,6 +5,9 @@ import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getUsers } from "../../api/user";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MdDeleteForever } from "react-icons/md";
+import { deleteUser } from "../../api/user";
+
 
 const CliniciansList = () => {
   const navigate = useNavigate();
@@ -12,6 +15,8 @@ const CliniciansList = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const limit = 30;
+    const [showModal, setShowModal] = useState(false);
+  
 
   useEffect(() => {
     const fetchClinicians = async () => {
@@ -23,6 +28,7 @@ const CliniciansList = () => {
         );
 
         setClinicians(filteredClinicians);
+        console.log(filteredClinicians)
       } catch (err) {
         console.error("Error loading clinicians:", err);
       } finally {
@@ -32,6 +38,24 @@ const CliniciansList = () => {
 
     fetchClinicians();
   }, [page]);
+
+   const handleDeleteUser = async (id) => {
+     if (!id) {
+       toast.error("User ID not found");
+       return;
+     }
+
+     try {
+       await deleteUser(id);
+       toast.success("User deleted successfully");
+       setShowModal(false);
+       navigate("/patients");
+     } catch (error) {
+       console.error(error);
+       toast.error("Failed to delete user");
+     }
+   };
+
 
   const columns = [
     {
@@ -50,7 +74,7 @@ const CliniciansList = () => {
       cell: (info) => info.row.original.phone || "N/A",
     },
     {
-      header: "Title",
+      header: "HCPCTitle",
       accessorKey: "hcpcTitle",
       cell: (info) => info.row.original.hcpcTitle || "N/A",
     },
@@ -60,9 +84,14 @@ const CliniciansList = () => {
       cell: (info) => info.row.original.practiceName || "N/A",
     },
     {
+      header: "RegNo",
+      accessorKey: "regNo",
+      cell: (info) => info.row.original.regNo || "N/A",
+    },
+    {
       header: "Actions",
       cell: ({ row }) => (
-        <div className="text-left">
+        <div className="text-left flex gap-2">
           <button
             onClick={() => navigate(`/clinicians/${row.original.id}`)} // backend id
             className="text-primary text-lg ml-3"
@@ -70,6 +99,12 @@ const CliniciansList = () => {
           >
             <IoEye />
           </button>
+         <button
+                  onClick={() => setShowModal(true)}
+                  className="  text-[#114654] "
+                >
+                  <MdDeleteForever size={20} /> 
+                </button>
         </div>
       ),
     },
@@ -122,6 +157,34 @@ const CliniciansList = () => {
             </button>
           </div>
         </>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-start justify-center pt-12 bg-black bg-opacity-20 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+            <p className="text-sm mb-4">
+              Are you sure you want to delete this User?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  handleDeleteUser(clinicians.id);
+                  setShowModal(false);
+                }}
+                className="bg-primary text-white px-4 py-1 rounded hover:bg-opacity-80 text-sm"
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400 text-sm"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

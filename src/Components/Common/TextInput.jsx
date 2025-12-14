@@ -10,8 +10,8 @@ const TextInput = ({
   defaultValue,
 }) => {
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
-      <label className="text-sm font-medium">{label}</label>
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <label className="text-xs text-gray-500 font-medium">{label}</label>
       <input
         type={type}
         name={name}
