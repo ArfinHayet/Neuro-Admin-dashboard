@@ -4,7 +4,7 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { getSubmissionsPage, getAllSubmissions } from "../../api/submissions";
+import { getSubmissionsPage, getAllSubmissions, deleteSubmission } from "../../api/submissions";
 
 const SubmittedOnDemand = () => {
   const navigate = useNavigate();
@@ -13,6 +13,11 @@ const SubmittedOnDemand = () => {
   const [page, setPage] = useState(1);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const limit = 20;
+
+  
+    const [showModal, setShowModal] = useState(false);
+    const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
+  
 
   // Group submissions by assessmentId + patientId
   const groupSubmissions = (submissions) => {

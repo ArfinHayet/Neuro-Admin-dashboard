@@ -5,6 +5,9 @@ import DataTable from "../../Components/Common/DataTable";
 import { IoEye } from "react-icons/io5";
 import { getAllSubmissions, getSubmissionsPage } from "../../api/submissions";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MdDeleteForever } from "react-icons/md";
+import { deleteSubmission } from "../../api/submissions";
+import toast from "react-hot-toast";
 
 const SubmittedInitialList = () => {
   const navigate = useNavigate();
@@ -12,6 +15,9 @@ const SubmittedInitialList = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const limit = 20;
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
 
   const fetchSubmissions = async () => {
     try {
@@ -35,6 +41,20 @@ const SubmittedInitialList = () => {
   useEffect(() => {
     fetchSubmissions();
   }, [page]);
+
+  const handleDelete = async (id) => {
+    if (!id) return;
+    try {
+      await deleteSubmission(id); // api call
+      toast.success("Submission deleted successfully");
+      setShowModal(false);
+      // remove deleted submission from state
+      setSubmissions((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete submission");
+    }
+  };
 
   const onView = (submission) => {
     navigate(`/submitted-assessments/initial/${submission.id}`);
@@ -70,13 +90,26 @@ const SubmittedInitialList = () => {
         header: "Actions",
         id: "actions",
         cell: ({ row }) => (
-          <button
-            onClick={() => onView(row.original)}
-            className="px-2 p-1 hover:bg-gray-100 rounded"
-            title="View Details"
-          >
-            <IoEye size={18} />
-          </button>
+          <div className="flex gap-0 items-center justify-start  -ml-1">
+            <button
+              onClick={() => onView(row.original)}
+              className="px-2 p-1 text-gray-500 "
+              title="View Details"
+            >
+              <IoEye size={18} />
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedSubmissionId(row.original.id);
+                setShowModal(true);
+              }}
+              className="px-2 p-1   text-primary/70"
+              title="Delete Submission"
+            >
+              <MdDeleteForever size={19} />
+            </button>
+          </div>
         ),
       },
     ],
@@ -131,6 +164,34 @@ const SubmittedInitialList = () => {
             </button>
           </div>
         </>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-start justify-center pt-12 bg-black bg-opacity-20 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+            <p className="text-sm mb-4">
+              Are you sure you want to delete this Submission?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  handleDelete(selectedSubmissionId);
+                  setShowModal(false);
+                }}
+                className="bg-primary text-white px-4 py-1 rounded hover:bg-opacity-80 text-sm"
+              >
+                Yes
+              </button>
+
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400 text-sm"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

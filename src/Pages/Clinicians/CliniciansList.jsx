@@ -94,7 +94,7 @@ const CliniciansList = () => {
         <div className="text-left flex gap-2">
           <button
             onClick={() => navigate(`/clinicians/${row.original.id}`)} // backend id
-            className="text-primary text-lg ml-3"
+            className="text-primary text-lg ml-1"
             aria-label={`View profile of ${row.original.name}`}
           >
             <IoEye />
@@ -103,7 +103,7 @@ const CliniciansList = () => {
                   onClick={() => setShowModal(true)}
                   className="  text-[#114654] "
                 >
-                  <MdDeleteForever size={20} /> 
+                  <MdDeleteForever size={18} /> 
                 </button>
         </div>
       ),

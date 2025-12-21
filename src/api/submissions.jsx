@@ -2,8 +2,6 @@ import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
 
-
-// fetch one page (paged API)
 const getSubmissionsPage = async (page = 1, limit = 20) => {
   const response = await fetch(
     `${domain}/submissions?page=${page}&limit=${limit}`,
@@ -46,4 +44,16 @@ const getAllSubmissions = async () => {
   return { payload: allSubmissions };
 };
 
-export {  getSubmissionsPage, getAllSubmissions };
+const deleteSubmission = async (id) => {
+ const response = await fetch(`${domain}/submissions/${id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${token()}`,
+    },
+  });
+  const data = await response.json();
+
+  return data;
+};
+
+export {  getSubmissionsPage, getAllSubmissions, deleteSubmission  };

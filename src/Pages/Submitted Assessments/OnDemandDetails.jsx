@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { getAnswersByPatientAndAssessment } from "../../api/answers";
 import { getAllAppointments } from "../../api/appointments";
 import { getUserById } from "../../api/user";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 
 
 const OnDemandDetails = () => {
@@ -20,6 +21,9 @@ const OnDemandDetails = () => {
   const [appointments, setAppointments] = useState([]);
   const [matchedAppointment, setMatchedAppointment] = useState(null);
   const [clinicianDetails, setClinicianDetails] = useState(null);
+  const [deletemodal, setdeletemodal] = useState(false);
+
+const [showMenu, setShowMenu] = useState(false);
 
 
 
@@ -38,13 +42,26 @@ const OnDemandDetails = () => {
               { limit: 100 }
             );
             const ans = res?.payload || [];
+            console.log(res.payload)
 
-            const grouped = ans.reduce((acc, item) => {
-              const type = sub.questionType || "Unknown";
-              if (!acc[type]) acc[type] = [];
-              acc[type].push(item);
-              return acc;
-            }, {});
+          const grouped = ans.reduce((acc, item) => {
+            const typeId = String(item.question?.questiontypeid); // 🔑 KEY
+            const typeName = item.question?.questionType?.name || "Unknown";
+
+            if (!typeId) return acc;
+
+            if (!acc[typeId]) {
+              acc[typeId] = {
+                name: typeName,
+                answers: [],
+              };
+            }
+
+            acc[typeId].answers.push(item);
+            return acc;
+          }, {});
+
+
 
             answersMap[sub.id] = grouped;
           } catch (err) {
@@ -147,21 +164,15 @@ useEffect(() => {
         <p>
           <span className="font-semibold">Clinician </span>
           {selectedSubmission.clinicianId ? "Assigned" : "Not assigned"}
-          {/* ( {selectedSubmission.clinicianId}) */}
         </p>
 
         <p>
           <span className="font-semibold">Status </span>
           {selectedSubmission.status}
         </p>
-        {/* <p>
-          <span className="font-semibold">Ratings: </span>
-          {selectedSubmission.ratings}
-        </p> */}
       </div>
 
-      {/* Switch between multiple submissions if parent passes grouped */}
-      {passedSubmissions.length > 1 && (
+      {/* {passedSubmissions.length > 1 && (
         <div className="mt-6 flex gap-2 flex-wrap">
           {passedSubmissions.map((sub, i) => (
             <button
@@ -185,39 +196,76 @@ useEffect(() => {
             </button>
           ))}
         </div>
-      )}
-
-      {/* Questions & answers for selected type */}
-      {/* <div className="mt-4 space-y-4 text-xs">
-        {selectedType && groupedAnswers[selectedType]?.length > 0 ? (
-          groupedAnswers[selectedType].map((ans, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-3 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl"
+      )} */}
+        {/* Question Type Buttons */}
+        <div className="relative flex gap-2 flex-wrap mt-2">
+          {Object.entries(groupedAnswers).map(([typeId, data]) => (
+            <button
+              key={typeId}
+              onClick={() => setSelectedType(typeId)}
+              className={`px-4 py-2 rounded-full text-xs font-medium ${
+                selectedType === typeId
+                  ? "bg-[#114654] text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
             >
-              <div>
-                <p className="font-medium text-gray-800">
-                  {ans.question?.questions || "No question text"}
-                </p>
-                <div className="flex gap-2 items-center">
-                  <div className="w-3 h-3 rounded-full bg-primary mt-1"></div>
-                  <p className="text-secondary mt-1">
-                    {ans.answer || "No answer"}
+              {data.name}
+            </button>
+          ))}
+      
+     <HiOutlineDotsVertical
+          size={18}
+          className="absolute right-2 top-2 cursor-pointer"
+          onClick={() => setShowMenu((prev) => !prev)}
+        />
+      </div>
+      {showMenu && (
+          <div className="absolute right-2 top-8 bg-white border rounded shadow-md z-10">
+            <button
+              onClick={() => {
+                setdeletemodal(true);
+                setShowMenu(false);
+              }}
+              className="px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
+            >
+              Delete
+            </button>
+          </div>
+      )}
+      <div className="relative mt-4 text-sm border rounded-lg p-3 bg-white">
+
+        {/* Questions & answers for selected type */}
+        <div className="mt-4 space-y-4 text-xs">
+          {selectedType && groupedAnswers[selectedType]?.answers?.length > 0 ? (
+            groupedAnswers[selectedType].answers.map((ans, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 border-b  p-4 bg-white  "
+              >
+                <div className=" flex justify-between items-start w-full ">
+                  <p className="font-medium text-gray-800">
+                    {ans.question?.questions || "No question text"}
                   </p>
+                  <div className="flex gap-2 items-center">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1"></div>
+                    <p className="text-secondary mt-1">
+                      {ans.answer || "No answer"}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl">
-            No answers submitted yet for this question type.
-          </p>
-        )}
-      </div> */}
+            ))
+          ) : (
+            <p className="text-center text-gray-500 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl">
+              No answers submitted yet for this question type.
+            </p>
+          )}
+        </div>
 
-      {/* Summary */}
-      <div className="py-4 bg-white rounded-md mt-6 max-w-4xl">
-        <h2 className=" font-semibold mb-2 text-lg">AI Summary</h2>
+        {/* Summary */}
+
+        <h2 className="mt-6 font-semibold mb-2 text-lg">AI Summary</h2>
+       
         <p className="mt-1 text-gray-700 whitespace-pre-line text-sm">
           {selectedSubmission.summary
             ? selectedSubmission.summary.replace(/\*/g, "")
@@ -225,13 +273,12 @@ useEffect(() => {
         </p>
       </div>
 
-
       {/* clinician details */}
 
       <div className="mt-4 text-sm border rounded-lg p-3 bg-white">
         <h2 className="font-semibold text-lg ">Clinician Details</h2>
 
-        {clinicianDetails  && (
+        {clinicianDetails && (
           <div className=" space-y-1 mt-2">
             <p>
               <span className="font-semibold">Clinician Name </span>{" "}
@@ -254,11 +301,11 @@ useEffect(() => {
 
       {/* appointments */}
 
-      {matchedAppointment  && (
+      {matchedAppointment && (
         <div className=" text-sm mt-6 border rounded-md p-3 ">
           <h2 className="font-semibold mb-1 text-lg">Scheduled Appointment</h2>
           <p>
-            <span className="font-semibold">Date & Time  </span>
+            <span className="font-semibold">Date & Time </span>
             {new Date(matchedAppointment.time).toLocaleString()}
           </p>
           <p>
@@ -282,11 +329,10 @@ useEffect(() => {
           </p>
           <p>
             <span className="font-semibold">Status </span>
-            {matchedAppointment.status} /{" "}
-            {matchedAppointment.metting_status}
+            {matchedAppointment.status} / {matchedAppointment.metting_status}
           </p>
         </div>
-     )}
+      )}
     </section>
   );
 };

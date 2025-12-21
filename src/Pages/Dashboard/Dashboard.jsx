@@ -250,6 +250,7 @@ const Dashboard = () => {
         );
 
         setMonthlyGrowthData(formattedData);
+        console.log(formattedData)
       } catch (err) {
         console.error("Failed to fetch growth data:", err);
         setMonthlyGrowthData([]);

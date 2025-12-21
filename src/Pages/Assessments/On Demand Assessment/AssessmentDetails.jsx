@@ -11,6 +11,7 @@ import { getAssessments } from "../../../api/assessments";
 import {
   getAllQuestionCategories,
   deleteQuestionCategory,
+  updateQuestionCategory,
 } from "../../../api/questioncategories";
 
 import { useLocation } from "react-router-dom";
@@ -81,6 +82,7 @@ const AssessmentDetails = () => {
       );
 
       setCategories(filteredCategories);
+      console.log(filteredCategories)
     } catch (err) {
       console.error("Failed to fetch assessment details", err);
       setError("Failed to load assessment details");
@@ -275,7 +277,10 @@ const AssessmentDetails = () => {
 
       <QuestionCategoryAddModal
         isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
+        onClose={() => {
+          setIsCategoryModalOpen(false);
+          setEditingCategory(null);
+        }}
         onSave={fetchData}
         editingCategory={editingCategory}
       />

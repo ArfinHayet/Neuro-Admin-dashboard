@@ -41,7 +41,7 @@ const QuestionCategoryAddModal = ({
     if (editingCategory) {
       setName(editingCategory.name || "");
       setVariant(editingCategory.variant || "");
-      setAssessment(editingCategory.assessmentId || "");
+      setAssessment(editingCategory.assessmentId?.toString() || "");
     } else {
        resetForm();
     }
@@ -51,13 +51,14 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     let response;
-    const payload = { name, variant, assessmentId: assessment }; // include assessmentId
+    const payload = { name, variant, assessmentId: String(assessment) }; // include assessmentId
+// console.log("Updating category with payload:", payload);
 
     if (editingCategory) {
       response = await updateQuestionCategory(editingCategory.id, payload);
       if (response?.payload || response?.success) {
         toast.success("Category updated successfully!");
-          resetForm();
+        resetForm();
       }
     } else {
       response = await addQuestionCategory(payload);
