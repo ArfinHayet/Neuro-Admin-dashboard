@@ -463,12 +463,12 @@ const Dashboard = () => {
         {/* Right Column */}
         <div className="space-y-4">
           {/* Monthly Assessments Chart */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200 h-[40vh]">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 h-[38vh]">
             <h2 className="text-sm font-semibold mb-2">
               Monthly Assessments Completed
             </h2>
             <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="88%">
                 <PieChart>
                   <Pie
                     data={monthlyAssessmentsData}
@@ -497,7 +497,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[24vh]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[24vh] overflow-y-auto">
             <h2 className="text-sm font-semibold mb-1">Popular Assessments</h2>
             <div className="divide-y max-h-[200px] overflow-y-auto">
               {popularAssessments.map((assessment) => (
@@ -507,7 +507,7 @@ const Dashboard = () => {
                       {assessment.name}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {assessment.count} submissions
+                       {assessment.count} submissions
                     </span>
                   </div>
                   <div className="w-full bg-gray-100 h-1 mt-1">

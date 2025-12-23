@@ -35,17 +35,37 @@ const getPatients = async () => {
   return data;
 };
 
-const getPatientById = async (id) => {
-  const response = await fetch(`${domain}/patient/${id}`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token()}`,
-    },
-  });
+// const getPatientById = async (id) => {
+//   const response = await fetch(`${domain}/patients/${id}`, {
+//     method: "GET",
+//     headers: {
+//       authorization: `Bearer ${token()}`,
+//     },
+//   });
 
-  const data = await response.json();
-  return data;
+//   const data = await response.json();
+//   return data;
+// };
+
+// Get all patients for a user
+const getPatientsByUserId = async (userId) => {
+  try {
+    const response = await fetch(`${domain}/users/${userId}/patients`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token()}`,
+      },
+    });
+
+    const data = await response.json();
+    return data;  
+  } catch (err) {
+    console.error("Failed to fetch patients by user", err);
+    return null;
+  }
 };
+
 
 const updatePatient = async (id, obj) => {
   const response = await fetch(`${domain}/patient/${id}`, {
@@ -77,7 +97,7 @@ const deletePatient = async (id) => {
 export {
   addPatient,
   getPatients,
-  getPatientById,
+  getPatientsByUserId,
   updatePatient,
   deletePatient,
 };

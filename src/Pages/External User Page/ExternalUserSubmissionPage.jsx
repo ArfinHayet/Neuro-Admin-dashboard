@@ -1,31 +1,118 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../../public/png/NeuroChPro_20250926_191549_0000.png";
+import { useSearchParams } from "react-router-dom";
+import { token } from "../../Components/utils/token";
+import { domain } from "../../../credential";
+import { getUserById } from "../../api/user";
+import { getPatientsByUserId } from "../../api/patient";
+
+
 
 const ExternalUserSubmissionPage = () => {
-  // Dummy questions (you’ll fetch them from API later)
-  const questions = [
-    {
-      id: 1,
-      question:
-        "How often does the child have difficulty organizing tasks and activities?",
-      answerType: "MultipleChoice",
-      options: ["Never", "Sometimes", "Often", "Very Often"],
-    },
-    {
-      id: 2,
-      question:
-        "How often does the child fail to give close attention to details or make careless mistakes?",
-      answerType: "MultipleChoice",
-      options: ["Never", "Sometimes", "Often", "Very Often"],
-    },
-    {
-      id: 3,
-      question:
-        "Please describe any challenges the child faces in focusing during class.",
-      answerType: "Text",
-      options: [],
-    },
-  ];
+  const [params] = useSearchParams();
+
+  // dynamic params from URL
+  const assessmentId = params.get("assessmentId") ?? 2;
+  const questiontypeid = params.get("questiontypeid") ?? 64;
+const patientId = Number(params.get("patientId") ?? 2);
+  const userId = params.get("userId") ?? 4;
+  const reviewerId = params.get("reviewerId") ;
+
+  const [questions, setQuestions] = useState([]);
+  const [assessmentInfo, setAssessmentInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchQuestions = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `${domain}/questionnaires?assessmentId=${assessmentId}&questiontypeid=${questiontypeid}`,
+
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token()}`,
+          },
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+
+      if (Array.isArray(data)) {
+        setQuestions(data);
+      } else if (Array.isArray(data.payload)) {
+        setQuestions(data.payload);
+      } else {
+        setQuestions([]);
+      }
+    } catch (err) {
+      console.error("Failed to load questions", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [patient, setPatient] = useState(null);
+  const [user, setUser] = useState(null);
+  const [patients, setPatients] = useState([]);
+
+
+  // fetch patient info
+const fetchPatient = async () => {
+  try {
+    const data = await getPatientsByUserId(userId);
+
+    console.log("PATIENT PAYLOAD:", data.payload);
+    console.log("URL patientId:", patientId);
+
+    // ✅ CASE 1: payload is ARRAY
+    if (Array.isArray(data.payload)) {
+      const selectedPatient = data.payload.find((p) => p.id === patientId);
+      setPatient(selectedPatient || null);
+      return;
+    }
+
+    // ✅ CASE 2: payload is OBJECT (single patient)
+    if (data.payload && typeof data.payload === "object") {
+      setPatient(data.payload);
+      return;
+    }
+
+    setPatient(null);
+  } catch (err) {
+    console.error("Failed to fetch patient info", err);
+    setPatient(null);
+  }
+};
+
+
+  // fetch user info
+  const fetchUser = async () => {
+    try {
+      const data = await getUserById(userId);
+      if (data && data.payload) {
+        setUser(data.payload);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user info", err);
+    }
+  };
+
+ useEffect(() => {
+   if (assessmentId && questiontypeid) {
+     fetchQuestions();
+   }
+ }, [assessmentId, questiontypeid]);
+
+useEffect(() => {
+  if (userId && patientId) {
+    fetchUser();
+    fetchPatient();
+  }
+}, [userId, patientId]);
+
 
   return (
     <section className="bg-[#114654] h-screen flex flex-col">
@@ -53,14 +140,59 @@ const ExternalUserSubmissionPage = () => {
         <div className="bg-white w-[80vw] mx-auto p-6 rounded-md space-y-1 ">
           <h2 className="font-semibold">Patient Details</h2>
 
-          <p className="text-sm ">Patient Name</p>
-          <p className="text-sm ">patient age</p>
+          <p className="text-sm">
+            Patient Name {patient?.name || "Loading..."}
+          </p>
+          <p className="text-sm">
+            Date of Birth {" "}
+            {patient?.dateOfBirth || "Loading..."} 
+          </p>
+          <p className="text-sm">Gender {patient?.gender || "Loading..."}</p>
+          <h2 className="font-semibold">User Details</h2>
 
-
+          <p className="text-sm">User Name {user?.name || "Loading..."}</p>
         </div>
 
+        {questions.map((q, index) => (
+          <div
+            key={q.id}
+            className="bg-white w-[95vw] lg:w-[80vw] mx-auto p-4 lg:p-6 rounded-md shadow-sm"
+          >
+            <p className="font-medium text-gray-800 mb-3 lg:mb-4">
+              {index + 1}. {q.questions}
+            </p>
+
+            {q.answerType === "Yes/No" && "MultipleChoice" && (
+              <div className="flex flex-col gap-3 ml-4">
+                {q.options.map((option, idx) => (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 text-gray-700 cursor-pointer text-sm"
+                  >
+                    <input
+                      type="radio"
+                      name={`question-${q.id}`}
+                      value={option}
+                      className="w-4 h-4 accent-[#114654]"
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {q.answerType === "Text" && (
+              <textarea
+                placeholder="Type your answer here..."
+                className="w-2/3 border-b px-3 py-2 text-sm text-gray-700 mt-2 focus:outline-none"
+                rows={1}
+              />
+            )}
+          </div>
+        ))}
+
         {/* Questions Section */}
-        {questions.map((q) => (
+        {/* {questions.map((q) => (
           <div
             key={q.id}
             className="bg-white w-[80vw] mx-auto p-6 rounded-md shadow-sm"
@@ -69,7 +201,7 @@ const ExternalUserSubmissionPage = () => {
               {q.id}. {q.question}
             </p>
 
-            {/* Multiple choice */}
+          //   Multiple choice 
             {q.answerType === "MultipleChoice" && (
               <div className="flex flex-col gap-3 ml-4">
                 {q.options.map((option, idx) => (
@@ -89,7 +221,7 @@ const ExternalUserSubmissionPage = () => {
               </div>
             )}
 
-            {/* Text input */}
+            // Text input 
             {q.answerType === "Text" && (
               <textarea
                 placeholder="Type your answer here..."
@@ -98,7 +230,7 @@ const ExternalUserSubmissionPage = () => {
               ></textarea>
             )}
           </div>
-        ))}
+        ))} */}
       </div>
     </section>
   );

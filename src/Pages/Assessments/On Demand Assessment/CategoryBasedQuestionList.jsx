@@ -23,20 +23,6 @@ const assessmentID = location.state?.assessmentId || paramId;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // const fetchQuestions = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const res = await getQuestionsByAssessmentId(assessmentID);
-  //     const data = res?.payload || [];
-  //     // later we can filter by categoryId once backend supports it
-  //     setQuestions(data);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError("Failed to fetch questions");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
  const fetchQuestions = async () => {
    try {
@@ -44,12 +30,12 @@ const assessmentID = location.state?.assessmentId || paramId;
      const res = await getQuestionsByAssessmentId(assessmentID);
      const allQuestions = res?.payload || [];
 
-     // ✅ Filter only the questions that belong to this category
+
      const filtered = allQuestions.filter(
        (q) => q.question_category?.id?.toString() === categoryId?.toString()
      );
 
-     console.log(filtered);
+     console.log("question",filtered);
 
      setQuestions(filtered);
    } catch (err) {
