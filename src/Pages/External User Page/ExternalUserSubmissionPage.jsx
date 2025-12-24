@@ -5,22 +5,19 @@ import { token } from "../../Components/utils/token";
 import { domain } from "../../../credential";
 import { getUserById } from "../../api/user";
 import { getPatientsByUserId } from "../../api/patient";
-
-
+import { createSubmission } from "../../api/submissions";
 
 const ExternalUserSubmissionPage = () => {
   const [params] = useSearchParams();
 
-
-  
   // dynamic params from URL
- const assessmentId = Number(params.get("assessmentId") ?? 2);
- const questiontypeid = Number(params.get("questiontypeid") ?? 64);
- const userId = Number(params.get("userId") ?? 4);
- const patientId = Number(params.get("patientId") ?? 2);
- const reviewerId = params.get("reviewerId")
-   ? Number(params.get("reviewerId"))
-   : null;
+  const assessmentId = Number(params.get("assessmentId") ?? 2);
+  const questiontypeid = Number(params.get("questiontypeid") ?? 64);
+  const userId = Number(params.get("userId") ?? 4);
+  const patientId = Number(params.get("patientId") ?? 2);
+  const reviewerId = params.get("reviewerId")
+    ? Number(params.get("reviewerId"))
+    : null;
 
   const [questions, setQuestions] = useState([]);
   const [assessmentInfo, setAssessmentInfo] = useState(null);
@@ -62,33 +59,31 @@ const ExternalUserSubmissionPage = () => {
   const [user, setUser] = useState(null);
   const [patients, setPatients] = useState([]);
 
-
   // fetch patient info
-const fetchPatient = async () => {
-  try {
-    const data = await getPatientsByUserId(userId);
+  const fetchPatient = async () => {
+    try {
+      const data = await getPatientsByUserId(userId);
 
-    // console.log("PATIENT PAYLOAD:", data.payload);
-    // console.log("URL patientId:", patientId);
+      // console.log("PATIENT PAYLOAD:", data.payload);
+      // console.log("URL patientId:", patientId);
 
-    if (Array.isArray(data.payload)) {
-      const selectedPatient = data.payload.find((p) => p.id === patientId);
-      setPatient(selectedPatient || null);
-      return;
+      if (Array.isArray(data.payload)) {
+        const selectedPatient = data.payload.find((p) => p.id === patientId);
+        setPatient(selectedPatient || null);
+        return;
+      }
+
+      if (data.payload && typeof data.payload === "object") {
+        setPatient(data.payload);
+        return;
+      }
+
+      setPatient(null);
+    } catch (err) {
+      console.error("Failed to fetch patient info", err);
+      setPatient(null);
     }
-
-    if (data.payload && typeof data.payload === "object") {
-      setPatient(data.payload);
-      return;
-    }
-
-    setPatient(null);
-  } catch (err) {
-    console.error("Failed to fetch patient info", err);
-    setPatient(null);
-  }
-};
-
+  };
 
   // fetch user info
   const fetchUser = async () => {
@@ -102,24 +97,23 @@ const fetchPatient = async () => {
     }
   };
 
- useEffect(() => {
-   if (assessmentId && questiontypeid) {
-     fetchQuestions();
-   }
- }, [assessmentId, questiontypeid]);
+  useEffect(() => {
+    if (assessmentId && questiontypeid) {
+      fetchQuestions();
+    }
+  }, [assessmentId, questiontypeid]);
 
-useEffect(() => {
-  if (userId && patientId) {
-    fetchUser();
-    fetchPatient();
-  }
-}, [userId, patientId]);
+  useEffect(() => {
+    if (userId && patientId) {
+      fetchUser();
+      fetchPatient();
+    }
+  }, [userId, patientId]);
 
-  
-if (!assessmentId || !questiontypeid || !userId || !patientId) {
-  return <div>Invalid or expired link</div>;
+  if (!assessmentId || !questiontypeid || !userId || !patientId) {
+    return <div>Invalid or expired link</div>;
   }
-  
+
   return (
     <section className="bg-[#114654] h-screen flex flex-col">
       {/* Sticky header */}
@@ -144,25 +138,26 @@ if (!assessmentId || !questiontypeid || !userId || !patientId) {
           </p>
         </div>
         <div className="bg-white w-[80vw] mx-auto p-6 rounded-md space-y-1 ">
-          <h2 className="font-semibold">Patient Details</h2>
+          <p className="p-2 border rounded-md text-sm">
+            User Name {user?.name || "Loading..."}
+          </p>
+          <h2 className="p-2  rounded-md font-semibold">Patient Details</h2>
 
-          <p className="text-sm">
+          <p className="p-2 border rounded-md text-sm">
             Patient Name {patient?.name || "Loading..."}
           </p>
-          <p className="text-sm">
-            Date of Birth {" "}
-            {patient?.dateOfBirth || "Loading..."} 
+          <p className="p-2 border rounded-md text-sm">
+            Date of Birth {patient?.dateOfBirth || "Loading..."}
           </p>
-          <p className="text-sm">Gender {patient?.gender || "Loading..."}</p>
-          <h2 className="font-semibold">User Details</h2>
-
-          <p className="text-sm">User Name {user?.name || "Loading..."}</p>
+          <p className="p-2 border rounded-md text-sm">
+            Gender {patient?.gender || "Loading..."}
+          </p>
         </div>
 
         {questions.map((q, index) => (
           <div
             key={q.id}
-            className="bg-white w-[95vw] lg:w-[80vw] mx-auto p-4 lg:p-6 rounded-md shadow-sm"
+            className="bg-white w-[95vw] lg:w-[80vw] mx-auto p-4 lg:p-8 rounded-md shadow-sm"
           >
             <p className="font-medium text-gray-800 mb-3 lg:mb-4">
               {index + 1}. {q.questions}

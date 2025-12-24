@@ -8,6 +8,9 @@ const QuestionArrangement = ({
   onChange,
   onEdit,
   onDelete,
+  onSelect,
+  selected,
+  isSelected,
 }) => {
   const qId = question.id || question._id;
   const [showModal, setShowModal] = useState(false);
@@ -31,6 +34,14 @@ const QuestionArrangement = ({
   return (
     <>
       <tr className="border-b bg-white ">
+        <td className="pl-2">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={(e) => onSelect(qId, e.target.checked)}
+          />
+        </td>
+
         <td className="pl-4">{index + 1}</td>
         <td className="p-2 text-sm w-[40vw]">
           {question.questions || question.question}
@@ -44,7 +55,8 @@ const QuestionArrangement = ({
             min={1}
           />
         </td>
-        <td className="px-6 text-xs w-32">{question.answerType}
+        <td className="px-6 text-xs w-32">
+          {question.answerType}
           {/* <select
             value=
             onChange={handleAnswerTypeChange}

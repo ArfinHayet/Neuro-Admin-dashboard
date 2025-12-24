@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { addQuestion, updateQuestion } from "../../api/questionnaires";
+import toast from "react-hot-toast";
 
 const OnDemandQuestionModal = ({
   isOpen,
@@ -22,6 +23,24 @@ const OnDemandQuestionModal = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [addedQuestions, setAddedQuestions] = useState([]);
+
+
+  const resetForm = () => {
+    setFormData({
+      type: defaultType,
+      questions: "",
+      order: "",
+      answerType: "Yes/No",
+      options: ["yes", "no"],
+      questiontypeid: "",
+      variant: "",
+    });
+    setError(null);
+  };
+
+
+
 
   useEffect(() => {
     if (editingQuestion) {
@@ -113,6 +132,67 @@ const OnDemandQuestionModal = ({
     setError(null);
     return true;
   };
+
+  const handleNext = () => {
+    if (!validateForm()) return;
+
+    setAddedQuestions((prev) => [...prev, { ...formData }]);
+
+    resetForm();
+
+    setError(null);
+  };
+  
+  const handleSaveAll = async () => {
+    if (!assessment) {
+      alert("No assessment selected");
+      return;
+    }
+
+    let questionsToSubmit = [...addedQuestions];
+
+    if (formData.questions.trim()) {
+      if (!validateForm()) return;
+      questionsToSubmit.push({ ...formData });
+    }
+
+    if (questionsToSubmit.length === 0) {
+      toast("No questions added");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      for (let q of questionsToSubmit) {
+        const payload = {
+          assessmentId: Number(assessment.id),
+          questions: q.questions,
+          order: Number(q.order),
+          answerType: q.answerType,
+          options: q.options,
+          questiontypeid: Number(categoryId),
+          variant: q.variant,
+        };
+
+        await addQuestion(payload);
+      }
+ toast.success( "Question added", {
+   position: "top-right",
+ });
+// toast("All questions have been added successfully!")
+      setAddedQuestions([]);
+      resetForm();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast("Failed to submit questions");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
 
   const handleSave = async () => {
     if (!validateForm()) return;
@@ -212,9 +292,9 @@ const OnDemandQuestionModal = ({
           value={formData.variant}
           onChange={(e) => handleChange("variant", e.target.value)}
         >
-          <option value="" >Select Variant</option>
-          <option value="internal" >Internal</option>
-          <option value="external" >External</option>
+          <option value="">Select Variant</option>
+          <option value="internal">Internal</option>
+          <option value="external">External</option>
         </select>
 
         <label className="block text-xs mb-1">Question Order</label>
@@ -238,7 +318,8 @@ const OnDemandQuestionModal = ({
           <option value="Text">Text</option>
         </select>
 
-        {(formData.answerType === "MultipleChoice" || formData.answerType === "Yes/No" ) && (
+        {(formData.answerType === "MultipleChoice" ||
+          formData.answerType === "Yes/No") && (
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
               <label className="text-xs font-medium">Options</label>
@@ -285,14 +366,38 @@ const OnDemandQuestionModal = ({
           >
             Cancel
           </button>
-          <button
-            type="button"
-            className="px-4 py-2 rounded-full bg-[#114654] text-white text-sm"
-            onClick={handleSave}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Save"}
-          </button>
+
+          <div>
+         {!editingQuestion && (
+            <button
+              className="px-3 py-2 rounded-full font-bold text-sm"
+              onClick={handleNext}
+              disabled={isSubmitting}
+            >
+              Add More
+            </button>
+          )}
+
+          {!editingQuestion && (
+            <button
+              className="px-4 py-2 rounded-full bg-[#114654] text-white text-xs"
+              onClick={handleSaveAll}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save All"}
+            </button>
+          )}
+</div>
+          {editingQuestion && (
+            <button
+              type="button"
+              className="px-4 py-2 rounded-full bg-[#114654] text-white text-xs"
+              onClick={handleSave}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+          )}
         </div>
       </div>
     </div>

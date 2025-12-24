@@ -2,6 +2,21 @@ import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
 
+const createSubmission = async (obj) => {
+  console.log(obj);
+  const response = await fetch(`${domain}/submissions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token()}`,
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const data = await response.json();
+  return data;
+};
+
 const getSubmissionsPage = async (page = 1, limit = 20) => {
   const response = await fetch(
     `${domain}/submissions?page=${page}&limit=${limit}`,
@@ -56,4 +71,4 @@ const deleteSubmission = async (id) => {
   return data;
 };
 
-export {  getSubmissionsPage, getAllSubmissions, deleteSubmission  };
+export { createSubmission, getSubmissionsPage, getAllSubmissions, deleteSubmission  };

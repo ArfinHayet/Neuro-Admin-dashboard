@@ -22,6 +22,9 @@ const assessmentID = location.state?.assessmentId || paramId;
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+
 
 
  const fetchQuestions = async () => {
@@ -105,31 +108,93 @@ const assessmentID = location.state?.assessmentId || paramId;
     return <p>{error}</p>;
   }
 
+
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const isSelected = (id) => selectedIds.includes(id);
+
+const handleBulkDelete = async () => {
+  if (selectedIds.length === 0) {
+    toast.error("Please select at least one question");
+    return;
+  }
+
+  try {
+    await Promise.all(selectedIds.map((id) => deleteQuestion(id)));
+
+    toast.success("Questions deleted successfully", {
+      position: "top-right",
+    });
+
+    setSelectedIds([]);
+    await fetchQuestions(); 
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to delete selected questions");
+  }
+};
+
+
   return (
     <section className="">
       <div className="flex justify-between items-center mb-3">
         <div>
           <h2 className="font-semibold ">{assessmentName}</h2>
-          <h2 className="text-sm  mb-1">Question Category:<span className="font-semibold"> {categoryName}</span>  </h2>
+          <h2 className="text-sm  mb-1">
+            Question Category:
+            <span className="font-semibold"> {categoryName}</span>{" "}
+          </h2>
           <p className="text-sm text-gray-500">
             Total Questions: {questions.length}
           </p>
         </div>
-        <button
-          className="bg-[#114654] text-white px-4 py-2 rounded-full text-xs"
-          onClick={() => {
-            setEditingQuestion(null);
-            setIsModalOpen(true);
-          }}
-        >
-          Add Question
-        </button>
+
+        <div className="flex gap-4">
+          {selectedIds.length > 0 && (
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded-full text-xs"
+              onClick={handleBulkDelete}
+            >
+              Delete Selected ({selectedIds.length})
+            </button>
+          )}
+
+          <button
+            className="bg-[#114654] text-white px-4 py-2 rounded-full text-xs"
+            onClick={() => {
+              setEditingQuestion(null);
+              setIsModalOpen(true);
+            }}
+          >
+            Add Question
+          </button>
+        </div>
       </div>
 
       <div className="h-[75vh] overflow-y-auto">
         <table className="w-full text-sm text-left text-gray-700 border-collapse">
           <thead className="bg-[#f3f1f1] font-light">
             <tr>
+              <th className="pl-2">
+                <input
+                  type="checkbox"
+                  checked={
+                    questions.length > 0 &&
+                    selectedIds.length === questions.length
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedIds(questions.map((q) => q.id));
+                    } else {
+                      setSelectedIds([]);
+                    }
+                  }}
+                />
+              </th>
               <th className="pl-4">Sl</th>
               <th className="p-2">Question</th>
               <th className="p-2">Order</th>
@@ -144,6 +209,13 @@ const assessmentID = location.state?.assessmentId || paramId;
                 key={q.id}
                 index={i}
                 question={q}
+                selected={isSelected(q.id)}
+                isSelected={selectedIds.includes(q.id)}
+                onSelect={(id, checked) =>
+                  setSelectedIds((prev) =>
+                    checked ? [...prev, id] : prev.filter((x) => x !== id)
+                  )
+                }
                 onChange={(id, field, value) =>
                   setQuestions((prev) =>
                     prev.map((ques) =>
@@ -159,7 +231,6 @@ const assessmentID = location.state?.assessmentId || paramId;
         </table>
       </div>
 
-
       <OnDemandQuestionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -168,7 +239,7 @@ const assessmentID = location.state?.assessmentId || paramId;
         editingQuestion={editingQuestion}
         assessment={{ id: assessmentID, name: assessmentName }}
         categoryId={categoryId}
-        categoryName={categoryName} 
+        categoryName={categoryName}
       />
     </section>
   );
