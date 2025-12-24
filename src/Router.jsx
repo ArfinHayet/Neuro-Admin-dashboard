@@ -138,7 +138,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "external_reviewer",
+    path: "external_user_submission",
     element: <ExternalUserSubmissionPage />,
   },
 ]);

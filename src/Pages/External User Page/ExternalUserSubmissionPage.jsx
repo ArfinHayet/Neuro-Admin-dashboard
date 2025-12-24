@@ -11,12 +11,16 @@ import { getPatientsByUserId } from "../../api/patient";
 const ExternalUserSubmissionPage = () => {
   const [params] = useSearchParams();
 
+
+  
   // dynamic params from URL
-  const assessmentId = params.get("assessmentId") ?? 2;
-  const questiontypeid = params.get("questiontypeid") ?? 64;
-const patientId = Number(params.get("patientId") ?? 2);
-  const userId = params.get("userId") ?? 4;
-  const reviewerId = params.get("reviewerId") ;
+ const assessmentId = Number(params.get("assessmentId") ?? 2);
+ const questiontypeid = Number(params.get("questiontypeid") ?? 64);
+ const userId = Number(params.get("userId") ?? 4);
+ const patientId = Number(params.get("patientId") ?? 2);
+ const reviewerId = params.get("reviewerId")
+   ? Number(params.get("reviewerId"))
+   : null;
 
   const [questions, setQuestions] = useState([]);
   const [assessmentInfo, setAssessmentInfo] = useState(null);
@@ -64,17 +68,15 @@ const fetchPatient = async () => {
   try {
     const data = await getPatientsByUserId(userId);
 
-    console.log("PATIENT PAYLOAD:", data.payload);
-    console.log("URL patientId:", patientId);
+    // console.log("PATIENT PAYLOAD:", data.payload);
+    // console.log("URL patientId:", patientId);
 
-    // ✅ CASE 1: payload is ARRAY
     if (Array.isArray(data.payload)) {
       const selectedPatient = data.payload.find((p) => p.id === patientId);
       setPatient(selectedPatient || null);
       return;
     }
 
-    // ✅ CASE 2: payload is OBJECT (single patient)
     if (data.payload && typeof data.payload === "object") {
       setPatient(data.payload);
       return;
@@ -113,7 +115,11 @@ useEffect(() => {
   }
 }, [userId, patientId]);
 
-
+  
+if (!assessmentId || !questiontypeid || !userId || !patientId) {
+  return <div>Invalid or expired link</div>;
+  }
+  
   return (
     <section className="bg-[#114654] h-screen flex flex-col">
       {/* Sticky header */}
