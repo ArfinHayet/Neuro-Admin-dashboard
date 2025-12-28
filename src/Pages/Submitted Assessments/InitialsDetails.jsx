@@ -60,13 +60,16 @@ const InitialsDetails = () => {
     fetchData();
   }, [submissionId]);
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex justify-center items-center">
-        <p>Loading assessment details...</p>
-      </section>
-    );
-  }
+ if (isLoading) {
+   return (
+     <section className="h-[90vh] flex flex-col justify-center items-center">
+       <div className="custom-loader"></div>
+       <p className="mt-4 text-sm text-gray-500">
+         Loading Assessment Submissions Details...
+       </p>
+     </section>
+   );
+ }
 
   if (!submission) {
     return (

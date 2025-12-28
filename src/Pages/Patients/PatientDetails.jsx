@@ -91,13 +91,17 @@ const PatientDetails = () => {
     }
   }, [selectedChildId, user?.id]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center  text-gray-500">
-  //       Loading user details...
-  //     </div>
-  //   );
-  // }
+ if (loading) {
+   return (
+     <section className="h-[90vh] flex flex-col justify-center items-center">
+       <div className="custom-loader"></div>
+       <p className="mt-4 text-sm text-gray-500">
+         Loading User Details Profile...
+       </p>
+     </section>
+   );
+  }
+  
   if (!user) {
     return (
       <div className="p-6 ">

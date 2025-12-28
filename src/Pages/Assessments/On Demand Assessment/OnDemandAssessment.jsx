@@ -16,6 +16,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const menuRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -54,6 +55,9 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
       duration: 3000,
     });
   };
+
+ 
+
 
   return (
     <section>
@@ -150,17 +154,19 @@ const OnDemandAssessment = () => {
  const fetchPrices = async () => {
    try {
      const data = await getProducts();
-     console.log("price",data)
+     console.log("price", data);
 
      if (data) {
        const map = {};
+
        data.forEach((product) => {
          (product.prices || []).forEach((p) => {
-           // ensure priceId matches exactly with what comes in assessment
-           map[p.priceId] = p.unit_amount;
+
+           map[p.priceId] = p.unit_amount ? p.unit_amount / 100 : 0;
          });
        });
-       console.log("[[",map)
+
+       console.log("price format", map);
        setPriceMap(map);
      }
    } catch (err) {
@@ -225,13 +231,14 @@ const OnDemandAssessment = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-        <p>Loading assessments...</p>
-      </section>
-    );
-  }
+ if (isLoading) {
+   return (
+     <section className="h-[90vh] flex flex-col justify-center items-center">
+       <div className="custom-loader"></div>
+       <p className="mt-4 text-sm text-gray-500">Loading assessments...</p>
+     </section>
+   );
+ }
 
   const handleDeleteAssessments = async (category) => {
     try {

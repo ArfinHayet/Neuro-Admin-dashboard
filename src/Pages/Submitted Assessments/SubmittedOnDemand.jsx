@@ -18,15 +18,23 @@ const SubmittedOnDemand = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
   
+const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
 
+  
   // Group submissions by assessmentId + patientId
   const groupSubmissions = (submissions) => {
     const map = new Map();
 
     submissions.forEach((sub) => {
-      const key = `${sub.assessmentId}_${sub.patientId}`;
+          const datekey = normalizeDate(sub.createdAt);
+
+      const key = `${sub.assessmentId}_${sub.patientId}_${datekey}`;
       if (!map.has(key)) {
-        map.set(key, { ...sub, grouped: [sub] });
+        map.set(key, {
+          ...sub,
+          grouped: [sub],
+          submissionDate: datekey,
+         });
       } else {
         map.get(key).grouped.push(sub);
       }
@@ -123,7 +131,7 @@ const SubmittedOnDemand = () => {
       {
         header: "Date Taken",
         accessorFn: (row) =>
-          new Date(row.createdAt).toLocaleDateString("en-GB"),
+          new Date(row.submissionDate).toLocaleDateString("en-GB"),
       },
       {
         header: "Actions",
@@ -146,7 +154,7 @@ const SubmittedOnDemand = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => `${row.assessmentId}_${row.patientId}`,
+    getRowId: (row) => `${row.assessmentId}_${row.patientId}_${row.submissionDate}`,
   });
 
   return (
@@ -157,9 +165,14 @@ const SubmittedOnDemand = () => {
       </p>
 
       {loading ? (
-        <p className="text-center py-10 text-gray-500">
-          Loading submissions...
+        
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading Assessments Submissions List...
         </p>
+      </section>
+   
       ) : (
         <>
           <div className="relative w-[78vw] h-[73vh] bg-white overflow-x-auto">

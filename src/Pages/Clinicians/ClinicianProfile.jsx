@@ -3,15 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
 import { getUserById, getLeaves, getAvailability } from "../../api/user";
-import { MdOutlineMailOutline } from "react-icons/md";
 import { MdLocationPin, MdEmail } from "react-icons/md";
 import { RiPhoneFill } from "react-icons/ri";
-import toast from "react-hot-toast";
-import { BsCalendarDateFill } from "react-icons/bs";
 import { BiSolidMessageRoundedDots } from "react-icons/bi";
-import { MdDeleteForever } from "react-icons/md";
 
-import { FaUserTag , FaUserPlus, FaUserCog } from "react-icons/fa";
+import { FaUserTag, FaUserPlus, FaUserCog } from "react-icons/fa";
 import { FaUserPen } from "react-icons/fa6";
 
 const ClinicianProfile = () => {
@@ -39,14 +35,14 @@ const ClinicianProfile = () => {
         const userLeaves = allLeaves.payload.filter(
           (l) => String(l.userId) === String(id)
         );
-        console.log(userLeaves)
+        console.log(userLeaves);
         setLeaves(userLeaves);
 
         const allAvailability = await getAvailability();
         const userAvailability = allAvailability.payload.filter(
           (a) => String(a.userId) === String(id)
         );
-        console.log(userAvailability)
+        console.log(userAvailability);
         setAvailability(userAvailability);
       } catch (err) {
         console.error(err);
@@ -116,13 +112,17 @@ const ClinicianProfile = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  //   if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center  text-gray-500">
-  //       Loading clinician details...
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading Clinician Profile...
+        </p>
+      </section>
+    );
+  }
+
   if (!clinician) {
     return (
       <div className="p-6 ">
@@ -166,7 +166,6 @@ const ClinicianProfile = () => {
               <p className="flex gap-2 items-center  text-sm">
                 <FaUserCog className=" text-gray-500" size={18} />
                 <strong>{clinician.role}</strong>
-               
               </p>
             </div>
           </section>

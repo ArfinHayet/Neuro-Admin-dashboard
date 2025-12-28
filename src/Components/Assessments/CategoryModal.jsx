@@ -14,25 +14,29 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [prices, setPrices] = useState([]);
 
   // Fetch all prices from backend
-  useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const data = await getProducts();
-        if (data && data.length > 0) {
-          const allPrices = data.flatMap(
-            (product) => product.prices || []
-          );
-          console.log("categoru",allPrices)
-          setPrices(allPrices);
+ useEffect(() => {
+   const fetchPrices = async () => {
+     try {
+       const data = await getProducts();
+       if (data && data.length > 0) {
+         const allPrices = data.flatMap((product) => product.prices || []);
 
-        }
-      } catch (err) {
-        console.error("Error fetching products", err);
-      }
-    };
+         const formattedPrices = allPrices.map((p) => ({
+           ...p,
+           amount: p.unit_amount ? p.unit_amount / 100 : 0,
+         }));
 
-    fetchPrices();
-  }, []);
+         console.log("price", formattedPrices);
+         setPrices(formattedPrices);
+       }
+     } catch (err) {
+       console.error("Error fetching products", err);
+     }
+   };
+
+   fetchPrices();
+ }, []);
+
 
   // Populate form when editing
   useEffect(() => {
@@ -194,7 +198,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               <option value="">Select Price</option>
               {prices.map((p) => (
                 <option key={p.priceId} value={p.priceId}>
-                  {p.unit_amount} {p.currency?.toUpperCase()}
+                  {p.amount.toFixed(2)} {p.currency?.toUpperCase()}
                 </option>
               ))}
             </select>

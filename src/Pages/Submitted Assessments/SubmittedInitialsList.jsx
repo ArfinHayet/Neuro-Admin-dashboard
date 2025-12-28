@@ -123,6 +123,8 @@ const SubmittedInitialList = () => {
     getRowId: (row) => row.id.toString(),
   });
 
+
+
   return (
     <section className=" ">
       <h1 className="text-xl font-semibold">Submitted Initial Assessments</h1>
@@ -130,9 +132,14 @@ const SubmittedInitialList = () => {
         Access and Review Detailed Records of Every Submitted Assessment.
       </p>
       {loading ? (
-        <p className="text-center py-10 text-gray-500">
-          Loading submissions...
+      
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading Assessment Submissions List...
         </p>
+      </section>
+    
       ) : (
         <>
           <div className="relative w-[78vw] h-[73vh] bg-white  overflow-x-auto">

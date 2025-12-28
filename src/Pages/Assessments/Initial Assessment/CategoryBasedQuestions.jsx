@@ -11,7 +11,7 @@ import OnDemandQuestionModal from "../../../Components/Assessments/OnDemandQuest
 import QuestionArrangement from "../../../Components/Common/QuestionArrangement";
 import CSVQuestionAddModal from "../../../Components/Assessments/CSVQuestionAddModal";
 
-const CategoryBasedQuestionList = () => {
+const CategoryBasedQuestions = () => {
   const { id: paramId, categoryId } = useParams();
   const location = useLocation();
   const categoryName = location.state?.categoryName;
@@ -141,7 +141,8 @@ const CategoryBasedQuestionList = () => {
           </h2>
           <p className="text-sm text-gray-500">
             Total Questions: {questions.length}
-          </p>
+                  </p>
+                  {/* <p>Variant: {variant}</p> */}
         </div>
 
         <div className="flex gap-4">
@@ -251,4 +252,4 @@ const CategoryBasedQuestionList = () => {
   );
 };
 
-export default CategoryBasedQuestionList;
+export default CategoryBasedQuestions;

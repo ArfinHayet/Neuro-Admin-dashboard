@@ -84,7 +84,8 @@ const handleSubmit = async (e) => {
         <h3 className="text-lg font-semibold mb-4">
           {editingCategory ? "Edit Category" : "Add Category"}
         </h3>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Enter category name"

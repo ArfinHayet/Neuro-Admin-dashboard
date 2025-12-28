@@ -147,13 +147,14 @@ const AssessmentDetails = () => {
     return <p> {error} </p>;
   }
 
-  // if (isLoading) {
-  //   return (
-  //     <section className="h-[90vh] flex justify-center items-center rounded-2xl px-4 pt-5">
-  //       <p>Loading assessments...</p>
-  //     </section>
-  //   );
-  // }
+ if (isLoading) {
+   return (
+     <section className="h-[90vh] flex flex-col justify-center items-center">
+       <div className="custom-loader"></div>
+       <p className="mt-4 text-sm text-gray-500">Loading assessments details...</p>
+     </section>
+   );
+ }
 
   return (
     <section className="">

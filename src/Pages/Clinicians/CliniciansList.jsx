@@ -7,6 +7,7 @@ import { getUsers } from "../../api/user";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MdDeleteForever } from "react-icons/md";
 import { deleteUser } from "../../api/user";
+import toast from "react-hot-toast";
 
 
 const CliniciansList = () => {
@@ -116,6 +117,15 @@ const CliniciansList = () => {
     getCoreRowModel: getCoreRowModel(),
     getRowId: (row) => row.id?.toString(),
   });
+
+   if (loading) {
+     return (
+       <section className="h-[90vh] flex flex-col justify-center items-center">
+         <div className="custom-loader"></div>
+         <p className="mt-4 text-sm font-medium text-gray-500">Loading clinicians...</p>
+       </section>
+     );
+   }
 
   return (
     <section className=" ">

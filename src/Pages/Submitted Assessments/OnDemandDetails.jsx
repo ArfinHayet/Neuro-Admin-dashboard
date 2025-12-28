@@ -131,14 +131,16 @@ useEffect(() => {
 }, [selectedSubmission]);
 
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <section className="h-[90vh] overflow-y-auto bg-white rounded-2xl px-4 pt-4">
-        <div className="flex justify-center items-center h-40">
-          <p>Loading assessment details...</p>
-        </div>
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading Submission Details...
+        </p>
       </section>
     );
+  }
 
   if (!selectedSubmission) return <p>Submission not found.</p>;
 

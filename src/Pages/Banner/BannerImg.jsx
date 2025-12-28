@@ -12,7 +12,7 @@ import { IoEye } from "react-icons/io5";
 import { domain } from "../../../credential";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+import { compressFile } from "../../api/compressfile";
 
 
 const BannerImg = () => {
@@ -23,6 +23,7 @@ const BannerImg = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [deleteName, setDeleteName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [banner, setBanner] = useState({
     name: "",
@@ -36,6 +37,7 @@ const BannerImg = () => {
 
   const fetchBannerData = async () => {
     try {
+      setIsLoading(true);
       const res = await getAllBanners();
       const list = Array.isArray(res) ? res : res.payload || [];
       console.log(list)
@@ -43,6 +45,8 @@ const BannerImg = () => {
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch banners");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -121,6 +125,16 @@ const BannerImg = () => {
     setViewModalOpen(true);
   };
 
+   if (isLoading) {
+     return (
+       <section className="h-[90vh] flex flex-col justify-center items-center">
+         <div className="custom-loader"></div>
+         <p className="mt-4 text-sm text-gray-500">Loading Banner Images...</p>
+       </section>
+     );
+  }
+  
+
   const BannerCard = ({ item }) => (
     <div className="relative  overflow-hidden h-[240px] border rounded-lg shadow-sm bg-white flex flex-col justify-between">
       <h3 className="text-sm font-semibold  p-3">{item.name}</h3>
@@ -194,7 +208,7 @@ const BannerImg = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[55vw] shadow-lg h-[55vh] text-sm">
+          <div className="bg-white p-6 rounded-lg w-[55vw] shadow-lg overflow-auto h-[60vh] text-sm">
             <h2 className="text-lg font-bold mb-2">Add New Banner</h2>
 
             <label className="text-xs pb-1">Name</label>
@@ -205,22 +219,26 @@ const BannerImg = () => {
               className="w-full p-2 border rounded mb-2 text-sm"
             />
 
-          <label htmlFor="" className="text-xs pb-1">
-                       Description
-                     </label>
-                     <ReactQuill
-                       theme="snow"
-                       value={banner.description}
-                       onChange={(value) => setBanner({ ...banner, description: value })}
-                       className="mb-[7%] h-[14vh]"
-                     />
+            <label htmlFor="" className="text-xs pb-1">
+              Description
+            </label>
+            <ReactQuill
+              theme="snow"
+              value={banner.description}
+              onChange={(value) => setBanner({ ...banner, description: value })}
+              className="mb-[7%] h-[14vh]"
+            />
 
             <label className="text-sm pb-1 pr-2">Image</label>
             <input
               type="file"
-              onChange={(e) => {
+              accept="image/*"
+              onChange={async (e) => {
                 const file = e.target.files[0];
-                if (file) setBanner({ ...banner, image: file });
+                if (!file) return;
+
+                const compressed = await compressFile(file, 1); // 1MB
+                setBanner({ ...banner, image: compressed });
               }}
             />
 

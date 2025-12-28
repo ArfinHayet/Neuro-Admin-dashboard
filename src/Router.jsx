@@ -25,6 +25,7 @@ import PaymentDetails from "./Pages/Finances/PaymentDetails";
 import CategoryBasedQuestionList from "./Pages/Assessments/On Demand Assessment/CategoryBasedQuestionList";
 import ExternalUserSubmissionPage from "./Pages/External User Page/ExternalUserSubmissionPage";
 import BannerImg from "./Pages/Banner/BannerImg";
+import CategoryBasedQuestions from "./Pages/Assessments/Initial Assessment/CategoryBasedQuestions";
 
 export const router = createBrowserRouter([
   {
@@ -90,6 +91,10 @@ export const router = createBrowserRouter([
       {
         path: "/ondemandassessment/:id/category/:categoryId",
         element: <CategoryBasedQuestionList />,
+      },
+      {
+        path: "/initial/:id/category/:categoryId",
+        element: <CategoryBasedQuestions />,
       },
 
       {

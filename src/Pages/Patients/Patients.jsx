@@ -98,6 +98,17 @@ const PatientPage = () => {
     getRowId: (row) => row.id.toString(),
   });
 
+  if (loading) {
+    return (
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading users ...
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section className=" ">
       <h1 className="font-semibold text-xl ">Users List</h1>

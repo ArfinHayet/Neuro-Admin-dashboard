@@ -9,28 +9,35 @@ export const compressFile = (file, maxSizeMB = 1) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        // Keep original width & height
         canvas.width = img.width;
         canvas.height = img.height;
-
         ctx.drawImage(img, 0, 0);
 
         let quality = 0.9;
 
+        const mimeType = file.type; // image/png | image/jpeg
+        const extension = file.name.split(".").pop(); // png / jpg
+
         const compressLoop = () => {
           canvas.toBlob(
             (blob) => {
-              // Convert to MB
               const sizeMB = blob.size / 1024 / 1024;
 
               if (sizeMB <= maxSizeMB || quality <= 0.2) {
-                resolve(blob);
+                // convert Blob → File
+                const compressedFile = new File(
+                  [blob],
+                  file.name, // keep original name with extension
+                  { type: mimeType }
+                );
+
+                resolve(compressedFile);
               } else {
                 quality -= 0.1;
                 compressLoop();
               }
             },
-            "image/jpeg",
+            mimeType, // 🔑 keep original format
             quality
           );
         };

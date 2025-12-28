@@ -2,7 +2,8 @@
 import { useContext } from "react";
 import { AuthContext } from "./AuthProvider/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import p3 from "../../public/png/heading.png"
+import p3 from "../../public/png/heading.png";
+import p4 from "../../public/png/Blacklogo.png";
 
 const Navbar = () => {
   const { userData,handleLogout } = useContext(AuthContext);
@@ -29,7 +30,7 @@ const Navbar = () => {
     <div className="navbar bg-[#F6F7F9] px-7">
       <div className="flex-1 gap-[7.5rem]">
         <a href="/">
-          <img height={300} className="h-[34px] -ml-2.5" src={p3} alt="logo" />
+          <img height={1800} className="h-[40px] -ml-2 mt-3" src={p4} alt="logo" />
         </a>
       </div>
       <div className="flex-none">

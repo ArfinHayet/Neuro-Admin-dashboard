@@ -31,7 +31,7 @@ export async function getAssessments() {
   });
 
   const data = await res.json();
-  console.log("Fetched assessments:", data);
+  // console.log("Fetched assessments:", data);
   return data;
 }
 

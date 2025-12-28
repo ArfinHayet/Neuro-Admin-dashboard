@@ -114,6 +114,15 @@ const ExternalUserSubmissionPage = () => {
     return <div>Invalid or expired link</div>;
   }
 
+   if (loading) {
+     return (
+       <section className="h-[90vh] flex flex-col justify-center items-center">
+         <div className="custom-loader"></div>
+         <p className="mt-4 text-sm font-medium text-gray-500">Loading assessments details ...</p>
+       </section>
+     );
+   }
+
   return (
     <section className="bg-[#114654] h-screen flex flex-col">
       {/* Sticky header */}
