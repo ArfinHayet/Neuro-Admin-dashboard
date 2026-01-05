@@ -1,7 +1,6 @@
 import { domain } from "../../credential";
 import { token } from "../Components/utils/token";
 
-
 const createSubmission = async (obj) => {
   console.log(obj);
   const response = await fetch(`${domain}/submissions`, {
@@ -60,7 +59,7 @@ const getAllSubmissions = async () => {
 };
 
 const deleteSubmission = async (id) => {
- const response = await fetch(`${domain}/submissions/${id}`, {
+  const response = await fetch(`${domain}/submissions/${id}`, {
     method: "DELETE",
     headers: {
       authorization: `Bearer ${token()}`,
@@ -71,4 +70,24 @@ const deleteSubmission = async (id) => {
   return data;
 };
 
-export { createSubmission, getSubmissionsPage, getAllSubmissions, deleteSubmission  };
+const updateSubmission = async (id, obj) => {
+  const response = await fetch(`${domain}/submissions/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token()}`,
+    },
+    body: JSON.stringify(obj),
+  });
+  const data = await response.json();
+
+  return data;
+};
+
+export {
+  createSubmission,
+  getSubmissionsPage,
+  getAllSubmissions,
+  deleteSubmission,
+  updateSubmission,
+};

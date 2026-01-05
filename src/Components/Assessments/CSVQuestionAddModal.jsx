@@ -5,24 +5,18 @@ import { addQuestion } from "../../api/questionnaires";
 const parseCSV = (text) => {
   const lines = text.trim().split("\n");
 
-  if (lines.length < 2) {
+  if (lines.length < 2)
     throw new Error("CSV must have header and at least one row");
-  }
 
-  // header
-  const headers = lines[0].split(",").map((h) => h.trim());
+  const headers = lines[0].split("\t").map((h) => h.trim()); // using tab-separated CSV
 
   return lines.slice(1).map((line, index) => {
-    const values = line.split(",").map((v) => v.trim());
-
+    const values = line.split("\t").map((v) => v.trim());
     const row = {};
     headers.forEach((h, i) => {
       row[h] = values[i] || "";
     });
-
-    // row number for error message
-    row._row = index + 2;
-
+    row._row = index + 2; // for error messages
     return row;
   });
 };
@@ -48,16 +42,17 @@ const CSVQuestionAddModal = ({
       try {
         const parsed = parseCSV(reader.result);
 
-        const mapped = parsed.map((r) => ({
-          assessmentId: Number(assessmentId),
-          questiontypeid: Number(categoryId),
-          questions: r.question,
-          order: Number(r.order),
-          answerType: r.answerType,
-          options: r.options ? r.options.split("|").map((o) => o.trim()) : [],
-          variant: r.variant,
-          row: r._row,
-        }));
+       const mapped = parsed.map((r) => ({
+         assessmentId: Number(r.assessmentId),
+         questions: r.questions,
+         order: Number(r.order),
+         answerType: r.answerType,
+         options: r.options ? r.options.split("|").map((o) => o.trim()) : [], // split options by "|" if present
+         questiontypeid: Number(r.questiontypeid),
+         variant: r.variant,
+         row: r._row, 
+       }));
+
 
         // validation
         const invalid = mapped.find(
@@ -78,27 +73,28 @@ const CSVQuestionAddModal = ({
     reader.readAsText(file);
   };
 
-  const handleSubmit = async () => {
-    if (!rows.length) {
-      toast.error("No valid questions");
-      return;
-    }
+ const handleSubmit = async () => {
+   if (!rows.length) {
+     toast.error("No valid questions");
+     return;
+   }
 
-    setLoading(true);
-    try {
-      for (let q of rows) {
-        await addQuestion(q); // works now
-      }
+   setLoading(true);
+   try {
+     for (let q of rows) {
+       await addQuestion(q); 
+     }
 
-      toast.success("Questions imported successfully");
-      onSuccess();
-      onClose();
-    } catch (err) {
-      toast.error("CSV import failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+     toast.success("Questions imported successfully");
+     onSuccess();
+     onClose();
+   } catch (err) {
+     console.error(err);
+     toast.error("CSV import failed");
+   } finally {
+     setLoading(false);
+   }
+ };
 
   if (!isOpen) return null;
 
@@ -121,7 +117,7 @@ const CSVQuestionAddModal = ({
         )}
 
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="px-3 py-1 bg-gray-300 rounded">
+          <button onClick={onClose} className="px-3 py-1 font-semibold">
             Cancel
           </button>
           <button

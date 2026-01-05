@@ -244,7 +244,7 @@ const BannerImg = () => {
 
             <div className="flex justify-between text-sm mt-4">
               <button
-                className="px-4 py-1.5 bg-gray-200 rounded"
+                className="font-semibold py-1.5 "
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel

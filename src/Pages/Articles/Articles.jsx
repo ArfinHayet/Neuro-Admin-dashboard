@@ -271,7 +271,7 @@ const Blogs = () => {
             <input
               type="text"
               name="heading"
-              value={blog.heading}
+              value={blog?.heading}
               onChange={(e) => setBlog({ ...blog, heading: e.target.value })}
               placeholder="Heading"
               className="w-full p-2 border rounded mb-2 text-sm"
@@ -308,7 +308,7 @@ const Blogs = () => {
 
             <div className="flex justify-between text-sm mt-[2%]">
               <button
-                className="px-4 py-1.5 bg-gray-200 rounded"
+                className="font-semibold py-1.5 "
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel

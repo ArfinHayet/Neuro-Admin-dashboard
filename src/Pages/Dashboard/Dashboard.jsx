@@ -284,6 +284,7 @@ const Dashboard = () => {
           );
 
           setTopClinicians(sorted);
+          console.log(sorted)
         } else {
           setTopClinicians([]);
         }
@@ -497,10 +498,10 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[24vh] overflow-y-auto">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[24vh] overflow-hidden">
             <h2 className="text-sm font-semibold mb-1">Popular Assessments</h2>
             <div className="divide-y max-h-[200px] overflow-y-auto">
-              {popularAssessments.map((assessment) => (
+              {popularAssessments.slice(0,3).map((assessment) => (
                 <div key={assessment.id} className="py-2">
                   <div className="flex justify-between">
                     <span className="text-xs font-medium">

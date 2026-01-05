@@ -13,6 +13,7 @@ const QuestionCategoryAddModal = ({
   editingCategory,
 }) => {
   const [name, setName] = useState("");
+  const [order, setOrder] = useState("");
   const [variant, setVariant] = useState("");
   const [assessment, setAssessment] = useState("");
   const [assessments, setAssessments] = useState([]);
@@ -32,6 +33,7 @@ const QuestionCategoryAddModal = ({
 
    const resetForm = () => {
      setName("");
+     setOrder("");
      setVariant("");
      setAssessment("");
    };
@@ -40,6 +42,7 @@ const QuestionCategoryAddModal = ({
   useEffect(() => {
     if (editingCategory) {
       setName(editingCategory.name || "");
+      setOrder(editingCategory.order || "");
       setVariant(editingCategory.variant || "");
       setAssessment(editingCategory.assessmentId?.toString() || "");
     } else {
@@ -51,7 +54,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     let response;
-    const payload = { name, variant, assessmentId: String(assessment) }; // include assessmentId
+    const payload = { name,order: parseInt(order, 10), variant, assessmentId: String(assessment) }; // include assessmentId
 // console.log("Updating category with payload:", payload);
 
     if (editingCategory) {
@@ -81,23 +84,33 @@ const handleSubmit = async (e) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
       <div className="bg-white rounded-xl w-full max-w-sm p-6 shadow-lg">
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-lg font-semibold mb-3">
           {editingCategory ? "Edit Category" : "Add Category"}
         </h3>
         <form
-          onSubmit={handleSubmit}>
+          onSubmit={handleSubmit} className="space-y-2">
           <input
             type="text"
             placeholder="Enter category name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#114654]"
             required
           />
+          <input
+            type="number"
+            // placeholder="Enter Order Number"
+            value={order}
+            onChange={(e) => setOrder(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            required
+          />
+
+
          
           <select
             required
-            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            className=" w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#114654]"
 
             value={variant}
             onChange={(e) => setVariant(e.target.value)}>
@@ -108,7 +121,7 @@ const handleSubmit = async (e) => {
           <select
             value={assessment}
             onChange={(e) => setAssessment(e.target.value)}
-            className="mt-4 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#114654]"
+            className=" w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#114654]"
             required
           >
             <option value="" disabled>
@@ -121,11 +134,11 @@ const handleSubmit = async (e) => {
             ))}
           </select>
 
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-between gap-2 ">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded-lg border border-gray-400"
+              className="font-semibold py-2 text-sm "
             >
               Cancel
             </button>

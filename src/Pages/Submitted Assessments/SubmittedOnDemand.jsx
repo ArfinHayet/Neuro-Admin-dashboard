@@ -44,6 +44,28 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
   };
 
   // Fetch paginated submissions
+  // const fetchSubmissions = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const data = await getSubmissionsPage(page, limit);
+  //     const submissionsData = data?.payload || [];
+
+  //     const onDemandSubmissions = submissionsData.filter(
+  //       (submission) => submission.assessment?.type !== "free"
+  //     );
+
+  //     const grouped = groupSubmissions(onDemandSubmissions);
+
+  //     setSubmissions(grouped);
+  //     console.log(grouped);
+  //   } catch (err) {
+  //     console.error("Failed to fetch submissions:", err);
+  //     setSubmissions([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
@@ -54,10 +76,15 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
         (submission) => submission.assessment?.type !== "free"
       );
 
-      const grouped = groupSubmissions(onDemandSubmissions);
+     
+      const formattedSubmissions = onDemandSubmissions.map((sub) => ({
+        ...sub,
+        submissionDate: normalizeDate(sub.createdAt),
+        grouped: [sub], // keep this so `onView` still works
+      }));
 
-      setSubmissions(grouped);
-      console.log(grouped);
+      setSubmissions(formattedSubmissions);
+      console.log(formattedSubmissions);
     } catch (err) {
       console.error("Failed to fetch submissions:", err);
       setSubmissions([]);
@@ -65,6 +92,7 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
       setLoading(false);
     }
   };
+
 
   // Fetch total count across all pages
   const fetchTotal = async () => {
@@ -107,8 +135,8 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
         accessorFn: (row) => row.user?.name || "Unknown User",
       },
       {
-        header: "Child Name",
-        accessorFn: (row) => row.patient?.name || "Unknown Child",
+        header: "Patient Name",
+        accessorFn: (row) => row.patient?.name || "Unknown Patient",
       },
       {
         header: "Assessment Name",

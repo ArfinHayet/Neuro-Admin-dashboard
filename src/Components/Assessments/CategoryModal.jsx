@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createAssessment } from "../../api/assessments";
+import { createAssessment, updateAssessment } from "../../api/assessments";
 import { getProducts } from "../../api/products";
 
 const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
@@ -18,17 +18,21 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
    const fetchPrices = async () => {
      try {
        const data = await getProducts();
-       if (data && data.length > 0) {
-         const allPrices = data.flatMap((product) => product.prices || []);
+console.log(data)
 
-         const formattedPrices = allPrices.map((p) => ({
-           ...p,
-           amount: p.unit_amount ? p.unit_amount / 100 : 0,
-         }));
+       
+       const products = Array.isArray(data) ? data : [data];
 
-         console.log("price", formattedPrices);
-         setPrices(formattedPrices);
-       }
+        const formattedPrices = products.flatMap((p) =>
+          (p.prices || []).map((price) => ({
+            ...price,
+            amount: price.unit_amount ? price.unit_amount / 100 : 0,
+            productName: p.name,
+          }))
+        );
+
+
+       setPrices(formattedPrices);
      } catch (err) {
        console.error("Error fetching products", err);
      }
@@ -36,6 +40,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
 
    fetchPrices();
  }, []);
+
 
 
   // Populate form when editing
@@ -77,33 +82,38 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
       const assessmentData = {
         name: name.trim(),
         description: description.trim(),
-        type: type,
-        totalTime: totalTime,
+        type,
+        totalTime,
         category: category.trim(),
-        priceId: priceId, // send priceId to backend
+        priceId,
       };
 
-      const response = await createAssessment(assessmentData);
-      if (response.error) throw new Error(response.error);
+      let response;
 
-      if (onSave) await onSave(response.payload);
+      if (defaultCategory?.id) {
 
-      // Reset form
-      setName("");
-      setDescription("");
-      setTotalTime("");
-      setType("");
-      setCategory("");
-      setPriceId("");
+        response = await updateAssessment(defaultCategory.id, assessmentData);
+      } else {
+        response = await createAssessment(assessmentData);
+      }
 
+      // if (onSave) onSave(response.payload ?? response);
+if (onSave)
+  onSave({
+    ...assessmentData,
+    id: response.payload?.id || defaultCategory?.id, // ensure id exists
+  });
+
+      
       onClose();
     } catch (err) {
-      console.error("Failed to save assessment:", err);
+      console.error(err);
       setError(err.message || "Failed to save assessment");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   const handleClose = () => {
     setName("");
@@ -117,7 +127,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 overflow-auto">
       <div className="bg-white rounded-lg p-6 min-w-[480px] max-w-full">
         <h2 className="text-lg font-semibold text-center mb-4">
           {defaultCategory ? "Edit Assessment" : "Add New Assessment"}
@@ -131,7 +141,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter assessment name"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border rounded px-3 py-2 text-xs"
               required
             />
           </div>
@@ -143,7 +153,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Enter category name"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border rounded px-3 py-2 text-xs"
               required
             />
           </div>
@@ -158,7 +168,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               value={totalTime}
               onChange={(e) => setTotalTime(e.target.value)}
               placeholder="Enter time in minutes"
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border rounded px-3 py-2 text-xs"
               required
             />
           </div>
@@ -198,7 +208,8 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
               <option value="">Select Price</option>
               {prices.map((p) => (
                 <option key={p.priceId} value={p.priceId}>
-                  {p.amount.toFixed(2)} {p.currency?.toUpperCase()}
+                  {p.amount.toFixed(2)} {p.currency?.toUpperCase()} (
+                  {p.productName})
                 </option>
               ))}
             </select>
@@ -210,17 +221,17 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-1.5 border rounded-full bg-gray-100 text-xs"
+              className=" py-1.5 font-semibold  text-xs"
               disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 bg-primary text-white rounded-full text-xs"
+              className="px-4 py-1.5 bg-primary text-white rounded-lg text-xs"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Adding..." : "Add"}
+              {isSubmitting ? "Adding..." : defaultCategory ? "Update" : "Add"}
             </button>
           </div>
         </form>

@@ -207,6 +207,7 @@ const AssessmentDetails = () => {
               <div className="">
                 <h4 className="font-semibold text-sm ">{cat.name}</h4>
                 <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
+                <p className="text-xs mb-1 text-gray-700">order {cat.order}</p>
               </div>
               <div className="flex  justify-between  item-center">
                 <button

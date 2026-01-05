@@ -17,7 +17,7 @@ const OnDemandQuestionModal = ({
     questions: "",
     order: "",
     answerType: "Yes/No",
-    options: ["yes", "no"],
+          options: ["Yes", "No", "Often" , "Very Often"],
     questiontypeid: "",
     variant: "",
   });
@@ -32,7 +32,7 @@ const OnDemandQuestionModal = ({
       questions: "",
       order: "",
       answerType: "Yes/No",
-      options: ["yes", "no"],
+          options: ["Yes", "No", "Often" , "Very Often"],
       questiontypeid: "",
       variant: "",
     });
@@ -52,7 +52,7 @@ const OnDemandQuestionModal = ({
         try {
           options = JSON.parse(editingQuestion.options);
         } catch {
-          options = ["yes", "no"];
+          options = ["Yes", "No", "Often" , "Very Often"];
         }
       }
 
@@ -71,7 +71,7 @@ const OnDemandQuestionModal = ({
         questions: "",
         order: "",
         answerType: "Yes/No",
-        options: ["yes", "no"],
+        options: ["Never", "Rarely", "Often", "Very Often"],
         questiontypeid: "",
         variant: "",
       });

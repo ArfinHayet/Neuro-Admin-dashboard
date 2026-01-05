@@ -317,7 +317,7 @@ if (fetchQuestions) fetchQuestions();
 
         <div className="flex justify-between gap-3 text-sm">
           <button
-            className="px-4 py-2 rounded-full bg-gray-200"
+            className="font-semibold py-2 "
             onClick={onClose}
             disabled={isSubmitting}
           >

@@ -162,8 +162,12 @@ const InitialAssessment = () => {
   } finally {
     setIsLoading(false);
   }
-};
-
+  };
+  
+ useEffect(() => {
+    fetchData();
+ }, [id]);
+  
   //   try {
   //     setIsLoading(true);
   //     // const assessmentsResponse = await getAssessments();
@@ -209,9 +213,7 @@ const InitialAssessment = () => {
   //   }
   // };
 
-  useEffect(() => {
-    fetchData();
-  }, [id]);
+ 
 
   // const handleSave = (newQ) => {
   //   if (editingQuestion) {
@@ -321,30 +323,30 @@ const InitialAssessment = () => {
           categories.map((cat) => (
             <div
               key={cat.id}
-              className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eefafc]"
+              className=" flex flex-col justify-between  relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eefafc]"
             >
               <div className="">
                 <h4 className="font-semibold text-sm ">{cat.name}</h4>
                 <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
               </div>
-              <div className="flex  justify-between  item-center">
+              <div className=" absolute flex  justify-between  item-center  bottom-2 gap-24">
                 <button
                   onClick={() =>
-                    navigate(`/initial/${id}/category/${cat.id}`, {
+                    navigate(`/initial/${assessment?.id}/category/${cat.id}`, {
                       state: {
-                        assessmentId: id,
+                        assessmentId: assessment?.id,
                         categoryId: cat.id,
                         categoryName: cat.name,
                         assessment: assessment,
                       },
                     })
                   }
-                  className="text-xs bg-[#114654]/80 hover:bg-[#114654] text-white px-2.5 py-1 rounded-full "
+                  className="text-xs bg-[#114654]/80 hover:bg-[#114654] text-white px-2.5 py-1.5 rounded-full  "
                 >
                   View Category
                 </button>
-                <div className="flex gap-0.5">
-                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border">
+                <div className="right-2  flex items-center  gap-0.5">
+                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border ">
                     <MdEdit
                       className="text-teal-800 cursor-pointer size-4"
                       onClick={() => {

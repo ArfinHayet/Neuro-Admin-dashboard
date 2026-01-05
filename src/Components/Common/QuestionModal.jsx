@@ -137,7 +137,7 @@ const QuestionModal = ({
         {/* Actions */}
         <div className="flex justify-between gap-3">
           <button
-            className="px-4 py-2 rounded-full bg-gray-200"
+            className=" py-2 font-semibold"
             onClick={onClose}
           >
             Cancel

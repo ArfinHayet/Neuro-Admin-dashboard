@@ -60,3 +60,24 @@ export async function getAssessmentById(id) {
     return null;
   }
 }
+
+
+export async function updateAssessment(id, obj) {
+  const res = await fetch(`${domain}/assessments/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token()}`,
+    },
+    body: JSON.stringify(obj),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || `HTTP error! status: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data;
+}
+

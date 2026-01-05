@@ -6,11 +6,13 @@ import { FiEdit3, FiTrash2 } from "react-icons/fi";
 import {
   getAssessments,
   deleteAssessment,
+  updateAssessment,
 } from "../../../api/assessments";
 import CategoryModal from "../../../Components/Assessments/CategoryModal";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import toast, { Toaster } from "react-hot-toast";
 import { getProducts } from "../../../api/products";
+import { IoReorderThreeOutline } from "react-icons/io5";
 
 const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,23 +63,27 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
 
   return (
     <section>
-      <div className="bg-[#fafafa] border border-[#dfdfdf] rounded-xl p-4 h-[220px] relative flex items-center justify-center ">
+      <div className="bg-[#f5fdff] border border-[#f0f0f0] rounded-xl p-4 h-[180px] relative flex items-start justify-start ">
         {/* Menu wrapper (button + dropdown) */}
-        <div ref={menuRef} className="absolute top-4 right-4">
+        <div className=" ">
+          <div className="bg-emerald-100 px-2 py-1.5 rounded-lg">
+         <p className="text-sm text-emerald-700 font-semibold">£{priceMap[category.priceId] ?? "null"}</p>
+     </div>
+        <div ref={menuRef} className=" top-4 right-4">
           <button onClick={handleMenuClick} title="Options">
             <PiDotsThreeVerticalBold size={20} />
           </button>
-
+  </div>
           {/* Options box */}
           {isMenuOpen && (
             <div className="absolute top-6 right-0 bg-white border border-gray-200 rounded-md z-10 w-28 shadow-md">
-              {/* <button
+              <button
                 onClick={handleEditClick}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
               >
                 <FiEdit3 size={14} />
                 Edit
-              </button> */}
+              </button>
               <button
                 onClick={handleDeleteClick}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"
@@ -88,32 +94,44 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
             </div>
           )}
         </div>
-
-        <div className="flex flex-col gap-2 justify-center items-center  mt-2">
-          <p className="text-xs text-center">{category.category}</p>
-          <h2 className=" font-semibold  text-center text-sm">
-            {category.name}
-          </h2>
-          <p className="text-xs text-secondary  text-center">
-            {category?.description.slice(0, 40)}
-            {category.description.length > 40 ? "..." : ""}
-          </p>
-          <span className="flex items-center gap-1 ">
-            <FaRegClock size={14} />
-            <p className="text-xs text-center">{category.totalTime}</p>
-          </span>
-          <p className="text-xs  capitalize">{category.type}</p>
-          <p className="text-sm">£{priceMap[category.priceId] ?? "null"}</p>
-
-          <div className="flex justify-center">
+ 
+        <div className="flex justify-end  ">
             <button
               onClick={() => onSelect(category)}
               className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit "
             >
               Show Details
-            </button>
+          </button>  </div>
+        
+       <IoReorderThreeOutline size={22}/>
+        <div className="flex flex-col gap-2 justify-between items-start  ">
+        
+          <p className="text-xs text-center px-2 py-1  rounded">
+            {category?.category}
+          </p>
+          <h2 className=" font-semibold   text-sm">
+            {category?.name}
+          </h2>
+
+          <p className="text-xs text-secondary ">
+            {(category?.description || "").slice(0, 40)}
+            {(category?.description || "").length > 40 ? "..." : ""}
+          </p>
+
+           <div className="py-1 px-2 rounded-full bg-amber-100">
+            <p className="text-xs  capitalize text-amber-700">
+              {category?.type}
+            </p>
           </div>
-        </div>
+          <span className="flex items-center gap-1 ">
+            <FaRegClock size={14} />
+            <p className="text-xs text-center">{category.totalTime}</p>
+          </span>
+        
+
+          
+        </div>  
+
         {showDeleteModal && (
           <div className="fixed inset-0 pt-10 flex items-start justify-center bg-black bg-opacity-20 z-50">
             <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
@@ -210,26 +228,44 @@ const OnDemandAssessment = () => {
     setIsModalOpen(true);
   };
 
-  const handleSaveCategory = async (assessment) => {
-    try {
-      // const saved = await createAssessment(assessment);
-      //  console.log("saved assessments" , assessment)
+// const handleSaveCategory = async (assessment) => {
+//   try {
+//     if (editingAssessments) {
+//       const updated = await updateAssessment(editingAssessments.id, assessment);
 
-      if (editingAssessments) {
-        setAssessments((prev) =>
-          prev.map((a) => (a.id === editingAssessments.id ? assessment : a))
-        );
-      } else {
-        setAssessments((prev) => [...prev, assessment]);
-      }
+//     setAssessments((prev) =>
+//   prev.map((a) => (a.id === editingAssessments.id ? updated : a))
+// );
 
-      setIsModalOpen(false);
-      setEditingAssessments(null);
-    } catch (err) {
-      setError("Failed to save assessment");
-      console.error(err);
+
+//       toast.success("Assessment updated");
+//     }
+
+//     setIsModalOpen(false);
+//     setEditingAssessments(null);
+//   } catch (err) {
+//     console.error(err);
+//     toast.error("Update failed");
+//   }
+  // };
+  
+  const handleSaveCategory = (assessment) => {
+    if (editingAssessments) {
+      // EDIT MODE → merge updated assessment
+      setAssessments((prev) =>
+        prev.map((a) => (a.id === editingAssessments.id ? assessment : a))
+      );
+      toast.success("Assessment updated");
+    } else {
+      // ADD MODE → append new assessment
+      setAssessments((prev) => [...prev, assessment]);
+      toast.success("Assessment added");
     }
+
+    setIsModalOpen(false);
+    setEditingAssessments(null);
   };
+
 
  if (isLoading) {
    return (
@@ -280,7 +316,7 @@ const OnDemandAssessment = () => {
         accuracy and relevance.
       </p>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-col gap-4">
         {assessments.map((category) => (
           <AssessmentCard
             key={category.id}
