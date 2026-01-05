@@ -144,10 +144,10 @@ const CategoryBasedQuestionList = () => {
           </p>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           {selectedIds.length > 0 && (
             <button
-              className="bg-red-600 text-white px-4 py-2 rounded-full text-xs"
+              className="bg-red-600 text-white px-3 py-2 rounded-full text-xs "
               onClick={handleBulkDelete}
             >
               Delete Selected ({selectedIds.length})
@@ -155,14 +155,14 @@ const CategoryBasedQuestionList = () => {
           )}
 
           <button
-            className="bg-[#114654]/80 text-white px-4 py-2 rounded-full text-xs"
+            className="bg-[#114654] hover:bg-[#114654]/80 text-white px-3 py-2 rounded-md text-xs"
             onClick={() => setIsCsvModalOpen(true)}
           >
-            Add Questions using CSV
+            Import from CSV
           </button>
 
           <button
-            className="bg-[#114654] text-white px-4 py-2 rounded-full text-xs"
+            className="bg-[#114654] hover:bg-[#114654]/80 text-white px-3 py-2 rounded-md text-xs"
             onClick={() => {
               setEditingQuestion(null);
               setIsModalOpen(true);

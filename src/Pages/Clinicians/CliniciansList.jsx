@@ -90,6 +90,10 @@ const CliniciansList = () => {
       cell: (info) => info.row.original.regNo || "N/A",
     },
     {
+      header: "Approval",
+      accessorKey: "approval",
+    },
+    {
       header: "Actions",
       cell: ({ row }) => (
         <div className="text-left flex gap-2">

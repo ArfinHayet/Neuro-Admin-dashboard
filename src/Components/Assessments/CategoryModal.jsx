@@ -180,7 +180,7 @@ if (onSave)
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter description"
               className="w-full border rounded px-3 py-2 resize-none text-xs"
-              rows={2}
+              rows={3}
             />
           </div>
 
