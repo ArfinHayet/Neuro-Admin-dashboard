@@ -30,9 +30,7 @@ const ExternalUserSubmissionPage = () => {
 
   const [questions, setQuestions] = useState([]);
   const [assessment, setAssessment] = useState(null);
-  const [questionType, setQuestionType] = useState(null);
 
-  const [assessmentInfo, setAssessmentInfo] = useState(null);
   const [questionCategories, setQuestionCategories] = useState([]);
 
   const [loading, setLoading] = useState(true);

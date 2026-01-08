@@ -15,8 +15,12 @@ const CategoryBasedQuestionList = () => {
   const { id: paramId, categoryId } = useParams();
   const location = useLocation();
   const categoryName = location.state?.categoryName;
+  
+  const categoryVariant = location.state?.categoryVariant;
+  console.log(categoryVariant)
   const assessmentName = location.state?.assessment?.name;
   const assessmentID = location.state?.assessmentId || paramId;
+  const assessmentDes = location.state?.assessment?.description;
 
   const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,19 +136,19 @@ const CategoryBasedQuestionList = () => {
 
   return (
     <section className="">
-      <div className="flex justify-between items-center mb-3">
-        <div>
+      <div className="flex justify-between items-start mb-3">
+        <div className="space-y-2">
           <h2 className="font-semibold ">{assessmentName}</h2>
-          <h2 className="text-sm  mb-1">
-            Question Category:
-            <span className="font-semibold"> {categoryName}</span>{" "}
+          <h2 className="text-sm  ">
+            Question Category -
+            <span className="font-semibold"> {categoryName}</span> - ({categoryVariant}){" "}
           </h2>
-          <p className="text-sm text-gray-500">
-            Total Questions: {questions.length}
+    
+          <p className="text-sm text-gray-500 ">Questions count {questions.length}
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex  gap-2 pt-2">
           {selectedIds.length > 0 && (
             <button
               className="bg-red-600 text-white px-3 py-2 rounded-full text-xs "

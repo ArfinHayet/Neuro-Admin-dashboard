@@ -46,13 +46,13 @@ export const generateExternalSubmissionLink = ({
 };
 
 // --- Demo usage ---
-const demoLink = generateExternalSubmissionLink({
-  assessmentId: 2,
-  questiontypeid: 64,
-  userId: 4,
-  patientId: 5,
-  reviewer_name: "John Doe",
-  reviewer_email: "john@example.com",
-});
+// const demoLink = generateExternalSubmissionLink({
+//   assessmentId: 2,
+//   questiontypeid: 64,
+//   userId: 4,
+//   patientId: 5,
+//   reviewer_name: "John Doe",
+//   reviewer_email: "john@example.com",
+// });
 
-console.log("Demo External Submission Link:", demoLink);
+// console.log("Demo External Submission Link:", demoLink);

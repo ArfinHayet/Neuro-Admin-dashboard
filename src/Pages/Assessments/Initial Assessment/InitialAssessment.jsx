@@ -320,52 +320,60 @@ const InitialAssessment = () => {
       <h3 className="font-medium my-3">Question Category List</h3>
       <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5  ">
         {categories.length > 0 ? (
-          categories.map((cat) => (
-            <div
-              key={cat.id}
-              className=" flex flex-col justify-between  relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eefafc]"
-            >
-              <div className="">
-                <h4 className="font-semibold text-sm ">{cat.name}</h4>
-                <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
-              </div>
-              <div className=" absolute flex  justify-between  item-center  bottom-2 gap-24">
-                <button
-                  onClick={() =>
-                    navigate(`/initial/${assessment?.id}/category/${cat.id}`, {
-                      state: {
-                        assessmentId: assessment?.id,
-                        categoryId: cat.id,
-                        categoryName: cat.name,
-                        assessment: assessment,
-                      },
-                    })
-                  }
-                  className="text-xs bg-[#114654]/80 hover:bg-[#114654] text-white px-2.5 py-1.5 rounded-full  "
-                >
-                  View Category
-                </button>
-                <div className="right-2  flex items-center  gap-0.5">
-                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border ">
-                    <MdEdit
-                      className="text-teal-800 cursor-pointer size-4"
-                      onClick={() => {
-                        setEditingCategory(cat);
-                        setIsCategoryModalOpen(true);
-                      }}
-                    />{" "}
-                  </div>
-                  <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border">
-                    <PiTrashFill
-                      className="text-red-600 cursor-pointer size-4"
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setShowDeleteModal(true);
-                      }}
-                    />
-                  </div>
+          [...categories]
+            .sort((a, b) => a.order - b.order) // Sort by order ascending
+            .map((cat) => (
+              <div
+                key={cat.id}
+                className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eef8f9]"
+              >
+                <div className="">
+                  <h4 className="font-semibold text-sm ">{cat.name}</h4>
+                  <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
+                  <p className="text-xs mb-1 text-gray-700">
+                    order {cat.order}
+                  </p>
                 </div>
-                {/* <div className="bg-gray-100 hover:bg-[#114654]/25 h-8 w-8 rounded-full flex justify-center items-center">
+                <div className=" absolute flex  justify-between  item-center  bottom-2 gap-24">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/initial/${assessment?.id}/category/${cat.id}`,
+                        {
+                          state: {
+                            assessmentId: assessment?.id,
+                            categoryId: cat.id,
+                            categoryName: cat.name,
+                            assessment: assessment,
+                          },
+                        }
+                      )
+                    }
+                    className="text-xs bg-[#114654]/80 hover:bg-[#114654] text-white px-2.5 py-1.5 rounded-full  "
+                  >
+                    View Category
+                  </button>
+                  <div className="right-2  flex items-center  gap-0.5">
+                    <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border ">
+                      <MdEdit
+                        className="text-teal-800 cursor-pointer size-4"
+                        onClick={() => {
+                          setEditingCategory(cat);
+                          setIsCategoryModalOpen(true);
+                        }}
+                      />{" "}
+                    </div>
+                    <div className="bg-white h-8 w-8 rounded-full flex justify-center items-center border">
+                      <PiTrashFill
+                        className="text-red-600 cursor-pointer size-4"
+                        onClick={() => {
+                          setSelectedCategory(cat);
+                          setShowDeleteModal(true);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  {/* <div className="bg-gray-100 hover:bg-[#114654]/25 h-8 w-8 rounded-full flex justify-center items-center">
                   <MdOutlineArrowOutward
                     className=" cursor-pointer size-5 "
                     onClick={() => {
@@ -374,18 +382,17 @@ const InitialAssessment = () => {
                     }}
                   />
                 </div> */}
-              </div>
+                </div>
 
-              {/* <p className="text-xs text-gray-500 mb-2">
+                {/* <p className="text-xs text-gray-500 mb-2">
                 Questions: <span className="font-medium">0</span>
               </p> */}
-            </div>
-          ))
+              </div>
+            ))
         ) : (
           <p className="text-gray-500 text-sm">No categories found.</p>
         )}
       </div>
-
 
       {/* 
       <h3 className="font-medium my-3">Question List</h3>
@@ -422,7 +429,7 @@ const InitialAssessment = () => {
         </table>
       </div> */}
 
-       <OnDemandQuestionModal
+      <OnDemandQuestionModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

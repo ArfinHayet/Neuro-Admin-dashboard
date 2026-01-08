@@ -14,20 +14,88 @@ const addQuestion = async (obj) => {
   return await response.json();
 };
 
+// const getQuestionsByAssessmentId = async (assessmentId) => {
+//   let page = 1;
+//   let limit = 100; // adjust if needed
+//   let allQuestions = [];
+//   let hasMore = true;
+
+//   while (hasMore) {
+//     const response = await fetch(
+//       `${domain}/questionnaires?assessmentId=${assessmentId}&page=${page}&limit=${limit}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           authorization: `Bearer ${token()}`,
+//         },
+//       }
+//     );
+
+//     const data = await response.json();
+
+//     if (Array.isArray(data.payload) && data.payload.length > 0) {
+//       allQuestions = [...allQuestions, ...data.payload];
+//       page++;
+//     } else {
+//       hasMore = false;
+//     }
+//   }
+
+//   return { payload: allQuestions };
+// };
+
+// const getAllQuestions = async () => {
+//   let page = 1;
+//   let limit = 100;
+//   let allQuestions = [];
+//   let hasMore = true;
+
+//   while (hasMore) {
+//     const response = await fetch(
+//       `${domain}/questionnaires?page=${page}&limit=${limit}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           authorization: `Bearer ${token()}`,
+//         },
+//       }
+//     );
+
+//     const data = await response.json();
+
+//     if (Array.isArray(data.payload) && data.payload.length > 0) {
+//       allQuestions = [...allQuestions, ...data.payload];
+//       page++;
+//     } else {
+//       hasMore = false;
+//     }
+//   }
+
+//   return { payload: allQuestions };
+// };
+
 const getQuestionsByAssessmentId = async (assessmentId) => {
   let page = 1;
-  let limit = 100; // adjust if needed
+  let limit = 100;
   let allQuestions = [];
   let hasMore = true;
 
   while (hasMore) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Only add authorization header if token exists
+    const userToken = token();
+    if (userToken) {
+      headers.authorization = `Bearer ${userToken}`;
+    }
+
     const response = await fetch(
       `${domain}/questionnaires?assessmentId=${assessmentId}&page=${page}&limit=${limit}`,
       {
         method: "GET",
-        headers: {
-          authorization: `Bearer ${token()}`,
-        },
+        headers: headers,
       }
     );
 
@@ -51,13 +119,21 @@ const getAllQuestions = async () => {
   let hasMore = true;
 
   while (hasMore) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Only add authorization header if token exists
+    const userToken = token();
+    if (userToken) {
+      headers.authorization = `Bearer ${userToken}`;
+    }
+
     const response = await fetch(
       `${domain}/questionnaires?page=${page}&limit=${limit}`,
       {
         method: "GET",
-        headers: {
-          authorization: `Bearer ${token()}`,
-        },
+        headers: headers,
       }
     );
 
@@ -73,6 +149,7 @@ const getAllQuestions = async () => {
 
   return { payload: allQuestions };
 };
+
 
 const updateQuestion = async (id, obj) => {
   const response = await fetch(`${domain}/questionnaires/${id}`, {

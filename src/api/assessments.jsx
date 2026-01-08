@@ -21,19 +21,44 @@ export async function createAssessment(obj) {
   return data;
 }
 
-export async function getAssessments() {
-  const res = await fetch(`${domain}/assessments`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${token()}`,
-    },
-  });
 
-  const data = await res.json();
-  // console.log("Fetched assessments:", data);
-  return data;
+export async function getAssessments() {
+  let page = 1;
+  const limit = 100;
+  let assessments = [];
+
+  while (true) {
+    const res = await fetch(
+      `${domain}/assessments?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token()}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+    const payload = data?.payload || [];
+
+    // stop when no data
+    if (!Array.isArray(payload) || payload.length === 0) {
+      break;
+    }
+
+    assessments.push(...payload);
+
+    if (payload.length < limit) {
+      break;
+    }
+
+    page++;
+  }
+
+  return { payload: assessments };
 }
+
 
 export async function deleteAssessment(id) {
   console.log(id);

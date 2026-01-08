@@ -17,7 +17,11 @@ const OnDemandQuestionModal = ({
     questions: "",
     order: "",
     answerType: "Yes/No",
-          options: ["Yes", "No", "Often" , "Very Often"],
+    // options: ["Yes", "No", "Often" , "Very Often"],
+    options: [
+      { label: "Yes", score: 0 },
+      { label: "No", score: 0 },
+    ],
     questiontypeid: "",
     variant: "",
   });
@@ -25,36 +29,51 @@ const OnDemandQuestionModal = ({
   const [error, setError] = useState(null);
   const [addedQuestions, setAddedQuestions] = useState([]);
 
-
   const resetForm = () => {
     setFormData({
       type: defaultType,
       questions: "",
       order: "",
       answerType: "Yes/No",
-          options: ["Yes", "No", "Often" , "Very Often"],
+      // options: ["Yes", "No", "Often" , "Very Often"],
+      options: [
+        { label: "Yes", score: 0 },
+        { label: "No", score: 0 },
+      ],
       questiontypeid: "",
       variant: "",
     });
     setError(null);
   };
 
-
-
-
   useEffect(() => {
     if (editingQuestion) {
-      let options = ["yes", "no"];
-
+      let options = [
+        { label: "Yes", score: 0 },
+        { label: "No", score: 0 },
+      ];
+      // Parse options if they exist
       if (Array.isArray(editingQuestion.options)) {
-        options = editingQuestion.options;
-      } else if (typeof editingQuestion.options === "string") {
-        try {
-          options = JSON.parse(editingQuestion.options);
-        } catch {
-          options = ["Yes", "No", "Often" , "Very Often"];
+        // Check if options already have label/score structure
+        if (editingQuestion.options[0]?.label !== undefined) {
+          options = editingQuestion.options;
+        } else {
+          options = editingQuestion.options.map((opt) => ({
+            label: opt,
+            score: 0,
+          }));
         }
       }
+
+      // if (Array.isArray(editingQuestion.options)) {
+      //   options = editingQuestion.options;
+      // } else if (typeof editingQuestion.options === "string") {
+      //   try {
+      //     options = JSON.parse(editingQuestion.options);
+      //   } catch {
+      //     options = ["Yes", "No", "Often" , "Very Often"];
+      //   }
+      // }
 
       setFormData({
         type: defaultType,
@@ -66,15 +85,7 @@ const OnDemandQuestionModal = ({
         variant: editingQuestion.variant || "",
       });
     } else {
-      setFormData({
-        type: defaultType,
-        questions: "",
-        order: "",
-        answerType: "Yes/No",
-        options: ["Never", "Rarely", "Often", "Very Often"],
-        questiontypeid: "",
-        variant: "",
-      });
+      resetForm();
     }
   }, [editingQuestion, defaultType]);
 
@@ -85,33 +96,68 @@ const OnDemandQuestionModal = ({
       }
     } else if (field === "answerType") {
       let options = [];
-      if (value === "Yes/No") options = [""];
-      else if (value === "Text") options = [""];
-      else if (value === "MultipleChoice") options = [""];
-      // else if (value === "SingleChoice") options = [""];
+      if (value === "Yes/No") {
+        options = [
+          { label: "Yes", score: 0 },
+          { label: "No", score: 0 },
+        ];
+      } else if (value === "MultipleChoice") {
+        options = [{ label: "", score: 0 }];
+      } else if (value === "Text") {
+        options = [];
+      }
+
       setFormData((prev) => ({ ...prev, answerType: value, options }));
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
     }
   };
 
-  const handleOptionChange = (index, value) => {
-    if (formData.answerType !== "MultipleChoice" && formData.answerType !== "Yes/No") return;
+ const handleOptionChange = (index, value) => {
+   if (
+     formData.answerType !== "MultipleChoice" &&
+     formData.answerType !== "Yes/No"
+   )
+     return;
+
+   setFormData((prev) => {
+     const updated = [...prev.options];
+     updated[index] = { ...updated[index], label: value };
+     return { ...prev, options: updated };
+   });
+  };
+  
+  const handleScoreChange = (index, value) => {
+    if (
+      formData.answerType !== "MultipleChoice" &&
+      formData.answerType !== "Yes/No"
+    )
+      return;
+
     setFormData((prev) => {
       const updated = [...prev.options];
-      updated[index] = value;
+      updated[index] = { ...updated[index], score: Number(value) || 0 };
       return { ...prev, options: updated };
     });
   };
 
-  const addOption = () =>
-    setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
+  const addOption = () => {
+    setFormData((prev) => ({
+      ...prev,
+      options: [...prev.options, { label: "", score: 0 }],
+    }));
+  };
 
-  const removeOption = (index) =>
+
+  const removeOption = (index) => {
     setFormData((prev) => {
       const updated = prev.options.filter((_, i) => i !== index);
-      return { ...prev, options: updated.length ? updated : [""] };
+      return {
+        ...prev,
+        options: updated.length ? updated : [{ label: "", score: 0 }],
+      };
     });
+  };
 
   const validateForm = () => {
     if (!formData.questions.trim()) {
@@ -123,8 +169,9 @@ const OnDemandQuestionModal = ({
       return false;
     }
     if (
-      (formData.answerType === "MultipleChoice" || formData.answerType === "Yes/No" ) &&
-      formData.options.some((o) => !o || !o.toString().trim())
+      (formData.answerType === "MultipleChoice" ||
+        formData.answerType === "Yes/No") &&
+      formData.options.some((o) => !o.label || !o.label.trim())
     ) {
       setError("All options must have labels");
       return false;
@@ -142,7 +189,7 @@ const OnDemandQuestionModal = ({
 
     setError(null);
   };
-  
+
   const handleSaveAll = async () => {
     if (!assessment) {
       alert("No assessment selected");
@@ -177,10 +224,10 @@ const OnDemandQuestionModal = ({
 
         await addQuestion(payload);
       }
- toast.success( "Question added", {
-   position: "top-right",
- });
-// toast("All questions have been added successfully!")
+      toast.success("Question added", {
+        position: "top-right",
+      });
+      // toast("All questions have been added successfully!")
       setAddedQuestions([]);
       resetForm();
       onClose();
@@ -192,8 +239,6 @@ const OnDemandQuestionModal = ({
     }
   };
 
-
-
   const handleSave = async () => {
     if (!validateForm()) return;
     if (!assessment) {
@@ -203,17 +248,16 @@ const OnDemandQuestionModal = ({
 
     setIsSubmitting(true);
     try {
-   
-     const payload = {
-       assessmentId: Number(assessment.id),
-       questions: formData.questions.trim(),
-       order: Number(formData.order),
-       answerType: formData.answerType,
-       options: formData.options,
-       questiontypeid: Number(categoryId), // pass the category id here
-       variant: formData.variant,
-     };
-      
+      const payload = {
+        assessmentId: Number(assessment.id),
+        questions: formData.questions.trim(),
+        order: Number(formData.order),
+        answerType: formData.answerType,
+        options: formData.options,
+        questiontypeid: Number(categoryId), // pass the category id here
+        variant: formData.variant,
+      };
+
       console.log("Payload to send:", {
         assessmentId: Number(assessment.id),
         questions: formData.questions,
@@ -224,14 +268,12 @@ const OnDemandQuestionModal = ({
         variant: formData.variant,
       });
 
-
-
       const savedQuestion = editingQuestion
         ? await updateQuestion(editingQuestion.id, payload)
         : await addQuestion(payload);
 
       onSave(savedQuestion);
-      
+
       onClose();
     } catch (err) {
       console.error("Failed to save question", err);
@@ -259,8 +301,8 @@ const OnDemandQuestionModal = ({
       >
         <h2 className="text-center font-medium mb-6">
           {editingQuestion
-            ? "Edit On-Demand Question"
-            : "Add On-Demand Assessment Question"}
+            ? "Edit Question"
+            : "Add New Question"}
         </h2>
 
         <label className="block text-xs mb-1 font-medium text-gray-700">
@@ -336,10 +378,17 @@ const OnDemandQuestionModal = ({
                 <div key={i} className="flex gap-2 items-center">
                   <input
                     type="text"
-                    className="flex-1 border px-2 py-1 rounded"
-                    value={opt}
+                    className="flex-1 border px-2 py-1 rounded w-4/5"
+                    value={opt.label}
                     onChange={(e) => handleOptionChange(i, e.target.value)}
                     placeholder={`Option ${i + 1}`}
+                  />
+                  <input
+                    type="number"
+                    className=" border px-2 py-1 rounded w-1/5"
+                    value={opt.score}
+                    onChange={(e) => handleScoreChange(i, e.target.value)}
+                    placeholder="enter score"
                   />
                   {formData.options.length > 1 && (
                     <button
@@ -368,26 +417,26 @@ const OnDemandQuestionModal = ({
           </button>
 
           <div>
-         {!editingQuestion && (
-            <button
-              className="px-3 py-2 rounded-full font-bold text-sm"
-              onClick={handleNext}
-              disabled={isSubmitting}
-            >
-              Add More
-            </button>
-          )}
+            {!editingQuestion && (
+              <button
+                className="px-3 py-2 rounded-full font-bold text-sm"
+                onClick={handleNext}
+                disabled={isSubmitting}
+              >
+                Add More
+              </button>
+            )}
 
-          {!editingQuestion && (
-            <button
-              className="px-4 py-2 rounded-full bg-[#114654] text-white text-xs"
-              onClick={handleSaveAll}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Saving..." : "Save All"}
-            </button>
-          )}
-</div>
+            {!editingQuestion && (
+              <button
+                className="px-4 py-2 rounded-full bg-[#114654] text-white text-xs"
+                onClick={handleSaveAll}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save All"}
+              </button>
+            )}
+          </div>
           {editingQuestion && (
             <button
               type="button"

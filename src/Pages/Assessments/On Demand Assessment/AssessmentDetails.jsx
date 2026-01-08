@@ -44,17 +44,20 @@ const AssessmentDetails = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); 
 
-  const fetchData = async () => {
+  const fetchData = async (silent = false) => {
     try {
-      setIsLoading(true);
+      if (!silent) {
+        setIsLoading(true);
+      }
       const assessmentsResponse = await getAssessments();
       const allAssessments = assessmentsResponse?.payload || [];
       const thisAssessment = allAssessments.find((a) => a.id.toString() === id);
 
       if (!thisAssessment) {
         setError("Assessment not found");
-        setIsLoading(false);
+              if (!silent) setIsLoading(false);
         return;
       }
 
@@ -77,17 +80,17 @@ const AssessmentDetails = () => {
       const categoryData = categoryResponse?.payload || [];
 
       // filter categories based on current assessment id
-      const filteredCategories = categoryData.filter(
-        (cat) => cat.assessmentId?.toString() === id
-      );
+       const filteredCategories = categoryData
+         .filter((cat) => cat.assessmentId?.toString() === id)
+         .sort((a, b) => a.order - b.order);
 
       setCategories(filteredCategories);
-      console.log(filteredCategories)
+      console.log(filteredCategories);
     } catch (err) {
       console.error("Failed to fetch assessment details", err);
       setError("Failed to load assessment details");
     } finally {
-      setIsLoading(false);
+     if (!silent) setIsLoading(false);
     }
   };
 
@@ -147,14 +150,16 @@ const AssessmentDetails = () => {
     return <p> {error} </p>;
   }
 
- if (isLoading) {
-   return (
-     <section className="h-[90vh] flex flex-col justify-center items-center">
-       <div className="custom-loader"></div>
-       <p className="mt-4 text-sm text-gray-500">Loading assessments details...</p>
-     </section>
-   );
- }
+  if (isLoading && isInitialLoad) {
+    return (
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">
+          Loading assessments details...
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="">
@@ -179,8 +184,7 @@ const AssessmentDetails = () => {
           Add Question Category
         </button>
       </div>
-      <p className="text-xs text-secondary mb-2">
-        {/* View, Edit and manage questions for the On-Demand Assessment to ensure accuracy and relevance. */}
+      <p className="text-xs text-secondary mb-2 w-[65vw]">
         {assessment?.description}
       </p>
       <p className="mb-1 text-gray-700 text-sm">
@@ -195,14 +199,19 @@ const AssessmentDetails = () => {
         <strong>Price </strong>£{priceMap[assessment?.priceId] ?? "N/A"}
       </p>
       <hr />
+
+
       {/* Category Grid */}
       <h3 className="font-medium my-3">Question Category List</h3>
-      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5  ">
+      <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-4  ">
         {categories.length > 0 ? (
-          categories.map((cat) => (
+          // categories.map((cat) => (
+             [...categories]
+      .sort((a, b) => a.order - b.order) // Sort by order ascending
+      .map((cat) => (
             <div
               key={cat.id}
-              className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eefafc]"
+              className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eef8f9]"
             >
               <div className="">
                 <h4 className="font-semibold text-sm ">{cat.name}</h4>
@@ -217,6 +226,7 @@ const AssessmentDetails = () => {
                         assessmentId: id,
                         categoryId: cat.id,
                         categoryName: cat.name,
+                        categoryVariant: cat.variant,
                         assessment: assessment,
                       },
                     })
@@ -283,7 +293,7 @@ const AssessmentDetails = () => {
           setIsCategoryModalOpen(false);
           setEditingCategory(null);
         }}
-        onSave={fetchData}
+        onSave={() => fetchData(true)}
         editingCategory={editingCategory}
       />
 
