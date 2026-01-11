@@ -295,7 +295,8 @@ useEffect(() => {
             * All fields are required here
           </p>
         </div>
-        <div className="bg-white w-[80vw] mx-auto p-6 rounded-md space-y-1 ">
+        {/*patient details */}
+        {/* <div className="bg-white w-[80vw] mx-auto p-6 rounded-md space-y-1 ">
           <p className="p-2 border rounded-md text-sm">
             User Name {user?.name || "Loading..."}
           </p>
@@ -310,7 +311,7 @@ useEffect(() => {
           <p className="p-2 border rounded-md text-sm">
             Gender {patient?.gender || "Loading..."}
           </p>
-        </div>
+        </div> */}
 
         {/* reviewer inputs */}
 
