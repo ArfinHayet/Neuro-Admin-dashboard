@@ -67,9 +67,9 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
           <IoReorderThreeOutline size={24} />
           <div className="flex flex-col gap-1.5 justify-start items-start">
             <p className="text-xs text-center px-2 py-1 rounded-full bg-slate-100">
-              {category?.category}
+              {category?.category} 
             </p>
-            <h2 className="font-semibold text-sm">{category?.name}</h2>
+            <h2 className="font-semibold text-sm">#{category?.id} {category?.name}</h2>
             <p className="text-xs text-secondary w-[62vw]">
               {(category?.description || "").slice(0, 160)}
               {(category?.description || "").length > 160 ? "..." : ""}

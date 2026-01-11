@@ -14,6 +14,7 @@ const QuestionArrangement = ({
 }) => {
   const qId = question.id || question._id;
   const [showModal, setShowModal] = useState(false);
+  const [showOptions, setShowOptions] = useState(false); //  Toggle options
 
   const handleOrderChange = (e) => {
     const value = parseInt(e.target.value);
@@ -67,6 +68,41 @@ const QuestionArrangement = ({
             <option value="multiple">Multiple Choice</option>
           </select> */}
         </td>
+
+        {/* Options Column */}
+        <td className="p-2 text-xs">
+          {question.options && question.options.length > 0 ? (
+            <div>
+              <button
+                onClick={() => setShowOptions(!showOptions)}
+                className="text-teal-700 font-medium hover:underline"
+              >
+                
+                {showOptions ? "Hide" : "Show"} Options (
+                {question.options.length})
+              </button>
+
+              {showOptions && (
+                <div className="mt-2 p-2 bg-gray-50 rounded border max-w-xs">
+                  {question.options.map((opt, i) => (
+                    <div
+                      key={i}
+                      className="flex justify-between py-1 border-b last:border-b-0"
+                    >
+                      <span className="text-gray-700">{opt.label}</span>
+                      <span className="font-semibold text-gray-900">
+                        Score: {opt.score}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="text-gray-400">No options</span>
+          )}
+        </td>
+
         <td className="px-2 text-xs">{question.variant}</td>
         <td className="p-2 space-x-2">
           <button className="" onClick={() => onEdit(question)}>

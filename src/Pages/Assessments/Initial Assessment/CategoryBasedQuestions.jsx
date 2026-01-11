@@ -38,6 +38,7 @@ const CategoryBasedQuestions = () => {
       );
 
       console.log("question", filtered);
+      console.log("Sample question options:", filtered[0]?.options); 
 
       setQuestions(filtered);
     } catch (err) {
@@ -141,8 +142,8 @@ const CategoryBasedQuestions = () => {
           </h2>
           <p className="text-sm text-gray-500">
             Total Questions: {questions.length}
-                  </p>
-                  {/* <p>Variant: {variant}</p> */}
+          </p>
+          {/* <p>Variant: {variant}</p> */}
         </div>
 
         <div className="flex gap-4">
@@ -198,6 +199,7 @@ const CategoryBasedQuestions = () => {
               <th className="p-2">Question</th>
               <th className="p-2">Order</th>
               <th className="p-2">Answer Type</th>
+              <th className="p-2">Options</th>
               <th className="p-2">Variant</th>
               <th className="p-2">Actions</th>
             </tr>

@@ -214,7 +214,7 @@ const AssessmentDetails = () => {
               className="flex flex-col justify-between relative  rounded-xl hover:shadow-md p-3 h-[130px] bg-[#eef8f9]"
             >
               <div className="">
-                <h4 className="font-semibold text-sm ">{cat.name}</h4>
+            <h4 className="font-semibold text-sm ">#{cat.id} {cat.name}</h4>
                 <p className="text-xs mb-1 text-gray-700">{cat.variant}</p>
                 <p className="text-xs mb-1 text-gray-700">order {cat.order}</p>
               </div>
