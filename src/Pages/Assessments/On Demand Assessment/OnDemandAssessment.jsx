@@ -69,7 +69,9 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
             <p className="text-xs text-center px-2 py-1 rounded-full bg-slate-100">
               {category?.category} 
             </p>
-            <h2 className="font-semibold text-sm">#{category?.id} {category?.name}</h2>
+              <h2 className="font-semibold text-sm">
+                {/* #{category?.id} */}
+                {category?.name}</h2>
             <p className="text-xs text-secondary w-[62vw]">
               {(category?.description || "").slice(0, 160)}
               {(category?.description || "").length > 160 ? "..." : ""}
