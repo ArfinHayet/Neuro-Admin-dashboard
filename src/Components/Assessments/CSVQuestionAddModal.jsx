@@ -69,6 +69,46 @@ const parseCSV = (text) => {
   return rows;
 };
 
+const parseOptionsWithScores = (optionsString) => {
+  if (!optionsString || optionsString.trim() === "") {
+    return undefined;
+  }
+
+  try {
+    // Format: "Yes:1|No:0|Maybe:0.5"
+    return optionsString.split("|").map((opt) => {
+      const parts = opt.trim().split(":");
+
+      if (parts.length !== 2) {
+        throw new Error(`Invalid option format: ${opt}`);
+      }
+
+      const label = parts[0].trim();
+      const scoreStr = parts[1].trim();
+
+      if (!label) {
+        throw new Error("Option label cannot be empty");
+      }
+
+      const score = parseFloat(scoreStr);
+
+      if (isNaN(score)) {
+        throw new Error(`Invalid score value: ${scoreStr}`);
+      }
+
+      return {
+        label,
+        score,
+      };
+    });
+  } catch (err) {
+    console.error("Error parsing options:", err);
+    throw new Error(`Options parsing failed: ${err.message}`);
+  }
+};
+
+
+
 const CSVQuestionAddModal = ({
   isOpen,
   onClose,
@@ -109,19 +149,26 @@ const CSVQuestionAddModal = ({
             throw new Error(`Missing question at row ${r._row}`);
           }
 
+          // Parse options with scores
+          const optionsString = r.options || r.Options || "";
+          let parsedOptions;
+
+          try {
+            parsedOptions = parseOptionsWithScores(optionsString);
+          } catch (err) {
+            throw new Error(`Row ${r._row}: ${err.message}`);
+          }
+
           return {
             assessmentId: Number(assessmentId),
             questions: questionText,
             order: Number(r.order || r.Order || 0),
-            answerType:
-              (
-                r.answerType ||
-                ""
-              ).trim() || "MultipleChoice",
-            options:
-              r.options || r.Options
-                ? (r.options || r.Options).split("|").map((o) => o.trim())
-                : ["Option A", "Option B", "Option C"],
+            answerType: (r.answerType || "").trim() || "MultipleChoice",
+            options: parsedOptions,
+            // options:
+            //   r.options || r.Options
+            //     ? (r.options || r.Options).split("|").map((o) => o.trim())
+            //     : ["Option A", "Option B", "Option C"],
             questiontypeid: Number(categoryId),
             variant: (r.variant || r.Variant || "").trim(),
           };
