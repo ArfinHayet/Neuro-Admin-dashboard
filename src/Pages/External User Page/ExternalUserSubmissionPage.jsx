@@ -15,16 +15,22 @@ import { RxCrossCircled } from "react-icons/rx";
 const ExternalUserSubmissionPage = () => {
   const [params] = useSearchParams();
 
+   const parseNumberParam = (value) => {
+     if (!value) return null;
+     const n = Number(value);
+     return Number.isNaN(n) ? null : n;
+   };
+
   // dynamic params from URL
-  const assessmentId = Number(params.get("assessmentId"));
-  const questiontypeid = Number(params.get("questiontypeid"));
-  const userId = Number(params.get("userId") );
-  const patientId = Number(params.get("patientId"));
+
+   const assessmentId = parseNumberParam(params.get("assessmentId"));
+   const questiontypeid = parseNumberParam(params.get("questiontypeid"));
+   const userId = parseNumberParam(params.get("userId"));
+   const patientId = parseNumberParam(params.get("patientId"));
+   const reviewer_name = params.get("reviewer_name") || "";
+   const reviewer_email = params.get("reviewer_email") || "";
+
   
-  const reviewer_name = params.get("reviewer_name") || "";
-  const reviewer_email = params.get("reviewer_email") || "";
-
-
   const [reviewer_occupation, setReviewerOccupation] = useState("");
   const [reviewer_relation, setReviewerRelation] = useState("");
 
@@ -41,13 +47,13 @@ const ExternalUserSubmissionPage = () => {
   const [loadingQuestions, setLoadingQuestions] = useState(true);
 
 
-
 useEffect(() => {
   const allParams = Object.fromEntries(params.entries());
   console.log("URL params object:", allParams);
 }, [params]);
 
-  
+
+
   
   // Fetch assessment details (category, description)
  const fetchAssessment = async () => {
@@ -148,7 +154,21 @@ useEffect(() => {
     }
   };
 
-  useEffect(() => {
+
+   useEffect(() => {
+    // ✅ Validate params first
+    if (
+      assessmentId === null ||
+      questiontypeid === null ||
+      userId === null ||
+      patientId === null ||
+      !reviewer_name ||
+      !reviewer_email
+    ) {
+      setLoading(false);
+      return;
+    }
+
     if (assessmentId) fetchAssessment();
     fetchQuestionCategories();
 
@@ -162,9 +182,48 @@ useEffect(() => {
     }
   }, [assessmentId, questiontypeid, userId, patientId]);
 
-  if (!assessmentId || !questiontypeid || !userId || !patientId) {
-    return <div>Invalid or expired link</div>;
+  // ✅ Invalid link check updated
+  if (
+    assessmentId === null ||
+    questiontypeid === null ||
+    userId === null ||
+    patientId === null ||
+    !reviewer_name ||
+    !reviewer_email
+  ) {
+    return (
+      <section className="h-screen flex flex-col justify-center items-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">
+            Invalid or Expired Link
+          </h2>
+          <p className="text-gray-600">
+            This submission link is invalid or has expired. Please contact the
+            person who sent you this link.
+          </p>
+        </div>
+      </section>
+    );
   }
+
+  // useEffect(() => {
+  //   if (assessmentId) fetchAssessment();
+  //   fetchQuestionCategories();
+
+  //   if (assessmentId && questiontypeid) {
+  //     fetchQuestions();
+  //   }
+
+  //   if (userId && patientId) {
+  //     fetchUser();
+  //     fetchPatient();
+  //   }
+  // }, [assessmentId, questiontypeid, userId, patientId]);
+
+  // if ( assessmentId === null || questiontypeid === null || userId === null || patientId === null
+  // ) {
+  //   return <div>Invalid or expired link</div>;
+  // }
 
 
 
@@ -317,9 +376,10 @@ useEffect(() => {
 
         <div className="bg-white w-[80vw] mx-auto p-6 rounded-md ">
           <strong>Reviewer Details </strong>
-          <p className=" "> Name {reviewer_name || "N/A"}</p>
+          <p className="pt-2 pb-5"> Name <span className="p-2 rounded-md border">{reviewer_name || "N/A"}</span></p>
 
-          <p className=" "> Email {reviewer_email || "N/A"}</p>
+          <p className=" "> Email <span className="p-2 border rounded-md">{reviewer_email || "N/A"}
+          </span> </p>
         </div>
         <div className="bg-white w-[80vw] mx-auto p-6 rounded-md mt-4">
           <div className="mt-2 flex flex-col gap-2">
@@ -365,6 +425,23 @@ useEffect(() => {
                     key={idx}
                     className="flex items-center gap-2 text-gray-700 cursor-pointer text-sm"
                   >
+                    <input
+                      type="radio"
+                      name={`question-${q.id}`}
+                      value={option.label}
+                      className="w-4 h-4 accent-[#114654]"
+                      checked={q.answer === option.label}
+                      onChange={() => handleAnswerChange(q.id, option.label)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+
+                {/* {q.options.map((option, idx) => (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 text-gray-700 cursor-pointer text-sm"
+                  >
                     {errors[q.id] && (
                       <p className="text-red-500 text-xs mt-2">
                         This question is required
@@ -380,7 +457,7 @@ useEffect(() => {
                     />
                     <span>{option}</span>
                   </label>
-                ))}
+                ))} */}
               </div>
             )}
 

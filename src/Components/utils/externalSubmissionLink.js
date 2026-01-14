@@ -33,26 +33,38 @@ export const generateExternalSubmissionLink = ({
 } = {}) => {
   const baseUrl = `${window.location.origin}/external_user_submission`;
 
+  // Validate required parameters
+  if (!assessmentId || !questiontypeid || !userId || !patientId || !reviewer_name || !reviewer_email) {
+    console.error("Missing required parameters for external link generation");
+    return null;
+  }
+
   const params = new URLSearchParams({
-    assessmentId: assessmentId ?? "{assessmentId}",
-    questiontypeid: questiontypeid ?? "{questiontypeid}",
-    userId: userId ?? "{userId}",
-    patientId: patientId ?? "{patientId}",
-    reviewer_name: reviewer_name ?? "{reviewer_name}",
-    reviewer_email: reviewer_email ?? "{reviewer_email}",
+    assessmentId: String(assessmentId),
+    questiontypeid: String(questiontypeid),
+    userId: String(userId),
+    patientId: String(patientId),
+    reviewer_name: String(reviewer_name),
+    reviewer_email: String(reviewer_email),
   });
 
   return `${baseUrl}?${params.toString()}`;
 };
 
-// --- Demo usage ---
-// const demoLink = generateExternalSubmissionLink({
-//   assessmentId: 2,
-//   questiontypeid: 64,
-//   userId: 4,
-//   patientId: 5,
-//   reviewer_name: "John Doe",
-//   reviewer_email: "john@example.com",
-// });
+// --- Demo usage with REAL values ---
+const demoLink = generateExternalSubmissionLink({
+  assessmentId: 2,
+  questiontypeid: 64,
+  userId: 4,
+  patientId: 2,
+  reviewer_name: "Dr. Sabbir",
+  reviewer_email: "sabbir.abdullah.dev@gmail.com",
+});
 
-// console.log("Demo External Submission Link:", demoLink);
+console.log("Demo External Submission Link:", demoLink);
+
+// ✅ Copy this link and test it:
+// http://localhost:3000/external_user_submission?assessmentId=2&questiontypeid=64&userId=4&patientId=2&reviewer_name=Dr.+Sabbir&reviewer_email=sabbir.abdullah.dev%40gmail.com
+
+// For production (replace localhost with your domain):
+// https://admin.neurocheckpro.com/external_user_submission?assessmentId=2&questiontypeid=64&userId=4&patientId=2&reviewer_name=Dr.+Sabbir&reviewer_email=sabbir.abdullah.dev%40gmail.com
