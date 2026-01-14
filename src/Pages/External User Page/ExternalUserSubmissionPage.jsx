@@ -29,7 +29,6 @@ const ExternalUserSubmissionPage = () => {
    const patientId = parseNumberParam(params.get("patientId"));
    const reviewer_name = params.get("reviewer_name") || "";
    const reviewer_email = params.get("reviewer_email") || "";
-
   
   const [reviewer_occupation, setReviewerOccupation] = useState("");
   const [reviewer_relation, setReviewerRelation] = useState("");
@@ -51,7 +50,6 @@ useEffect(() => {
   const allParams = Object.fromEntries(params.entries());
   console.log("URL params object:", allParams);
 }, [params]);
-
 
 
   
@@ -156,7 +154,7 @@ useEffect(() => {
 
 
    useEffect(() => {
-    // ✅ Validate params first
+    
     if (
       assessmentId === null ||
       questiontypeid === null ||
@@ -182,7 +180,7 @@ useEffect(() => {
     }
   }, [assessmentId, questiontypeid, userId, patientId]);
 
-  // ✅ Invalid link check updated
+  
   if (
     assessmentId === null ||
     questiontypeid === null ||
