@@ -155,13 +155,7 @@ useEffect(() => {
 
    useEffect(() => {
     
-    if (
-      assessmentId === null ||
-      questiontypeid === null ||
-      userId === null ||
-      patientId === null ||
-      !reviewer_name ||
-      !reviewer_email
+    if ( assessmentId === null || questiontypeid === null ||  userId === null || patientId === null || !reviewer_name || !reviewer_email
     ) {
       setLoading(false);
       return;
