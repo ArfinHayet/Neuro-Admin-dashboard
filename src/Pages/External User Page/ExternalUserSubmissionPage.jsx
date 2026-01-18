@@ -78,37 +78,37 @@ useEffect(() => {
     }
   };
 
-  const fetchQuestions = async () => {
-    try {
-      setLoading(true);
+ const fetchQuestions = async () => {
+   try {
+     setLoading(true);
 
-      const res = await fetch(
-        `${domain}/questionnaires?assessmentId=${assessmentId}&questiontypeid=${questiontypeid}`,
+     const res = await fetch(
+       `${domain}/questionnaires?assessmentId=${assessmentId}&questiontypeid=${questiontypeid}&page=1&limit=1000`,
+       {
+         method: "GET",
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${token()}`,
+         },
+       },
+     );
 
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token()}`,
-          },
-        }
-      );
-      const data = await res.json();
-      console.log(data);
+     const data = await res.json();
 
-      if (Array.isArray(data)) {
-        setQuestions(data);
-      } else if (Array.isArray(data.payload)) {
-        setQuestions(data.payload);
-      } else {
-        setQuestions([]);
-      }
-    } catch (err) {
-      console.error("Failed to load questions", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+     if (Array.isArray(data?.payload)) {
+       setQuestions(data.payload);
+     } else if (Array.isArray(data)) {
+       setQuestions(data);
+     } else {
+       setQuestions([]);
+     }
+   } catch (err) {
+     console.error("Failed to load questions", err);
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   const [patient, setPatient] = useState(null);
   const [user, setUser] = useState(null);

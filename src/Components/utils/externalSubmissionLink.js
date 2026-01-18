@@ -64,7 +64,7 @@ const demoLink = generateExternalSubmissionLink({
 console.log("Demo External Submission Link:", demoLink);
 
 // ✅ Copy this link and test it:
-// http://localhost:3000/external_user_submission?assessmentId=2&questiontypeid=64&userId=4&patientId=2&reviewer_name=Dr.+Sabbir&reviewer_email=sabbir.abdullah.dev%40gmail.com
+// http://localhost:5173/external_user_submission?assessmentId=2&questiontypeid=64&userId=4&patientId=2&reviewer_name=Dr.+Sabbir&reviewer_email=sabbir.abdullah.dev%40gmail.com
 
 // For production (replace localhost with your domain):
 // https://admin.neurocheckpro.com/external_user_submission?assessmentId=2&questiontypeid=64&userId=4&patientId=2&reviewer_name=Dr.+Sabbir&reviewer_email=sabbir.abdullah.dev%40gmail.com
