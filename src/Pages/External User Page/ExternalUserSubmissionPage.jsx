@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../../public/png/NeuroChPro_20250926_191549_0000.png";
+import logo from "../../../public/png/Blacklogo.png";
 import { useSearchParams } from "react-router-dom";
 import { token } from "../../Components/utils/token";
 import { domain } from "../../../credential";
@@ -35,6 +35,9 @@ const ExternalUserSubmissionPage = () => {
   const [questionCategories, setQuestionCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -162,16 +165,15 @@ const ExternalUserSubmissionPage = () => {
     (q) => q.answer && q.answer.trim() !== "",
   );
 
-  // Check if all questions are answered
+  // if all questions are answered
   const isAllQuestionsAnswered = questions.every(
     (q) => q.answer && q.answer.trim() !== "",
   );
 
-  // Check if reviewer details are filled
   const isReviewerDetailsComplete =
     reviewer_occupation.trim() !== "" && reviewer_relation.trim() !== "";
 
-  // Can submit only on last page with all questions answered
+  // submit button active after all questions answered
   const canSubmit =
     currentPage === totalPages &&
     isAllQuestionsAnswered &&
@@ -205,6 +207,7 @@ const ExternalUserSubmissionPage = () => {
     }
   };
 
+
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
@@ -230,11 +233,17 @@ const ExternalUserSubmissionPage = () => {
       }
 
       setErrors({});
+
+          const questionType =
+            questionCategories.find((cat) => cat.id === questiontypeid)?.name ||
+            "";
+
+      
       const createPayload = {
         patientId,
         assessmentId,
         userId,
-        questionType: "ASRS",
+        questionType: questionType,
         answers: questions.map((q) => ({
           questionId: q.id,
           userId,
@@ -245,7 +254,7 @@ const ExternalUserSubmissionPage = () => {
       };
 
       const createRes = await createSubmission(createPayload);
-      console.log("Create submission response:", createRes);
+      // console.log("Create submission response:", createRes);
 
       // Check different response structures
       const submissionId =
@@ -265,11 +274,68 @@ const ExternalUserSubmissionPage = () => {
       await updateSubmission(submissionId, updatePayload);
 
       toast.success("Submission successful!");
+
+      setIsSubmitted(true);
     } catch (err) {
       console.error("Submission failed:", err);
       toast.error("Submission failed", { icon: <RxCrossCircled /> });
     }
   };
+
+  if (isSubmitted) {
+    return (
+      <section className="bg-[#114654] h-screen flex flex-col justify-center items-center">
+        <div className="bg-white p-8 lg:p-12 rounded-lg shadow-lg text-center max-w-md mx-4">
+          {/* Success Icon */}
+          <div className="mb-6">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <svg
+                className="w-10 h-10 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* Success Message */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Submission Successful!
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Thank you for completing the assessment. Your responses have been
+            submitted successfully.
+          </p>
+
+          {/* Assessment Info */}
+          {/* <div className="bg-gray-50 rounded-md p-4 mb-6 text-left">
+            <p className="text-sm text-gray-600 mb-2">
+              <span className="font-medium">Assessment:</span>{" "}
+              {assessment?.category || assessment?.name || "N/A"}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium">Submitted by:</span>{" "}
+              {reviewer_name || "N/A"}
+            </p>
+          </div> */}
+
+          {/* Info Message */}
+          <p className="text-sm text-gray-500">
+            The results will be reviewed by our clinical team. You may close
+            this window now.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   if (loading) {
     return (
       <section className="h-[90vh] flex flex-col justify-center items-center">
