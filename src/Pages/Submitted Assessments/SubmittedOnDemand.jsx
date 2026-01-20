@@ -66,32 +66,38 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
   //   }
   // };
 
-  const fetchSubmissions = async () => {
-    try {
-      setLoading(true);
-      const data = await getSubmissionsPage(page, limit);
-      const submissionsData = data?.payload || [];
+const fetchSubmissions = async () => {
+  try {
+    setLoading(true);
 
-      const onDemandSubmissions = submissionsData.filter(
-        (submission) => submission.assessment?.type !== "free"
-      );
+    // Fetch all submissions
+    const data = await getAllSubmissions();
+    const submissionsData = data?.payload || [];
 
-     
-      const formattedSubmissions = onDemandSubmissions.map((sub) => ({
-        ...sub,
-        submissionDate: normalizeDate(sub.createdAt),
-        grouped: [sub], // keep this so `onView` still works
-      }));
+    // Filter out "free" assessments
+    const onDemandSubmissions = submissionsData.filter(
+      (submission) => submission.assessment?.type !== "free",
+    );
 
-      setSubmissions(formattedSubmissions);
-      console.log(formattedSubmissions);
-    } catch (err) {
-      console.error("Failed to fetch submissions:", err);
-      setSubmissions([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Map and normalize date
+    const formattedSubmissions = onDemandSubmissions.map((sub) => ({
+      ...sub,
+      submissionDate: new Date(sub.createdAt), // store as Date object for sorting
+      grouped: [sub],
+    }));
+
+    // Sort by submissionDate descending (latest first)
+    formattedSubmissions.sort((a, b) => b.submissionDate - a.submissionDate);
+
+    setSubmissions(formattedSubmissions);
+    console.log(formattedSubmissions);
+  } catch (err) {
+    console.error("Failed to fetch submissions:", err);
+    setSubmissions([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   // Fetch total count across all pages
@@ -203,7 +209,7 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
    
       ) : (
         <>
-          <div className="relative w-[78vw] h-[73vh] bg-white overflow-x-auto">
+          <div className="relative w-[80vw] h-[73vh] bg-white overflow-x-auto">
             <DataTable table={table} />
           </div>
 
