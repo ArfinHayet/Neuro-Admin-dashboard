@@ -7,26 +7,38 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import ManuallyClinicianAssign from "./ManuallyClinicianAssign";
 import { TiInputChecked } from "react-icons/ti";
 
+const groupAnswersByType = (submissions = []) => {
+  const grouped = {};
 
-const groupAnswersByType = (answers = []) => {
-  return answers.reduce((acc, item) => {
-    const typeId = String(item.question?.questiontypeid);
-    const typeName = item.question?.questionType?.name || "Unknown";
+  submissions.forEach((sub) => {
+    const typeName = (sub.questionType || "Unknown").trim();
 
-    if (!typeId) return acc;
-
-    if (!acc[typeId]) {
-      acc[typeId] = {
+    if (!grouped[typeName]) {
+      grouped[typeName] = {
         name: typeName,
         answers: [],
       };
     }
 
-    acc[typeId].answers.push(item);
-    return acc;
-  }, {});
-};
+    // Check if this submission has multiple questions (nested array)
+    if (Array.isArray(sub.questions) && sub.questions.length > 0) {
+      sub.questions.forEach((q) => {
+        grouped[typeName].answers.push({
+          question: q.questions || q.questionText || "No question",
+          answer: q.answer || "No answer",
+        });
+      });
+    } else {
+      // fallback: single question in top-level
+      grouped[typeName].answers.push({
+        question: sub.questions || sub.question?.questions || "No question",
+        answer: sub.answer || sub.question?.answer || "No answer",
+      });
+    }
+  });
 
+  return grouped;
+};
 
 
 
@@ -35,9 +47,9 @@ const OnDemandDetails = () => {
   const { state } = useLocation();
   const passedSubmissions = state?.submissions || []; // note: array of submissions
   const [selectedSubmission, setSelectedSubmission] = useState(
-    passedSubmissions[0] || null
+    passedSubmissions[0] || null,
   );
-  console.log("passesd submissions",passedSubmissions)
+  console.log("passesd submissions", passedSubmissions);
 
   const [groupedAnswers, setGroupedAnswers] = useState({});
   const [selectedType, setSelectedType] = useState(null);
@@ -50,87 +62,49 @@ const OnDemandDetails = () => {
   const [deletemodal, setdeletemodal] = useState(false);
 
   const [showMenu, setShowMenu] = useState(false);
-  
-const [showClinicianModal, setShowClinicianModal] = useState(false);
 
+  const [showClinicianModal, setShowClinicianModal] = useState(false);
 
+  const fetchAnswers = async () => {
+    if (!passedSubmissions?.length) return;
+
+    try {
+      setIsLoading(true);
+
+      const grouped = groupAnswersByType(passedSubmissions);
+
+      setGroupedAnswers(grouped);
+      setSelectedType(Object.keys(grouped)[0] || null);
+    } catch (err) {
+      console.error("Error grouping answers:", err);
+      setGroupedAnswers({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAllAnswers = async () => {
-      if (!passedSubmissions.length) return;
+    fetchAnswers();
+  }, [passedSubmissions]);
 
-      const answersMap = {};
+  const handleAssignSuccess = async () => {
+    const res = await getAnswersByPatientAndAssessment(
+      selectedSubmission.patient.id,
+      selectedSubmission.assessmentId,
+      { limit: 100 },
+    );
 
-      await Promise.all(
-        passedSubmissions.map(async (sub) => {
-          try {
-            const res = await getAnswersByPatientAndAssessment(
-              sub.patient.id,
-              sub.assessmentId,
-              { limit: 100 }
-            );
-            const ans = res?.payload || [];
-            console.log(res.payload)
+    const ans = res?.payload || [];
 
-          // const grouped = ans.reduce((acc, item) => {
-          //   const typeId = String(item.question?.questiontypeid); // 🔑 KEY
-          //   const typeName = item.question?.questionType?.name || "Unknown";
+    const grouped = groupAnswersByType(ans);
+    setGroupedAnswers(grouped);
 
-          //   if (!typeId) return acc;
+    if (selectedSubmission.clinicianId) {
+      const clinicianRes = await getUserById(selectedSubmission.clinicianId);
+      setClinicianDetails(clinicianRes?.payload || null);
+    }
+  };
 
-          //   if (!acc[typeId]) {
-          //     acc[typeId] = {
-          //       name: typeName,
-          //       answers: [],
-          //     };
-          //   }
-
-          //   acc[typeId].answers.push(item);
-          //   return acc;
-          // }, {});
-
-            answersMap[sub.id] = groupAnswersByType(ans);
-
-          } catch (err) {
-            console.error("Error fetching answers for submission", sub.id, err);
-            answersMap[sub.id] = {};
-          }
-        })
-      );
-
-      setAllAnswers(answersMap);
-      setGroupedAnswers(answersMap[selectedSubmission.id] || {});
-      setSelectedType(
-        Object.keys(answersMap[selectedSubmission.id] || {})[0] || null
-      );
-      setIsLoading(false);
-    };
-
-    fetchAllAnswers();
-  }, []);
-
-    
-const handleAssignSuccess = async () => {
-  const res = await getAnswersByPatientAndAssessment(
-    selectedSubmission.patient.id,
-    selectedSubmission.assessmentId,
-    { limit: 100 },
-  );
-
-  // Update state with fresh data
-  const ans = res?.payload || [];
-  const grouped = groupAnswersByType(ans);
-  setGroupedAnswers(grouped);
-
-  // Refetch clinician details
-  if (selectedSubmission.clinicianId) {
-    const clinicianRes = await getUserById(selectedSubmission.clinicianId);
-    setClinicianDetails(clinicianRes?.payload || null);
-  }
-};
-
- 
-  
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -152,35 +126,31 @@ const handleAssignSuccess = async () => {
     const matched = appointments.find(
       (appt) =>
         appt.clinicianId === selectedSubmission.clinicianId &&
-        appt.patientId === selectedSubmission.patientId
+        appt.patientId === selectedSubmission.patientId,
     );
 
     setMatchedAppointment(matched || null);
   }, [selectedSubmission, appointments]);
 
+  useEffect(() => {
+    const fetchClinician = async () => {
+      if (!selectedSubmission?.clinicianId) {
+        setClinicianDetails(null);
+        return;
+      }
 
-useEffect(() => {
-  const fetchClinician = async () => {
-    if (!selectedSubmission?.clinicianId) {
-      setClinicianDetails(null);
-      return;
-    }
+      try {
+        const res = await getUserById(selectedSubmission.clinicianId);
+        console.log(res);
+        setClinicianDetails(res?.payload || null);
+      } catch (err) {
+        console.error("Error fetching clinician details:", err);
+        setClinicianDetails(null);
+      }
+    };
 
-    try {
-      const res = await getUserById(selectedSubmission.clinicianId);
-      console.log(res)
-      setClinicianDetails(res?.payload || null);
-    } catch (err) {
-      console.error("Error fetching clinician details:", err);
-      setClinicianDetails(null);
-    }
-  };
-
-  fetchClinician();
-}, [selectedSubmission]);
-
-
- 
+    fetchClinician();
+  }, [selectedSubmission]);
 
   if (isLoading) {
     return (
@@ -200,56 +170,32 @@ useEffect(() => {
   return (
     <section className="space-y-3 pb-14">
       <div>
-       <h1 className="text-xl font-semibold mb-2 ">
-        {selectedSubmission.assessment?.category || "Assessment"} Submission
-        Details
-      </h1>
-      {/* Basic info */}
-      <div className="text-sm space-y-1 pb-2">
-        <p>
-          <span className="font-semibold">User Name </span>
-          {selectedSubmission.user?.name}
-        </p>
-        <p>
-          <span className="font-semibold">Patient Name </span>
-          {selectedSubmission.patient?.name}
-        </p>
-        <p>
-          <span className="font-semibold">Clinician </span>
-          {selectedSubmission.clinicianId ? "Assigned" : "Not assigned"}
-        </p>
+        <h1 className="text-xl font-semibold mb-2 ">
+          {selectedSubmission.assessment?.category || "Assessment"} Submission
+          Details
+        </h1>
+        {/* Basic info */}
+        <div className="text-sm space-y-1 pb-2">
+          <p>
+            <span className="font-semibold">User Name </span>
+            {selectedSubmission.user?.name}
+          </p>
+          <p>
+            <span className="font-semibold">Patient Name </span>
+            {selectedSubmission.patient?.name}
+          </p>
+          <p>
+            <span className="font-semibold">Clinician </span>
+            {selectedSubmission.clinicianId ? "Assigned" : "Not assigned"}
+          </p>
 
-        <p>
-          <span className="font-semibold">Status </span>
-          {selectedSubmission.status}
-        </p>
+          <p>
+            <span className="font-semibold">Status </span>
+            {selectedSubmission.status}
+          </p>
         </div>
-        </div>
-      {/* {passedSubmissions.length > 1 && (
-        <div className="mt-6 flex gap-2 flex-wrap">
-          {passedSubmissions.map((sub, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setSelectedSubmission(sub);
-                setGroupedAnswers(allAnswers[sub.id] || {});
-                setSelectedType(
-                  Object.keys(allAnswers[sub.id] || {})[0] || null
-                );
-              }}
-              className={`px-4 py-1 rounded-full text-sm font-medium ${
-                selectedSubmission.id === sub.id
-                  ? "bg-[#114654] text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-            >
-              {sub.questionType ||
-                sub.assessment?.name ||
-                `Submission ${i + 1}`}
-            </button>
-          ))}
-        </div>
-      )} */}
+      </div>
+
       {/* Question Type Buttons */}
       <div className="relative flex gap-2 flex-wrap mt-2">
         {Object.entries(groupedAnswers).map(([typeId, data]) => (
@@ -292,17 +238,13 @@ useEffect(() => {
             groupedAnswers[selectedType].answers.map((ans, i) => (
               <div
                 key={i}
-                className="flex items-start gap-3 border-b  p-4 bg-white  "
+                className="flex items-start gap-3 border-b p-4 bg-white"
               >
-                <div className=" flex justify-between items-start w-full ">
-                  <p className="font-medium text-gray-800">
-                    {ans.question?.questions || "No question text"}
-                  </p>
+                <div className="flex justify-between items-start w-full">
+                  <p className="font-medium text-gray-800">{ans.question}</p>
                   <div className="flex gap-2 items-center">
                     <div className="w-2 h-2 rounded-full bg-primary mt-1"></div>
-                    <p className="text-secondary mt-1">
-                      {ans.answer || "No answer"}
-                    </p>
+                    <p className="text-secondary mt-1">{ans.answer}</p>
                   </div>
                 </div>
               </div>
@@ -345,7 +287,7 @@ useEffect(() => {
         {/* Status */}
         <div className="mb-3 p-2 rounded-md bg-gray-100">
           <p className="text-sm">
-            <span className="font-semibold">Status  </span>
+            <span className="font-semibold">Status </span>
             {selectedSubmission.clinician_approved ? (
               <span className="text-green-700 font-medium">
                 <TiInputChecked size={20} /> Approved

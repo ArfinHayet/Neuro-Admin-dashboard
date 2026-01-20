@@ -22,26 +22,31 @@ const normalizeDate = (date) => new Date(date).toISOString().split("T")[0];
 
   
   // Group submissions by assessmentId + patientId
-  const groupSubmissions = (submissions) => {
-    const map = new Map();
+const groupSubmissions = (submissions) => {
+  const map = new Map();
 
-    submissions.forEach((sub) => {
-          const datekey = normalizeDate(sub.createdAt);
+  submissions.forEach((sub) => {
+    const key = `${sub.patientId}_${sub.assessmentId}`;
 
-      const key = `${sub.assessmentId}_${sub.patientId}_${datekey}`;
-      if (!map.has(key)) {
-        map.set(key, {
-          ...sub,
-          grouped: [sub],
-          submissionDate: datekey,
-         });
-      } else {
-        map.get(key).grouped.push(sub);
-      }
-    });
+    if (!map.has(key)) {
+      map.set(key, {
+        patientId: sub.patientId,
+        assessmentId: sub.assessmentId,
+        patient: sub.patient,
+        assessment: sub.assessment,
+        user: sub.user,
+        submissionDate: new Date(sub.createdAt),
+        
+        grouped: [sub],
+      });
+    } else {
+      map.get(key).grouped.push(sub);
+    }
+  });
 
-    return Array.from(map.values());
-  };
+  return Array.from(map.values());
+};
+
 
   // Fetch paginated submissions
   // const fetchSubmissions = async () => {
@@ -78,19 +83,20 @@ const fetchSubmissions = async () => {
     const onDemandSubmissions = submissionsData.filter(
       (submission) => submission.assessment?.type !== "free",
     );
+    const grouped = groupSubmissions(onDemandSubmissions);
 
-    // Map and normalize date
-    const formattedSubmissions = onDemandSubmissions.map((sub) => ({
-      ...sub,
-      submissionDate: new Date(sub.createdAt), // store as Date object for sorting
-      grouped: [sub],
-    }));
+    // // Map and normalize date
+    // const formattedSubmissions = onDemandSubmissions.map((sub) => ({
+    //   ...sub,
+    //   submissionDate: new Date(sub.createdAt), // store as Date object for sorting
+    //   grouped: [sub],
+    // }));
 
     // Sort by submissionDate descending (latest first)
-    formattedSubmissions.sort((a, b) => b.submissionDate - a.submissionDate);
+    // formattedSubmissions.sort((a, b) => b.submissionDate - a.submissionDate);
 
-    setSubmissions(formattedSubmissions);
-    console.log(formattedSubmissions);
+    setSubmissions(grouped);
+    console.log(grouped);
   } catch (err) {
     console.error("Failed to fetch submissions:", err);
     setSubmissions([]);
@@ -209,7 +215,7 @@ const fetchSubmissions = async () => {
    
       ) : (
         <>
-          <div className="relative w-[80vw] h-[73vh] bg-white overflow-x-auto">
+          <div className="relative w-[79vw] h-[73vh] bg-white overflow-x-auto">
             <DataTable table={table} />
           </div>
 
