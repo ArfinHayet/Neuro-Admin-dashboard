@@ -84,10 +84,35 @@ const updateSubmission = async (id, obj) => {
   return data;
 };
 
+ const assignClinicianToSubmission = async (
+  submissionId,
+  clinicianId,
+) => {
+  try {
+    const res = await fetch(
+      `${domain}/submissions/${submissionId}/assign-clinician`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token()}`,
+        },
+        body: JSON.stringify({ clinicianId }),
+      },
+    );
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to assign clinician:", err);
+    throw err;
+  }
+};
+
+
 export {
   createSubmission,
   getSubmissionsPage,
   getAllSubmissions,
   deleteSubmission,
   updateSubmission,
+  assignClinicianToSubmission,
 };

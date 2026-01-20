@@ -4,6 +4,30 @@ import { getAnswersByPatientAndAssessment } from "../../api/answers";
 import { getAllAppointments } from "../../api/appointments";
 import { getUserById } from "../../api/user";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import ManuallyClinicianAssign from "./ManuallyClinicianAssign";
+import { TiInputChecked } from "react-icons/ti";
+
+
+const groupAnswersByType = (answers = []) => {
+  return answers.reduce((acc, item) => {
+    const typeId = String(item.question?.questiontypeid);
+    const typeName = item.question?.questionType?.name || "Unknown";
+
+    if (!typeId) return acc;
+
+    if (!acc[typeId]) {
+      acc[typeId] = {
+        name: typeName,
+        answers: [],
+      };
+    }
+
+    acc[typeId].answers.push(item);
+    return acc;
+  }, {});
+};
+
+
 
 
 const OnDemandDetails = () => {
@@ -13,6 +37,8 @@ const OnDemandDetails = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(
     passedSubmissions[0] || null
   );
+  console.log("passesd submissions",passedSubmissions)
+
   const [groupedAnswers, setGroupedAnswers] = useState({});
   const [selectedType, setSelectedType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +49,9 @@ const OnDemandDetails = () => {
   const [clinicianDetails, setClinicianDetails] = useState(null);
   const [deletemodal, setdeletemodal] = useState(false);
 
-const [showMenu, setShowMenu] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  
+const [showClinicianModal, setShowClinicianModal] = useState(false);
 
 
 
@@ -44,26 +72,25 @@ const [showMenu, setShowMenu] = useState(false);
             const ans = res?.payload || [];
             console.log(res.payload)
 
-          const grouped = ans.reduce((acc, item) => {
-            const typeId = String(item.question?.questiontypeid); // 🔑 KEY
-            const typeName = item.question?.questionType?.name || "Unknown";
+          // const grouped = ans.reduce((acc, item) => {
+          //   const typeId = String(item.question?.questiontypeid); // 🔑 KEY
+          //   const typeName = item.question?.questionType?.name || "Unknown";
 
-            if (!typeId) return acc;
+          //   if (!typeId) return acc;
 
-            if (!acc[typeId]) {
-              acc[typeId] = {
-                name: typeName,
-                answers: [],
-              };
-            }
+          //   if (!acc[typeId]) {
+          //     acc[typeId] = {
+          //       name: typeName,
+          //       answers: [],
+          //     };
+          //   }
 
-            acc[typeId].answers.push(item);
-            return acc;
-          }, {});
+          //   acc[typeId].answers.push(item);
+          //   return acc;
+          // }, {});
 
+            answersMap[sub.id] = groupAnswersByType(ans);
 
-
-            answersMap[sub.id] = grouped;
           } catch (err) {
             console.error("Error fetching answers for submission", sub.id, err);
             answersMap[sub.id] = {};
@@ -82,6 +109,28 @@ const [showMenu, setShowMenu] = useState(false);
     fetchAllAnswers();
   }, []);
 
+    
+const handleAssignSuccess = async () => {
+  const res = await getAnswersByPatientAndAssessment(
+    selectedSubmission.patient.id,
+    selectedSubmission.assessmentId,
+    { limit: 100 },
+  );
+
+  // Update state with fresh data
+  const ans = res?.payload || [];
+  const grouped = groupAnswersByType(ans);
+  setGroupedAnswers(grouped);
+
+  // Refetch clinician details
+  if (selectedSubmission.clinicianId) {
+    const clinicianRes = await getUserById(selectedSubmission.clinicianId);
+    setClinicianDetails(clinicianRes?.payload || null);
+  }
+};
+
+ 
+  
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -131,6 +180,8 @@ useEffect(() => {
 }, [selectedSubmission]);
 
 
+ 
+
   if (isLoading) {
     return (
       <section className="h-[90vh] flex flex-col justify-center items-center">
@@ -147,12 +198,12 @@ useEffect(() => {
   const questionTypes = Object.keys(groupedAnswers);
 
   return (
-    <section className="space-y-2 pb-14">
-      <h1 className="text-xl font-semibold ">
+    <section className="space-y-3 pb-14">
+      <div>
+       <h1 className="text-xl font-semibold mb-2 ">
         {selectedSubmission.assessment?.category || "Assessment"} Submission
         Details
       </h1>
-
       {/* Basic info */}
       <div className="text-sm space-y-1 pb-2">
         <p>
@@ -172,8 +223,8 @@ useEffect(() => {
           <span className="font-semibold">Status </span>
           {selectedSubmission.status}
         </p>
-      </div>
-
+        </div>
+        </div>
       {/* {passedSubmissions.length > 1 && (
         <div className="mt-6 flex gap-2 flex-wrap">
           {passedSubmissions.map((sub, i) => (
@@ -199,43 +250,42 @@ useEffect(() => {
           ))}
         </div>
       )} */}
-        {/* Question Type Buttons */}
-        <div className="relative flex gap-2 flex-wrap mt-2">
-          {Object.entries(groupedAnswers).map(([typeId, data]) => (
-            <button
-              key={typeId}
-              onClick={() => setSelectedType(typeId)}
-              className={`px-4 py-2 rounded-full text-xs font-medium ${
-                selectedType === typeId
-                  ? "bg-[#114654] text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              {data.name}
-            </button>
-          ))}
-      
-     <HiOutlineDotsVertical
+      {/* Question Type Buttons */}
+      <div className="relative flex gap-2 flex-wrap mt-2">
+        {Object.entries(groupedAnswers).map(([typeId, data]) => (
+          <button
+            key={typeId}
+            onClick={() => setSelectedType(typeId)}
+            className={`px-4 py-2 rounded-full text-xs font-medium ${
+              selectedType === typeId
+                ? "bg-[#114654] text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {data.name}
+          </button>
+        ))}
+
+        <HiOutlineDotsVertical
           size={18}
           className="absolute right-2 top-2 cursor-pointer"
           onClick={() => setShowMenu((prev) => !prev)}
         />
       </div>
       {showMenu && (
-          <div className="absolute right-2 top-8 bg-white border rounded shadow-md z-10">
-            <button
-              onClick={() => {
-                setdeletemodal(true);
-                setShowMenu(false);
-              }}
-              className="px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
-            >
-              Delete
-            </button>
-          </div>
+        <div className="absolute right-2 top-8 bg-white border rounded shadow-md z-10">
+          <button
+            onClick={() => {
+              setdeletemodal(true);
+              setShowMenu(false);
+            }}
+            className="px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
+          >
+            Delete
+          </button>
+        </div>
       )}
-      <div className="relative mt-4 text-sm border rounded-lg p-3 bg-white">
-
+      <div className="relative  text-sm border rounded-lg p-3 ">
         {/* Questions & answers for selected type */}
         <div className="mt-4 space-y-4 text-xs">
           {selectedType && groupedAnswers[selectedType]?.answers?.length > 0 ? (
@@ -267,7 +317,7 @@ useEffect(() => {
         {/* Summary */}
 
         <h2 className="mt-6 font-semibold mb-2 text-lg">AI Summary</h2>
-       
+
         <p className="mt-1 text-gray-700 whitespace-pre-line text-sm">
           {selectedSubmission.summary
             ? selectedSubmission.summary.replace(/\*/g, "")
@@ -277,32 +327,73 @@ useEffect(() => {
 
       {/* clinician details */}
 
-      <div className="mt-4 text-sm border rounded-lg p-3 bg-white">
-        <h2 className="font-semibold text-lg ">Clinician Details</h2>
+      <div className=" text-sm border rounded-lg p-3 ">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="font-semibold text-lg">Clinician Details</h2>
 
+          {/* Show assign/reassign button if not approved */}
+          {!selectedSubmission.clinician_approved && (
+            <button
+              onClick={() => setShowClinicianModal(true)}
+              className="px-4 py-1 bg-[#114654] text-white rounded-md text-sm hover:bg-[#0d3640]"
+            >
+              {selectedSubmission.clinicianId ? "Reassign" : "Assign"} Clinician
+            </button>
+          )}
+        </div>
+
+        {/* Status */}
+        <div className="mb-3 p-2 rounded-md bg-gray-100">
+          <p className="text-sm">
+            <span className="font-semibold">Status  </span>
+            {selectedSubmission.clinician_approved ? (
+              <span className="text-green-700 font-medium">
+                <TiInputChecked size={20} /> Approved
+              </span>
+            ) : selectedSubmission.clinicianId ? (
+              <span className="text-orange-600 font-medium">
+                Assigned (Pending Approval)
+              </span>
+            ) : (
+              <span className="text-gray-500 font-medium">Not Assigned</span>
+            )}
+          </p>
+        </div>
+
+        {/* Show clinician details if assigned */}
         {clinicianDetails && (
-          <div className=" space-y-1 mt-2">
-            <p>
-              <span className="font-semibold">Clinician Name </span>{" "}
-              {clinicianDetails.name}
-            </p>
-            <p>
-              <span className="font-semibold">Email </span>{" "}
-              {clinicianDetails.email}
-            </p>
-            <p>
-              <span className="font-semibold">Phone </span>{" "}
-              {clinicianDetails.phone}
-            </p>
-            {/* <p>
-              <span className="font-semibold">ID </span> {clinicianDetails.id}
-            </p> */}
+          <div className="space-y-1 mt-2">
+            {clinicianDetails.name && (
+              <p>
+                <span className="font-semibold">Clinician Name </span>
+                {clinicianDetails.name}
+              </p>
+            )}
+            {/* {clinicianDetails.email && (
+              <p>
+                <span className="font-semibold">Email </span>
+                {clinicianDetails.email}
+              </p>
+            )} */}
+            {clinicianDetails.hcpcTitle && (
+              <p>
+                <span className="font-semibold">HCPC Title </span>
+                {clinicianDetails.hcpcTitle}
+              </p>
+            )}
           </div>
         )}
       </div>
 
-      {/* appointments */}
+      {/* Clinician Assignment Modal */}
+      <ManuallyClinicianAssign
+        show={showClinicianModal}
+        onClose={() => setShowClinicianModal(false)}
+        submissionId={selectedSubmission.id}
+        onSuccess={handleAssignSuccess}
+      />
 
+      {/* appointments */}
       {matchedAppointment && (
         <div className=" text-sm mt-6 border rounded-md p-3 ">
           <h2 className="font-semibold mb-1 text-lg">Scheduled Appointment</h2>
