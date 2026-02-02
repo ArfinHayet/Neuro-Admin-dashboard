@@ -26,6 +26,8 @@ import CategoryBasedQuestionList from "./Pages/Assessments/On Demand Assessment/
 import ExternalUserSubmissionPage from "./Pages/External User Page/ExternalUserSubmissionPage";
 import BannerImg from "./Pages/Banner/BannerImg";
 import CategoryBasedQuestions from "./Pages/Assessments/Initial Assessment/CategoryBasedQuestions";
+import OnDemandQuestionModal from "./Components/Assessments/OnDemandQuestionModal";
+import AddQuestionPage from "./Components/Assessments/AddQuestionPage";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +93,10 @@ export const router = createBrowserRouter([
       {
         path: "/ondemandassessment/:id/category/:categoryId",
         element: <CategoryBasedQuestionList />,
+      },
+      {
+        path: "/ondemandassessment/:id/category/:categoryId/questionAdd",
+        element: <AddQuestionPage />,
       },
       {
         path: "/initial/:id/category/:categoryId",

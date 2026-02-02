@@ -24,6 +24,7 @@ const OnDemandQuestionModal = ({
     ],
     questiontypeid: "",
     variant: "",
+    domain: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -42,6 +43,7 @@ const OnDemandQuestionModal = ({
       ],
       questiontypeid: "",
       variant: "",
+      domain: "",
     });
     setError(null);
   };
@@ -83,6 +85,7 @@ const OnDemandQuestionModal = ({
         options: options,
         questiontypeid: editingQuestion.questiontypeid || "",
         variant: editingQuestion.variant || "",
+        domain: editingQuestion.domain || "",
       });
     } else {
       resetForm();
@@ -220,6 +223,7 @@ const OnDemandQuestionModal = ({
           options: q.options,
           questiontypeid: Number(categoryId),
           variant: q.variant,
+          domain: q.domain,
         };
 
         await addQuestion(payload);
@@ -256,6 +260,7 @@ const OnDemandQuestionModal = ({
         options: formData.options,
         questiontypeid: Number(categoryId), // pass the category id here
         variant: formData.variant,
+        domain: formData.domain,
       };
 
       console.log("Payload to send:", {
@@ -266,6 +271,7 @@ const OnDemandQuestionModal = ({
         options: formData.options,
         questiontypeid: Number(categoryId), // pass the category id here
         variant: formData.variant,
+        domain: formData.domain,
       });
 
       const savedQuestion = editingQuestion
@@ -300,9 +306,7 @@ const OnDemandQuestionModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-center font-medium mb-6">
-          {editingQuestion
-            ? "Edit Question"
-            : "Add New Question"}
+          {editingQuestion ? "Edit Question" : "Add New Question"}
         </h2>
 
         <label className="block text-xs mb-1 font-medium text-gray-700">
@@ -338,6 +342,15 @@ const OnDemandQuestionModal = ({
           <option value="internal">Internal</option>
           <option value="external">External</option>
         </select>
+
+        <label className="block text-xs mb-1">Domain</label>
+        <input
+          type="text"
+          className="w-full border px-3 py-2 rounded mb-4 text-xs"
+          value={formData.domain}
+          onChange={(e) => handleChange("domain", e.target.value)}
+          placeholder="Enter question Domain"
+        />
 
         <label className="block text-xs mb-1">Question Order</label>
         <input

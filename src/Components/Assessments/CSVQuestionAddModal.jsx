@@ -8,23 +8,16 @@ const parseCSV = (text) => {
   if (lines.length < 2)
     throw new Error("CSV must have header and at least one row");
 
-  // Detect delimiter - check if tab or comma separated
-  const firstLine = lines[0];
   const delimiter = ",";
-  // const delimiter = firstLine.includes("\t") ? "\t" : ",";
-  // console.log("Detected delimiter:", delimiter === "\t" ? "TAB" : "COMMA");
 
   // Parse headers
-  const headers = lines[0].split(delimiter).map(
-    (h) =>
-      h
-        .replace(/^\uFEFF/, "")
-        .trim()
-        .toLowerCase()
-        .replace(/"/g, "") // Remove quotes
+  const headers = lines[0].split(delimiter).map((h) =>
+    h
+      .replace(/^\uFEFF/, "")
+      .trim()
+      .toLowerCase()
+      .replace(/"/g, ""),
   );
-
-  // console.log("Headers found:", headers);
 
   const rows = [];
 
@@ -32,37 +25,44 @@ const parseCSV = (text) => {
     const line = lines[i].trim();
     if (!line) continue;
 
-    // Parse CSV line with proper quote handling
-    let values = [];
+    // ✅ FIXED: Proper CSV parsing with quote handling
+    const values = [];
     let current = "";
     let inQuotes = false;
 
     for (let j = 0; j < line.length; j++) {
       const char = line[j];
+      const nextChar = line[j + 1];
 
-      if (char === '"') {
+      if (char === '"' && nextChar === '"') {
+        // Handle escaped quotes ("")
+        current += '"';
+        j++; // Skip next quote
+      } else if (char === '"') {
+        // Toggle quote state
         inQuotes = !inQuotes;
       } else if (char === delimiter && !inQuotes) {
-        values.push(current.trim().replace(/^"|"$/g, "")); // Remove surrounding quotes
+        // Split only if not inside quotes
+        values.push(current.trim());
         current = "";
       } else {
         current += char;
       }
     }
     // Don't forget the last value
-    values.push(current.trim().replace(/^"|"$/g, ""));
-
-// const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
-
-    // console.log(`Row ${i + 1} raw values:`, values);
+    values.push(current.trim());
 
     const row = {};
     headers.forEach((header, idx) => {
-      row[header] = (values[idx] || "").replace(/^\uFEFF/, "").trim();
+      // ✅ Remove surrounding quotes but keep internal content
+      let value = (values[idx] || "").trim();
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value.slice(1, -1); // Remove outer quotes only
+      }
+      row[header] = value;
     });
 
     row._row = i + 1;
-    // console.log(`Parsed row ${i + 1}:`, row);
     rows.push(row);
   }
 
@@ -107,8 +107,6 @@ const parseOptionsWithScores = (optionsString) => {
   }
 };
 
-
-
 const CSVQuestionAddModal = ({
   isOpen,
   onClose,
@@ -127,7 +125,6 @@ const CSVQuestionAddModal = ({
     reader.onload = () => {
       try {
         const parsed = parseCSV(reader.result);
-        // console.log("All parsed rows:", parsed);
 
         if (!parsed.length) {
           toast.error("No rows found in CSV");
@@ -135,7 +132,7 @@ const CSVQuestionAddModal = ({
         }
 
         const questionsArray = parsed.map((r) => {
-          // Check for questions field with various possible names
+          // Get question text
           const questionText = (
             r.questions ||
             r.question ||
@@ -150,7 +147,7 @@ const CSVQuestionAddModal = ({
           }
 
           // Parse options with scores
-          const optionsString = r.options || r.Options || "";
+          const optionsString = (r.options || r.Options || "").trim();
           let parsedOptions;
 
           try {
@@ -159,18 +156,19 @@ const CSVQuestionAddModal = ({
             throw new Error(`Row ${r._row}: ${err.message}`);
           }
 
+          // Parse domain
+          const domain = (r.domain || r.Domain || "").trim();
+
           return {
             assessmentId: Number(assessmentId),
             questions: questionText,
             order: Number(r.order || r.Order || 0),
-            answerType: (r.answerType || "").trim() || "MultipleChoice",
+            answerType:
+              (r.answertype || r.answerType || "").trim() || "MultipleChoice",
             options: parsedOptions,
-            // options:
-            //   r.options || r.Options
-            //     ? (r.options || r.Options).split("|").map((o) => o.trim())
-            //     : ["Option A", "Option B", "Option C"],
             questiontypeid: Number(categoryId),
             variant: (r.variant || r.Variant || "").trim(),
+            domain: domain || undefined, // ✅ NEW: Add domain field
           };
         });
 
@@ -225,24 +223,54 @@ const CSVQuestionAddModal = ({
           </button>
         </div>
 
-        <div className="mb-2">
-          
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 mb-2">
+            CSV Format: questions, order, answerType, options, variant, domain
+          </p>
+          <p className="text-xs text-gray-500 mb-3">
+            Example options:{" "}
+            <code className="bg-gray-100 px-1 rounded">
+              "Yes:1|No:0|Maybe:0.5"
+            </code>
+          </p>
           <input
             type="file"
             accept=".csv"
             onChange={handleFile}
-            className="w-full text-sm border border-gray-300 rounded-md"
+            className="w-full text-sm border border-gray-300 rounded-md p-2"
           />
         </div>
 
         {rows.length > 0 && (
           <div className="mb-4">
-           
-              <p className="text-green-600 font-medium text-sm">
-                {rows.length} questions ready to import
-              </p>
-           
-           
+            <p className="text-green-600 font-medium text-sm mb-2">
+              {rows.length} questions ready to import
+            </p>
+            <div className="max-h-40 overflow-y-auto bg-gray-50 p-3 rounded text-xs">
+              {rows.map((row, idx) => (
+                <div
+                  key={idx}
+                  className="mb-2 pb-2 border-b border-gray-200 last:border-0"
+                >
+                  <div className="font-semibold text-gray-800">
+                    {idx + 1}. {row.questions}
+                  </div>
+                  <div className="flex gap-3 mt-1 text-gray-600">
+                    {row.domain && (
+                      <span className="text-blue-600">📁 {row.domain}</span>
+                    )}
+                    {row.variant && (
+                      <span className="text-purple-600">🏷️ {row.variant}</span>
+                    )}
+                    {row.options && (
+                      <span className="text-green-600">
+                        ✓ {row.options.length} options
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -268,3 +296,22 @@ const CSVQuestionAddModal = ({
 };
 
 export default CSVQuestionAddModal;
+
+
+
+
+
+// (questions, order, answerType, options, variant, domain);
+// ("Do you exercise regularly?",
+//   1,
+//   MultipleChoice,
+//   "Yes:1|No:0",
+//   internal,
+//   "Physical Health");
+// ("How many hours do you sleep?", 2, Text, "", internal, "Sleep Habits");
+// ("Are you satisfied?",
+//   3,
+//   Yes / No,
+//   "Yes:1|No:0|Maybe:0.5",
+//   external,
+//   "Mental Health");

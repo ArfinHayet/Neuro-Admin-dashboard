@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MdEdit, MdDeleteOutline } from "react-icons/md";
 import toast from "react-hot-toast";
 import {
@@ -15,6 +15,7 @@ const CategoryBasedQuestionList = () => {
   const { id: paramId, categoryId } = useParams();
   const location = useLocation();
   const categoryName = location.state?.categoryName;
+  const navigate = useNavigate();
   
   const categoryVariant = location.state?.categoryVariant;
   console.log(categoryVariant)
@@ -141,10 +142,12 @@ const CategoryBasedQuestionList = () => {
           <h2 className="font-semibold ">{assessmentName}</h2>
           <h2 className="text-sm  ">
             Question Category -
-            <span className="font-semibold"> {categoryName}</span> - ({categoryVariant}){" "}
+            <span className="font-semibold"> {categoryName}</span> - (
+            {categoryVariant}){" "}
           </h2>
-    
-          <p className="text-sm text-gray-500 ">Questions count {questions.length}
+
+          <p className="text-sm text-gray-500 ">
+            Questions count {questions.length}
           </p>
         </div>
 
@@ -165,11 +168,28 @@ const CategoryBasedQuestionList = () => {
             Import from CSV
           </button>
 
-          <button
+          {/* <button
             className="bg-[#114654] hover:bg-[#114654]/80 text-white px-3 py-2 rounded-md text-xs"
             onClick={() => {
               setEditingQuestion(null);
               setIsModalOpen(true);
+            }}
+          > */}
+          <button
+            className="bg-[#114654] hover:bg-[#114654]/80 text-white px-3 py-2 rounded-md text-xs"
+            onClick={() => {
+              // Navigate to new page instead of opening modal
+              navigate(
+                `/ondemandassessment/${assessmentID}/category/${categoryId}/questionAdd`,
+                {
+                  state: {
+                    assessment: { id: assessmentID, name: assessmentName },
+                    categoryId,
+                    categoryName,
+                    categoryVariant,
+                  },
+                },
+              );
             }}
           >
             Add Question
@@ -216,14 +236,14 @@ const CategoryBasedQuestionList = () => {
                 isSelected={selectedIds.includes(q.id)}
                 onSelect={(id, checked) =>
                   setSelectedIds((prev) =>
-                    checked ? [...prev, id] : prev.filter((x) => x !== id)
+                    checked ? [...prev, id] : prev.filter((x) => x !== id),
                   )
                 }
                 onChange={(id, field, value) =>
                   setQuestions((prev) =>
                     prev.map((ques) =>
-                      ques.id === id ? { ...ques, [field]: value } : ques
-                    )
+                      ques.id === id ? { ...ques, [field]: value } : ques,
+                    ),
                   )
                 }
                 onEdit={handleEdit}
