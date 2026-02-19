@@ -44,7 +44,7 @@ const QuestionArrangement = ({
         </td>
 
         <td className="pl-4">{index + 1}</td>
-        <td className="p-2 text-sm w-[40vw]">
+        <td className="p-2 text-sm w-[37vw]">
           {question.questions || question.question}
         </td>
         <td className="p-2">
@@ -103,6 +103,7 @@ const QuestionArrangement = ({
           )}
         </td>
 
+        <td className="px-2 text-xs">{question.domain}</td>
         <td className="px-2 text-xs">{question.variant}</td>
         <td className="p-2 space-x-2">
           <button className="" onClick={() => onEdit(question)}>

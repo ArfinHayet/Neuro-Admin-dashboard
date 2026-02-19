@@ -14,6 +14,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { getProducts } from "../../../api/products";
 import { IoReorderThreeOutline } from "react-icons/io5";
 
+import { useMemo } from "react";
+import { HiOutlineSearch } from "react-icons/hi";
+import { MdOutlineFilterList } from "react-icons/md";
+
+
 const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -161,126 +166,7 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
       </div>
     )}
   </>
-    // <section className=" border border-slate-200 rounded-xl p-4  relative min-h-[120px] ">
-    //   <div className="flex justify-between items-stretch h-full w-full">
-    //     <div className="flex gap-4 items-center ">
-    //       <IoReorderThreeOutline size={24} />
-    //       <div className="flex flex-col gap-1.5 justify-start items-start ">
-    //         <p className="text-xs text-center px-2 py-1  rounded-full bg-slate-100">
-    //           {category?.category}
-    //         </p>
-    //         <h2 className=" font-semibold   text-sm">{category?.name}</h2>
-    //         <p className="text-xs text-secondary w-[62vw]">
-    //           {/* {category?.description} */}
-    //           {(category?.description || "").slice(0, 160)}
-    //           {(category?.description || "").length > 160 ? "..." : ""}
-    //         </p>
-
-    //         <div className="flex gap-2">
-    //           <div className="py-1 px-2 rounded-full bg-amber-100">
-    //             <p className="text-xs  capitalize text-amber-700">
-    //               {category?.type}
-    //             </p>
-    //           </div>
-    //           <div className="bg-emerald-100/60 px-2 py-1 rounded-full">
-    //             <p className="text-xs text-emerald-800 font-medium">
-    //               £ {priceMap[category.priceId] ?? "null"}
-    //             </p>
-    //           </div>
-    //           <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-full  ">
-    //             <FaRegClock size={12} />
-    //             <p className="text-xs text-center"> {category.totalTime}</p>
-    //           </span>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     {/* Menu wrapper (button + dropdown) */}
-    //     <div className="flex flex-col justify-between items-end self-stretch">
-    //       <div className="flex gap-2  items-center relative ">
-    //         <div ref={menuRef} className=" top-4 right-4">
-    //           <button onClick={handleMenuClick} title="Options">
-    //             <PiDotsThreeVerticalBold size={22} />
-    //           </button>
-    //         </div>
-    //         {/* Options box */}
-    //         {isMenuOpen && (
-    //           <div className="absolute top-2 right-0 bg-white border border-gray-200 rounded-md z-50 w-28 shadow-md">
-    //             <button
-    //               // onClick={handleEditClick}
-    //               onMouseDown={handleEditClick}
-    //               className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
-    //             >
-    //               <FiEdit3 size={14} />
-    //               Edit
-    //             </button>
-    //             <button
-    //               onClick={handleDeleteClick}
-    //               className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"
-    //             >
-    //               <FiTrash2 size={14} />
-    //               Delete
-    //             </button>
-    //           </div>
-    //         )}
-    //       </div>
-
-    //       <div>
-    //         <button
-    //           onClick={() => onSelect(category)}
-    //           className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit self-end"
-    //         >
-    //           Show Details
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   {showDeleteModal && (
-    //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
-    //       <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
-    //         <p className="text-sm mb-4">
-    //           Are you sure you want to delete "{category.name}"?
-    //         </p>
-    //         <div className="flex justify-center gap-4">
-    //           <button
-    //             onClick={handleConfirmDelete}
-    //             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
-    //           >
-    //             Yes, Delete
-    //           </button>
-    //           <button
-    //             onClick={() => setShowDeleteModal(false)}
-    //             className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-sm"
-    //           >
-    //             Cancel
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )}
-    //   {/* {showDeleteModal && (
-    //     <div className="fixed inset-0  flex items-start justify-center bg-black bg-opacity-20 z-50">
-    //       <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
-    //         <p className="text-sm mb-4">
-    //           Are you sure you want to delete "{category.category}"?
-    //         </p>
-    //         <div className="flex justify-center gap-4">
-    //           <button
-    //             onClick={handleConfirmDelete}
-    //             className="bg-primary text-white px-4 py-1 rounded hover:bg-opacity-80 text-sm"
-    //           >
-    //             Yes
-    //           </button>
-    //           <button
-    //             onClick={() => setShowDeleteModal(false)}
-    //             className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400 text-sm"
-    //           >
-    //             No
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )} */}
-    // </section>
+  
   );
 };
 
@@ -293,21 +179,20 @@ const OnDemandAssessment = () => {
   const navigate = useNavigate();
   const [priceMap, setPriceMap] = useState({});
 
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCat, setSelectedCat] = useState("All");
+
   const fetchPrices = async () => {
     try {
       const data = await getProducts();
-      console.log("price", data);
-
       if (data) {
         const map = {};
-
         data.forEach((product) => {
           (product.prices || []).forEach((p) => {
             map[p.priceId] = p.unit_amount ? p.unit_amount / 100 : 0;
           });
         });
-
-        console.log("price format", map);
         setPriceMap(map);
       }
     } catch (err) {
@@ -323,9 +208,7 @@ const OnDemandAssessment = () => {
       const filtered = Array.isArray(data)
         ? data.filter((a) => a.type !== "free")
         : [];
-      // console.log("Assessments data:", filtered);
       setAssessments(Array.isArray(filtered) ? filtered : []);
-      console.log("assessments",filtered);
     } catch (err) {
       setError("Failed to load assessments");
       console.error(err);
@@ -339,10 +222,25 @@ const OnDemandAssessment = () => {
     fetchAssessments();
   }, []);
 
-  const handleCardClick = (category) => {
-    navigate(`/ondemandassessment/${category.id}`, {
-      state: { priceMap },
+  // Dynamic type list from data
+  const types = useMemo(() => {
+    const unique = [...new Set(assessments.map((a) => a.category).filter(Boolean))];
+    return ["All", ...unique];
+  }, [assessments]);
+
+  // Filtered list
+  const filteredAssessments = useMemo(() => {
+    return assessments.filter((a) => {
+      const matchesSearch =
+        !searchQuery ||
+        a.name?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCat = selectedCat === "All" || a.category === selectedCat;
+      return matchesSearch && matchesCat;
     });
+  }, [assessments, searchQuery, selectedCat]);
+
+  const handleCardClick = (category) => {
+    navigate(`/ondemandassessment/${category.id}`, { state: { priceMap } });
   };
 
   const handleEditingAssessments = (category) => {
@@ -350,58 +248,24 @@ const OnDemandAssessment = () => {
     setIsModalOpen(true);
   };
 
-  // const handleSaveCategory = async (assessment) => {
-  //   try {
-  //     if (editingAssessments) {
-  //       const updated = await updateAssessment(editingAssessments.id, assessment);
-
-  //     setAssessments((prev) =>
-  //   prev.map((a) => (a.id === editingAssessments.id ? updated : a))
-  // );
-
-  //       toast.success("Assessment updated");
-  //     }
-
-  //     setIsModalOpen(false);
-  //     setEditingAssessments(null);
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Update failed");
-  //   }
-  // };
-
   const handleSaveCategory = (assessment) => {
     if (editingAssessments) {
-
       setAssessments((prev) =>
-        prev.map((a) => (a.id === editingAssessments.id ? assessment : a))
+        prev.map((a) => (a.id === editingAssessments.id ? assessment : a)),
       );
       toast.success("Assessment updated");
     } else {
-
       setAssessments((prev) => [...prev, assessment]);
       toast.success("Assessment added");
     }
-
     setIsModalOpen(false);
     setEditingAssessments(null);
   };
 
-  if (isLoading) {
-    return (
-      <section className="h-[90vh] flex flex-col justify-center items-center">
-        <div className="custom-loader"></div>
-        <p className="mt-4 text-sm text-gray-500">Loading assessments...</p>
-      </section>
-    );
-  }
-
   const handleDeleteAssessments = async (category) => {
     try {
       await deleteAssessment(category.id);
-
       setAssessments((prev) => prev.filter((a) => a.id !== category.id));
-
       toast.success("Assessment deleted successfully", {
         position: "top-right",
         duration: 3000,
@@ -415,15 +279,28 @@ const OnDemandAssessment = () => {
     }
   };
 
-
-  if (error) {
-    return <p>{error}</p>;
+  if (isLoading) {
+    return (
+      <section className="h-[90vh] flex flex-col justify-center items-center">
+        <div className="custom-loader"></div>
+        <p className="mt-4 text-sm text-gray-500">Loading assessments...</p>
+      </section>
+    );
   }
 
+  if (error) return <p>{error}</p>;
+
   return (
-    <section className=" ">
+    <section>
+      {/* Header */}
       <div className="flex justify-between items-start">
-        <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
+        <div>
+          <h1 className="text-xl font-semibold">On-Demand Assessments</h1>
+          <p className="text-sm text-secondary mt-0.5">
+            View, Edit and manage questions for the Initial Assessment to ensure
+            accuracy and relevance.
+          </p>
+        </div>
         <button
           className="bg-[#114654] text-white px-4 py-1.5 rounded-full text-sm"
           onClick={() => {
@@ -434,22 +311,67 @@ const OnDemandAssessment = () => {
           Add New Category
         </button>
       </div>
-      <p className="text-sm text-secondary mb-6">
-        View, Edit and manage questions for the Initial Assessment to ensure
-        accuracy and relevance.
-      </p>
 
-      <div className="flex flex-col gap-4">
-        {assessments.map((category) => (
-          <AssessmentCard
-            key={category.id}
-            category={category}
-            onEdit={handleEditingAssessments}
-            onSelect={handleCardClick}
-            onDelete={handleDeleteAssessments}
-            priceMap={priceMap}
+      {/* Search + Filter Bar */}
+      <div className="flex  items-end justify-end mr-52 gap-2 -mt-12 mb-8">
+        {/* Search by name */}
+        <div className="relative w-40">
+          <HiOutlineSearch
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
           />
-        ))}
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition"
+          />
+        </div>
+
+        {/* category filter */}
+        <div className="relative">
+          <MdOutlineFilterList
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
+          <select
+            value={selectedCat}
+            onChange={(e) => setSelectedCat(e.target.value)}
+            className="pl-7 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition appearance-none cursor-pointer capitalize"
+          >
+            {types.map((category) => (
+              <option key={category} value={category} className="capitalize">
+                {category === "All"
+                  ? "All Categories"
+                  : category.charAt(0).toUpperCase() + category.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+       
+      </div>
+
+      {/* Cards */}
+      <div className="flex flex-col gap-4">
+        {filteredAssessments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <p className="text-sm font-medium">No assessments found.</p>
+            <p className="text-xs mt-1">Try adjusting your search or filter.</p>
+          </div>
+        ) : (
+          filteredAssessments.map((category) => (
+            <AssessmentCard
+              key={category.id}
+              category={category}
+              onEdit={handleEditingAssessments}
+              onSelect={handleCardClick}
+              onDelete={handleDeleteAssessments}
+              priceMap={priceMap}
+            />
+          ))
+        )}
       </div>
 
       <CategoryModal

@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import DataTable from "../../Components/Common/DataTable";
+import Pagination from "../../Components/Common/Pagination";
 import { IoEye } from "react-icons/io5";
+import { HiOutlineSearch } from "react-icons/hi";
+import { MdOutlineFilterList } from "react-icons/md";
 import { getUsers } from "../../api/user";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const PatientPage = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRole, setSelectedRole] = useState("All");
   const limit = 30;
 
   useEffect(() => {
@@ -21,11 +25,9 @@ const PatientPage = () => {
     try {
       setLoading(true);
       const data = await getUsers(page, limit);
-      console.log("users", data);
       const filteredUsers = (data.payload || []).filter(
-        (user) => user.role !== "admin" && user.role !== "clinician"
+        (user) => user.role !== "admin" && user.role !== "clinician",
       );
-
       setUsers(filteredUsers);
     } catch (err) {
       console.error("Error loading users:", err);
@@ -33,6 +35,25 @@ const PatientPage = () => {
       setLoading(false);
     }
   };
+
+  // Derive unique roles from fetched users dynamically
+  const roles = useMemo(() => {
+    const unique = [...new Set(users.map((u) => u.role).filter(Boolean))];
+    return ["All", ...unique];
+  }, [users]);
+
+  // Client-side search + filter
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        !q ||
+        user.name?.toLowerCase().includes(q) ||
+        user.email?.toLowerCase().includes(q);
+      const matchesRole = selectedRole === "All" || user.role === selectedRole;
+      return matchesSearch && matchesRole;
+    });
+  }, [users, searchQuery, selectedRole]);
 
   const columns = [
     {
@@ -55,44 +76,48 @@ const PatientPage = () => {
       accessorKey: "country",
       cell: (info) => info.row.original.country || "N/A",
     },
-
+    {
+      header: "Joined",
+      accessorKey: "createdAt",
+      cell: (info) => {
+        const date = info.row.original.createdAt;
+        if (!date) return "N/A";
+        return new Date(date).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+        });
+      },
+    },
     {
       header: "Role",
       accessorKey: "role",
-      cell: (info) => info.row.original.role || "N/A",
+      cell: (info) => {
+        const role = info.row.original.role;
+        if (!role) return "N/A";
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 capitalize">
+            {role}
+          </span>
+        );
+      },
     },
-    // {
-    //   header: "Status",
-    //   accessorKey: "isBlocked",
-    //   cell: ({ getValue }) =>
-    //     getValue() ? (
-    //       <span className="px-2 text-xs  inline-flex leading-5 rounded-full bg-red-100 text-red-800">
-    //         Blocked
-    //       </span>
-    //     ) : (
-    //       <span className="px-2 text-xs  inline-flex leading-5 rounded-full bg-green-100 text-green-800">
-    //         Active
-    //       </span>
-    //     ),
-    // },
     {
       header: "Actions",
       cell: ({ row }) => (
-        <div className="text-left">
-          <button
-            onClick={() => navigate(`/patients/${row.original.id}`)}
-            className="text-primary  text-lg ml-3"
-            aria-label={`View profile of ${row.original.name}`}
-          >
-            <IoEye />
-          </button>
-        </div>
+        <button
+          onClick={() => navigate(`/patients/${row.original.id}`)}
+          className="text-primary ml-4 hover:opacity-70 transition-opacity"
+          aria-label={`View profile of ${row.original.name}`}
+        >
+          <IoEye size={16} />
+        </button>
       ),
     },
   ];
 
   const table = useReactTable({
-    data: users,
+    data: filteredUsers,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getRowId: (row) => row.id.toString(),
@@ -102,53 +127,87 @@ const PatientPage = () => {
     return (
       <section className="h-[90vh] flex flex-col justify-center items-center">
         <div className="custom-loader"></div>
-        <p className="mt-4 text-sm text-gray-500">
-          Loading users ...
-        </p>
+        <p className="mt-4 text-sm text-gray-500">Loading users ...</p>
       </section>
     );
   }
 
   return (
-    <section className=" ">
-      <h1 className="font-semibold text-xl ">Users List</h1>
-      <p className="text-secondary text-sm mb-4">
-        Manage and view all registered platform users.
-      </p>
-      {loading ? (
-        <div className="flex justify-center items-center h-40 text-gray-500">
-          Loading users...
+    <section>
+      {/* Page Header */}
+      <div className="mb-5">
+        <h1 className="font-semibold text-xl text-gray-800">Users</h1>
+        <p className="text-gray-400 text-sm mt-0.5">
+          Manage and view all registered platform users.
+        </p>
+      </div>
+
+      {/* Search + Filter Bar */}
+      <div className="flex  items-end justify-end  gap-2 -mt-12 mb-3 ">
+        {/* Search */}
+        <div className="relative  w-52">
+          <HiOutlineSearch
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+            className="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition"
+          />
         </div>
-      ) : (
-        <>
-          {" "}
-          <div className="relative w-[78vw] h-[76vh] bg-white overflow-x-auto">
-            <DataTable table={table} />
-          </div>
-          {/* pagination */}
-          <div className="absolute flex justify-end items-center gap-1 right-10 bottom-6">
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}
-              className="py-1 rounded bg-gray-200 disabled:opacity-60"
-            >
-              <IoIosArrowBack size={18} />
-            </button>
 
-            <span className="text-sm p-2">Page {page}</span>
+        {/* Role Filter */}
+        <div className="relative">
+          <MdOutlineFilterList
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+            size={15}
+          />
+          <select
+            value={selectedRole}
+            onChange={(e) => {
+              setSelectedRole(e.target.value);
+              setPage(1);
+            }}
+            className="pl-7 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition appearance-none cursor-pointer"
+          >
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role === "All"
+                  ? "All Roles"
+                  : role.charAt(0).toUpperCase() + role.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
 
-            <button
-              onClick={() =>
-                setPage((prev) => (users.length < limit ? prev : prev + 1))
-              }
-              disabled={users.length < limit}
-              className="py-1 rounded bg-gray-200 disabled:opacity-60"
-            >
-              <IoIosArrowForward size={18} />
-            </button>
-          </div>
-        </>
-      )}
+        {/* Results count */}
+        {/* <span className="text-xs text-gray-400 ml-auto">
+          {filteredUsers.length} result{filteredUsers.length !== 1 ? "s" : ""}
+        </span> */}
+      </div>
+
+      {/* Table Card */}
+      <div className="bg-white border border-gray-200 rounded-md overflow-hidden w-[79vw]">
+        <div className="overflow-x-auto h-[72vh] overflow-y-auto">
+          <DataTable table={table} emptyMessage="No users found." />
+        </div>
+  </div>
+        {/* Pagination, at the bottom */}
+        <Pagination
+          page={page}
+          onPrev={() => setPage((prev) => Math.max(prev - 1, 1))}
+          onNext={() =>
+            setPage((prev) => (users.length < limit ? prev : prev + 1))
+          }
+          hasNextPage={users.length >= limit}
+        />
+    
     </section>
   );
 };

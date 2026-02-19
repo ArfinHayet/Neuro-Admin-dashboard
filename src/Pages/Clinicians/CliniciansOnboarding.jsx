@@ -7,7 +7,7 @@ const CliniciansOnboarding = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    subject: "Invitation to join NeuroCheck Pro",
     joinLink: "https://clinician.neurocheckpro.com/signup",
     // joinLink: "https://neurocheck-clinician.vercel.app/signup",
   });
