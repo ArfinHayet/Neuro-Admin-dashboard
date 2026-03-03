@@ -7,12 +7,12 @@ import { IoClose } from "react-icons/io5";
 const ManuallyClinicianAssign = ({
   show,
   onClose,
-  submissionId,
+  submissionIds,
   onSuccess,
 }) => {
   const [clinicians, setClinicians] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [assigning, setAssigning] = useState(false);
+  const [assigningId, setAssigningId] = useState(null); // ✅ boolean এর বদলে ID track করবে
 
   useEffect(() => {
     if (show) {
@@ -27,8 +27,8 @@ const ManuallyClinicianAssign = ({
       const allUsers = res?.payload || [];
       const clinicianList = allUsers.filter(
         (user) => user.role === "clinician",
-        );
-        console.log(clinicianList)
+      );
+      console.log(clinicianList);
       setClinicians(clinicianList);
     } catch (err) {
       console.error("Failed to fetch clinicians:", err);
@@ -40,16 +40,20 @@ const ManuallyClinicianAssign = ({
 
   const handleAssign = async (clinicianId) => {
     try {
-      setAssigning(true);
-      await assignClinicianToSubmission(submissionId, clinicianId);
+      setAssigningId(clinicianId);
+
+      await Promise.all(
+        submissionIds.map((id) => assignClinicianToSubmission(id, clinicianId)),
+      );
+
       toast.success("Clinician assigned successfully!");
-      onSuccess();
+      onSuccess(clinicianId);
       onClose();
     } catch (err) {
       console.error("Failed to assign:", err);
       toast.error("Failed to assign clinician");
     } finally {
-      setAssigning(false);
+      setAssigningId(null);
     }
   };
 
@@ -92,14 +96,13 @@ const ManuallyClinicianAssign = ({
                       <p className="text-sm text-gray-600">
                         {clinician.hcpcTitle}
                       </p>
-                      
                     </div>
                     <button
                       onClick={() => handleAssign(clinician.id)}
-                      disabled={assigning}
-                      className="px-4 py-1 bg-[#114654]/80 hover:bg-primary text-white rounded-md text-sm  disabled:bg-gray-400"
+                      disabled={assigningId === clinician.id}
+                      className="px-4 py-1 bg-[#114654]/80 hover:bg-primary text-white rounded-md text-sm disabled:bg-gray-400"
                     >
-                      {assigning ? "Assigning..." : "Assign"}
+                      {assigningId === clinician.id ? "Assigning..." : "Assign"}
                     </button>
                   </div>
                 </div>
@@ -113,5 +116,3 @@ const ManuallyClinicianAssign = ({
 };
 
 export default ManuallyClinicianAssign;
-
-

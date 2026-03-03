@@ -19,24 +19,57 @@ const SubmittedInitialList = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
 
-  const fetchSubmissions = async () => {
-    try {
-      setLoading(true);
-      const data = await getSubmissionsPage(page, limit); // ✅ paged API
-      const submissionsData = data?.payload || [];
+const groupByPatientAndDate = (submissions) => {
+  const map = {};
 
-      const initialSubmissions = submissionsData.filter(
-        (submission) => submission.assessment?.type === "free"
-      );
+  submissions.forEach((sub) => {
+    const dateKey = sub.createdAt.split("T")[0]; //  YYYY-MM-DD from payload
+    const key = `${sub.patientId}_${dateKey}`;
 
-      setSubmissions(initialSubmissions);
-    } catch (err) {
-      console.error("Failed to fetch submissions:", err);
-      setSubmissions([]);
-    } finally {
-      setLoading(false);
+    if (!map[key]) {
+      map[key] = {
+        patientId: sub.patientId,
+        patient: sub.patient,
+        user: sub.user,
+        submissionDate: dateKey, // store ISO style internally
+        grouped: [sub],
+      };
+    } else {
+      map[key].grouped.push(sub);
     }
-  };
+  });
+
+  return Object.values(map);
+};
+  
+ const fetchSubmissions = async () => {
+   try {
+     setLoading(true);
+
+     const data = await getAllSubmissions();
+     const submissionsData = data?.payload || [];
+
+     const initialSubmissions = submissionsData.filter(
+       (sub) => sub.assessment?.type === "free",
+     );
+
+     const grouped = groupByPatientAndDate(initialSubmissions);
+
+     // Latest first
+     grouped.sort(
+       (a, b) =>
+         new Date(b.grouped[b.grouped.length - 1].createdAt) -
+         new Date(a.grouped[a.grouped.length - 1].createdAt),
+     );
+
+     setSubmissions(grouped);
+   } catch (err) {
+     console.error(err);
+     setSubmissions([]);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   useEffect(() => {
     fetchSubmissions();
@@ -65,65 +98,63 @@ const SubmittedInitialList = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "user.name",
         header: "User Name",
-        cell: (info) => info.row.original.user?.name || "Unknown User",
+        accessorFn: (row) => row.user?.name || "Unknown User",
       },
       {
-        accessorKey: "patient.name",
         header: "Child Name",
-        cell: (info) => info.row.original.patient?.name || "Unknown Child",
+        accessorFn: (row) => row.patient?.name || "Unknown Child",
       },
+      
       {
-        accessorKey: "createdAt",
-        header: "Date Taken",
-        cell: (info) =>
-          new Date(info.row.original.createdAt).toLocaleDateString(),
-      },
+  header: "Date Taken",
+  accessorFn: (row) => {
+    const d = new Date(row.submissionDate);
+    return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`;
+  },
+},
       {
-        accessorKey: "score",
         header: "Score",
-        cell: (info) =>
-          info.row.original.score !== null ? info.row.original.score : "N/A",
+        accessorFn: (row) => {
+          if (!row.grouped?.length) return "N/A";
+
+          // latest submission (based on createdAt)
+          const latest = [...row.grouped].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          )[0];
+
+          return latest.score ?? "N/A";
+        },
       },
       {
         header: "Actions",
         id: "actions",
         cell: ({ row }) => (
-          <div className="flex gap-0 items-center justify-start  -ml-1">
-            <button
-              onClick={() => onView(row.original)}
-              className="px-2 p-1 text-gray-500 "
-              title="View Details"
-            >
-              <IoEye size={18} />
-            </button>
-
-            <button
-              onClick={() => {
-                setSelectedSubmissionId(row.original.id);
-                setShowModal(true);
-              }}
-              className="px-2 p-1   text-primary/70"
-              title="Delete Submission"
-            >
-              <MdDeleteForever size={19} />
-            </button>
-          </div>
+          <button
+            onClick={() =>
+              navigate(
+                `/submitted-assessments/initial/${row.original.patientId}`,
+                {
+                  state: { submissions: row.original.grouped },
+                },
+              )
+            }
+            className="px-2 p-1 text-gray-500"
+          >
+            <IoEye size={18} />
+          </button>
         ),
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => `${row.patientId}_${row.submissionDate}`,
   });
-
-
 
   return (
     <section className=" ">
@@ -132,17 +163,15 @@ const SubmittedInitialList = () => {
         Access and Review Detailed Records of Every Submitted Assessment.
       </p>
       {loading ? (
-      
-      <section className="h-[90vh] flex flex-col justify-center items-center">
-        <div className="custom-loader"></div>
-        <p className="mt-4 text-sm text-gray-500">
-          Loading Assessment Submissions List...
-        </p>
-      </section>
-    
+        <section className="h-[90vh] flex flex-col justify-center items-center">
+          <div className="custom-loader"></div>
+          <p className="mt-4 text-sm text-gray-500">
+            Loading Assessment Submissions List...
+          </p>
+        </section>
       ) : (
         <>
-          <div className="relative w-[78vw] h-[73vh] bg-white  overflow-x-auto">
+          <div className="relative w-[79vw] h-[73vh] bg-white  overflow-x-auto">
             <DataTable table={table} />
           </div>
 
@@ -161,7 +190,7 @@ const SubmittedInitialList = () => {
             <button
               onClick={() =>
                 setPage((prev) =>
-                  submissions.length < limit ? prev : prev + 1
+                  submissions.length < limit ? prev : prev + 1,
                 )
               }
               disabled={submissions.length < limit}

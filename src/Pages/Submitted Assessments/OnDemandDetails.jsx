@@ -54,6 +54,7 @@ const OnDemandDetails = () => {
   const [groupedAnswers, setGroupedAnswers] = useState({});
   const [selectedType, setSelectedType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingId, setLoadingId] = useState(null);
   const [allAnswers, setAllAnswers] = useState({});
 
   const [appointments, setAppointments] = useState([]);
@@ -87,7 +88,30 @@ const OnDemandDetails = () => {
     fetchAnswers();
   }, [passedSubmissions]);
 
-  const handleAssignSuccess = async () => {
+  // const handleAssignSuccess = async () => {
+  //   const res = await getAnswersByPatientAndAssessment(
+  //     selectedSubmission.patient.id,
+  //     selectedSubmission.assessmentId,
+  //     { limit: 100 },
+  //   );
+
+  //   const ans = res?.payload || [];
+
+  //   const grouped = groupAnswersByType(ans);
+  //   setGroupedAnswers(grouped);
+
+  //   if (selectedSubmission.clinicianId) {
+  //     const clinicianRes = await getUserById(selectedSubmission.clinicianId);
+  //     setClinicianDetails(clinicianRes?.payload || null);
+  //   }
+  // };
+
+  const handleAssignSuccess = async (newClinicianId) => {
+    setSelectedSubmission((prev) => ({
+      ...prev,
+      clinicianId: newClinicianId,
+    }));
+
     const res = await getAnswersByPatientAndAssessment(
       selectedSubmission.patient.id,
       selectedSubmission.assessmentId,
@@ -95,13 +119,19 @@ const OnDemandDetails = () => {
     );
 
     const ans = res?.payload || [];
-
     const grouped = groupAnswersByType(ans);
     setGroupedAnswers(grouped);
 
-    if (selectedSubmission.clinicianId) {
-      const clinicianRes = await getUserById(selectedSubmission.clinicianId);
-      setClinicianDetails(clinicianRes?.payload || null);
+    if (newClinicianId) {
+      try {
+        const clinicianRes = await getUserById(newClinicianId);
+        setClinicianDetails(clinicianRes?.payload || null);
+      } catch (err) {
+        console.error("Failed to fetch new clinician details:", err);
+        setClinicianDetails(null);
+      }
+    } else {
+      setClinicianDetails(null);
     }
   };
 
@@ -331,7 +361,7 @@ const OnDemandDetails = () => {
       <ManuallyClinicianAssign
         show={showClinicianModal}
         onClose={() => setShowClinicianModal(false)}
-        submissionId={selectedSubmission.id}
+        submissionIds={passedSubmissions.map((s) => s.id)}
         onSuccess={handleAssignSuccess}
       />
 
