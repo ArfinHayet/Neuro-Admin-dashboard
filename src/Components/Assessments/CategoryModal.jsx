@@ -12,6 +12,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, defaultCategory }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [prices, setPrices] = useState([]);
+  const [assignedTo, setAssignedTo] = useState("");
 
   // Fetch all prices from backend
  useEffect(() => {
@@ -52,6 +53,8 @@ console.log(data)
       setTotalTime(defaultCategory.totalTime || "");
       setType(defaultCategory.type || "");
       setPriceId(defaultCategory.priceId || "");
+      setAssignedTo(defaultCategory.assignedTo || "");
+
     } else {
       setName("");
       setCategory("");
@@ -59,6 +62,7 @@ console.log(data)
       setTotalTime("");
       setType("");
       setPriceId("");
+      setAssignedTo("");
     }
     setError(null);
   }, [defaultCategory, isOpen]);
@@ -86,6 +90,7 @@ console.log(data)
         totalTime,
         category: category.trim(),
         priceId,
+        assignedTo,
       };
 
       let response;
@@ -194,6 +199,19 @@ if (onSave)
               <option value="">Select Type</option>
               <option value="free">Free</option>
               <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-xs">Assigned To</label>
+            <select
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-xs"
+            >
+              <option value="">Select Role</option>
+              <option value="Clinician">Clinician</option>
+              <option value="Nurse">Nurse</option>
             </select>
           </div>
 

@@ -16,17 +16,6 @@ const createAnswer = async (obj) => {
   return data;
 };
 
-const getAllAnswers = async () => {
-  const response = await fetch(`${domain}/answers`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token()}`,
-    },
-  });
-
-  const data = await response.json();
-  return data;
-};
 
 const getAnswersByAssessmentId = async (assessmentId) => {
   let page = 1;
@@ -58,25 +47,41 @@ const getAnswersByAssessmentId = async (assessmentId) => {
 
 };
 
-// ✅ Now supports both patientId and assessmentId together
-const getAnswersByPatientAndAssessment = async (patientId, assessmentId) => {
-  const response = await fetch(
-    `${domain}/answers?patientId=${patientId}&assessmentId=${assessmentId}`,
-    {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${token()}`,
-      },
-    }
-  );
 
-  const data = await response.json();
-  return data;
+const getAllanswers = async ({ patientId, assessmentId }) => {
+  let allData = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const response = await fetch(
+      `${domain}/answers?patientId=${Number(patientId)}&assessmentId=${assessmentId}&limit=100&page=${page}`,
+      {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+    const payload = data?.payload || [];
+
+    allData = [...allData, ...payload];
+
+    if (payload.length < 100) {
+      hasMore = false;
+    } else {
+      page++;
+    }
+  }
+
+  return { payload: allData };
 };
+
 
 export {
   createAnswer,
-  getAllAnswers,
+  getAllanswers,
   getAnswersByAssessmentId,
-  getAnswersByPatientAndAssessment,
 };

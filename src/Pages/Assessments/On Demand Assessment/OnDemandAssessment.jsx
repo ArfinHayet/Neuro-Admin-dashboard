@@ -65,108 +65,113 @@ const AssessmentCard = ({ category, onEdit, onDelete, onSelect, priceMap }) => {
 
   // bg-[#ecfafe]
   return (
-  <>
-    <section className="border border-slate-200 rounded-xl p-4 relative min-h-[120px]">
-      <div className="flex justify-between items-stretch h-full w-full">
-        <div className="flex gap-4 items-center">
-          <IoReorderThreeOutline size={24} />
-          <div className="flex flex-col gap-1.5 justify-start items-start">
-            <p className="text-xs text-center px-2 py-1 rounded-full bg-slate-100">
-              {category?.category} 
-            </p>
+    <>
+      <section className="border border-slate-200 rounded-xl p-4 relative min-h-[120px]">
+        <div className="flex justify-between items-stretch h-full w-full">
+          <div className="flex gap-4 items-center">
+            <IoReorderThreeOutline size={24} />
+            <div className="flex flex-col gap-1.5 justify-start items-start">
+              <div className="flex gap-4">
+               <p className="text-xs text-center px-2 py-1 rounded-full bg-slate-200">
+                {category?.category}
+              </p>
+              <p className="text-xs text-center px-2 py-1 rounded-full bg-sky-700 text-white">
+                {category?.assignedTo}
+                </p>
+                </div>
               <h2 className="font-semibold text-sm">
                 {/* #{category?.id} */}
-                {category?.name}</h2>
-            <p className="text-xs text-secondary w-[62vw]">
-              {(category?.description || "").slice(0, 160)}
-              {(category?.description || "").length > 160 ? "..." : ""}
-            </p>
+                {category?.name}
+              </h2>
+              <p className="text-xs text-secondary w-[62vw]">
+                {(category?.description || "").slice(0, 160)}
+                {(category?.description || "").length > 160 ? "..." : ""}
+              </p>
 
-            <div className="flex gap-2">
-              <div className="py-1 px-2 rounded-full bg-amber-100">
-                <p className="text-xs capitalize text-amber-700">
-                  {category?.type}
-                </p>
+              <div className="flex gap-2">
+                <div className="py-1 px-2 rounded-full bg-amber-100">
+                  <p className="text-xs capitalize text-amber-700">
+                    {category?.type}
+                  </p>
+                </div>
+                <div className="bg-emerald-100/60 px-2 py-1 rounded-full">
+                  <p className="text-xs text-emerald-800 font-medium">
+                    £ {priceMap[category.priceId] ?? "null"}
+                  </p>
+                </div>
+                <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-full">
+                  <FaRegClock size={12} />
+                  <p className="text-xs text-center"> {category.totalTime}</p>
+                </span>
               </div>
-              <div className="bg-emerald-100/60 px-2 py-1 rounded-full">
-                <p className="text-xs text-emerald-800 font-medium">
-                  £ {priceMap[category.priceId] ?? "null"}
-                </p>
-              </div>
-              <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-full">
-                <FaRegClock size={12} />
-                <p className="text-xs text-center"> {category.totalTime}</p>
-              </span>
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-col justify-between items-end self-stretch -my-2">
-          <div className="flex gap-2 items-center relative">
-            <div ref={menuRef} className="top-4 right-4">
-              <button onClick={handleMenuClick} title="Options">
-                <PiDotsThreeVerticalBold size={22} />
+          <div className="flex flex-col justify-between items-end self-stretch -my-2">
+            <div className="flex gap-2 items-center relative">
+              <div ref={menuRef} className="top-4 right-4">
+                <button onClick={handleMenuClick} title="Options">
+                  <PiDotsThreeVerticalBold size={22} />
+                </button>
+              </div>
+
+              {isMenuOpen && (
+                <div className="absolute top-1 right-0 bg-white border border-gray-200 rounded-md z-50 w-28 shadow-md">
+                  <button
+                    onMouseDown={handleEditClick}
+                    className="w-full text-left px-4 py-1.5 text-sm hover:bg-gray-100 flex items-center gap-2"
+                  >
+                    <FiEdit3 size={14} />
+                    Edit
+                  </button>
+                  <button
+                    onMouseDown={handleDeleteClick}
+                    className="w-full text-left px-4 py-1.5 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"
+                  >
+                    <FiTrash2 size={14} />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <button
+                onClick={() => onSelect(category)}
+                className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit self-end"
+              >
+                Show Details
               </button>
             </div>
-
-            {isMenuOpen && (
-              <div className="absolute top-1 right-0 bg-white border border-gray-200 rounded-md z-50 w-28 shadow-md">
-                <button
-                  onMouseDown={handleEditClick}
-                  className="w-full text-left px-4 py-1.5 text-sm hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <FiEdit3 size={14} />
-                  Edit
-                </button>
-                <button
-                  onMouseDown={handleDeleteClick}
-                  className="w-full text-left px-4 py-1.5 text-sm hover:bg-gray-100 text-red-600 flex items-center gap-2"
-                >
-                  <FiTrash2 size={14} />
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <button
-              onClick={() => onSelect(category)}
-              className="bg-[#114654] text-white text-xs py-1.5 px-3 rounded-full w-fit self-end"
-            >
-              Show Details
-            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Modal moved OUTSIDE the section - this is the key fix */}
-    {showDeleteModal && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
-        <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
-          <p className="text-sm mb-4">
-            Are you sure you want to delete "{category.name}"?
-          </p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={handleConfirmDelete}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
-            >
-              Yes, Delete
-            </button>
-            <button
-              onClick={() => setShowDeleteModal(false)}
-              className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-sm"
-            >
-              Cancel
-            </button>
+      {/* Modal moved OUTSIDE the section - this is the key fix */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+            <p className="text-sm mb-4">
+              Are you sure you want to delete "{category.name}"?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleConfirmDelete}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 text-sm"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </>
-  
+      )}
+    </>
   );
 };
 
@@ -181,7 +186,8 @@ const OnDemandAssessment = () => {
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCat, setSelectedCat] = useState("All");
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
 
   const fetchPrices = async () => {
     try {
@@ -209,6 +215,7 @@ const OnDemandAssessment = () => {
         ? data.filter((a) => a.type !== "free")
         : [];
       setAssessments(Array.isArray(filtered) ? filtered : []);
+      // console.log("assessment", filtered);
     } catch (err) {
       setError("Failed to load assessments");
       console.error(err);
@@ -223,22 +230,26 @@ const OnDemandAssessment = () => {
   }, []);
 
   // Dynamic type list from data
-  const types = useMemo(() => {
-    const unique = [...new Set(assessments.map((a) => a.category).filter(Boolean))];
-    return ["All", ...unique];
+  const filterOptions = useMemo(() => {
+    const cats = [ ...new Set(assessments.map((a) => a.category).filter(Boolean)) ];
+    const roles = [ ...new Set(assessments.map((a) => a.assignedTo).filter(Boolean)) ];
+    return { cats, roles };
   }, [assessments]);
 
   // Filtered list
-  const filteredAssessments = useMemo(() => {
-    return assessments.filter((a) => {
-      const matchesSearch =
-        !searchQuery ||
-        a.name?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCat = selectedCat === "All" || a.category === selectedCat;
-      return matchesSearch && matchesCat;
-    });
-  }, [assessments, searchQuery, selectedCat]);
-
+ 
+const filteredAssessments = useMemo(() => {
+  return assessments.filter((a) => {
+    const matchesSearch =
+      !searchQuery || a.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter =
+      selectedFilter === "All" ||
+      a.category === selectedFilter ||
+      a.assignedTo === selectedFilter;
+    return matchesSearch && matchesFilter;
+  });
+}, [assessments, searchQuery, selectedFilter]);
+  
   const handleCardClick = (category) => {
     navigate(`/ondemandassessment/${category.id}`, { state: { priceMap } });
   };
@@ -308,7 +319,7 @@ const OnDemandAssessment = () => {
             setIsModalOpen(true);
           }}
         >
-          Add New Category
+          Add New Assessment
         </button>
       </div>
 
@@ -330,27 +341,34 @@ const OnDemandAssessment = () => {
         </div>
 
         {/* category filter */}
+       
         <div className="relative">
           <MdOutlineFilterList
             className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
             size={15}
           />
           <select
-            value={selectedCat}
-            onChange={(e) => setSelectedCat(e.target.value)}
-            className="pl-7 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition appearance-none cursor-pointer capitalize"
+            value={selectedFilter}
+            onChange={(e) => setSelectedFilter(e.target.value)}
+            className="pl-7 pr-3 py-2 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition appearance-none cursor-pointer"
           >
-            {types.map((category) => (
-              <option key={category} value={category} className="capitalize">
-                {category === "All"
-                  ? "All Categories"
-                  : category.charAt(0).toUpperCase() + category.slice(1)}
-              </option>
-            ))}
+            <option value="All">All</option>
+            <optgroup label="Category">
+              {filterOptions.cats.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Assigned To">
+              {filterOptions.roles.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </div>
-
-       
       </div>
 
       {/* Cards */}

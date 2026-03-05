@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { getAnswersByPatientAndAssessment } from "../../api/answers";
+import { getAllanswers } from "../../api/answers";
 import { getAllAppointments } from "../../api/appointments";
 import { getUserById } from "../../api/user";
-import { HiOutlineDotsVertical } from "react-icons/hi";
 import ManuallyClinicianAssign from "./ManuallyClinicianAssign";
 import { TiInputChecked } from "react-icons/ti";
 
-const groupAnswersByType = (submissions = []) => {
+const groupAnswersByType = (answersRaw = []) => {
   const grouped = {};
 
-  submissions.forEach((sub) => {
-    const typeName = (sub.questionType || "Unknown").trim();
+  answersRaw.forEach((item) => {
+    const typeName = (
+      item.question?.questionType?.name ||
+      item.question?.questionType ||
+      item.questionType ||
+      "Unknown"
+    ).trim();
 
     if (!grouped[typeName]) {
       grouped[typeName] = {
@@ -20,36 +24,27 @@ const groupAnswersByType = (submissions = []) => {
       };
     }
 
-    // Check if this submission has multiple questions (nested array)
-    if (Array.isArray(sub.questions) && sub.questions.length > 0) {
-      sub.questions.forEach((q) => {
-        grouped[typeName].answers.push({
-          question: q.questions || q.questionText || "No question",
-          answer: q.answer || "No answer",
-        });
-      });
-    } else {
-      // fallback: single question in top-level
-      grouped[typeName].answers.push({
-        question: sub.questions || sub.question?.questions || "No question",
-        answer: sub.answer || sub.question?.answer || "No answer",
-      });
-    }
+    grouped[typeName].answers.push({
+      question:
+        item.question?.questions ||
+        item.question?.questionText ||
+        "No question",
+      answer: item.answer || "No answer",
+      variant: item.question?.variant,
+      extraInfo: item.extraInfo,
+    });
   });
 
   return grouped;
 };
 
-
-
 const OnDemandDetails = () => {
   const { id } = useParams();
   const { state } = useLocation();
-  const passedSubmissions = state?.submissions || []; // note: array of submissions
+  const passedSubmissions = state?.submissions || [];
   const [selectedSubmission, setSelectedSubmission] = useState(
     passedSubmissions[0] || null,
   );
-  console.log("passesd submissions", passedSubmissions);
 
   const [groupedAnswers, setGroupedAnswers] = useState({});
   const [selectedType, setSelectedType] = useState(null);
@@ -62,22 +57,29 @@ const OnDemandDetails = () => {
   const [clinicianDetails, setClinicianDetails] = useState(null);
   const [deletemodal, setdeletemodal] = useState(false);
 
-  const [showMenu, setShowMenu] = useState(false);
-
   const [showClinicianModal, setShowClinicianModal] = useState(false);
 
   const fetchAnswers = async () => {
-    if (!passedSubmissions?.length) return;
+    if (!selectedSubmission) return;
+
+    const patientId =
+      selectedSubmission.patient?.id || selectedSubmission.patientId;
+    const assessmentId = selectedSubmission.assessmentId;
+
+    if (!patientId || !assessmentId) return;
 
     try {
       setIsLoading(true);
 
-      const grouped = groupAnswersByType(passedSubmissions);
+      // ✅ getAllanswers API দিয়ে fetch করছি
+      const res = await getAllanswers({ patientId, assessmentId });
+      const answersRaw = res?.payload || [];
 
+      const grouped = groupAnswersByType(answersRaw);
       setGroupedAnswers(grouped);
       setSelectedType(Object.keys(grouped)[0] || null);
     } catch (err) {
-      console.error("Error grouping answers:", err);
+      console.error("Error fetching answers:", err);
       setGroupedAnswers({});
     } finally {
       setIsLoading(false);
@@ -86,25 +88,7 @@ const OnDemandDetails = () => {
 
   useEffect(() => {
     fetchAnswers();
-  }, [passedSubmissions]);
-
-  // const handleAssignSuccess = async () => {
-  //   const res = await getAnswersByPatientAndAssessment(
-  //     selectedSubmission.patient.id,
-  //     selectedSubmission.assessmentId,
-  //     { limit: 100 },
-  //   );
-
-  //   const ans = res?.payload || [];
-
-  //   const grouped = groupAnswersByType(ans);
-  //   setGroupedAnswers(grouped);
-
-  //   if (selectedSubmission.clinicianId) {
-  //     const clinicianRes = await getUserById(selectedSubmission.clinicianId);
-  //     setClinicianDetails(clinicianRes?.payload || null);
-  //   }
-  // };
+  }, [selectedSubmission]);
 
   const handleAssignSuccess = async (newClinicianId) => {
     setSelectedSubmission((prev) => ({
@@ -112,15 +96,8 @@ const OnDemandDetails = () => {
       clinicianId: newClinicianId,
     }));
 
-    const res = await getAnswersByPatientAndAssessment(
-      selectedSubmission.patient.id,
-      selectedSubmission.assessmentId,
-      { limit: 100 },
-    );
-
-    const ans = res?.payload || [];
-    const grouped = groupAnswersByType(ans);
-    setGroupedAnswers(grouped);
+    // re-fetch answers after reassign
+    await fetchAnswers();
 
     if (newClinicianId) {
       try {
@@ -171,7 +148,6 @@ const OnDemandDetails = () => {
 
       try {
         const res = await getUserById(selectedSubmission.clinicianId);
-        console.log(res);
         setClinicianDetails(res?.payload || null);
       } catch (err) {
         console.error("Error fetching clinician details:", err);
@@ -195,16 +171,13 @@ const OnDemandDetails = () => {
 
   if (!selectedSubmission) return <p>Submission not found.</p>;
 
-  const questionTypes = Object.keys(groupedAnswers);
-
   return (
     <section className="space-y-3 pb-14">
-      <div>
-        <h1 className="text-xl font-semibold mb-2 ">
+      <div className="relative">
+        <h1 className="text-xl font-semibold mb-2">
           {selectedSubmission.assessment?.category || "Assessment"} Submission
           Details
         </h1>
-        {/* Basic info */}
         <div className="text-sm space-y-1 pb-2">
           <p>
             <span className="font-semibold">User Name </span>
@@ -218,67 +191,107 @@ const OnDemandDetails = () => {
             <span className="font-semibold">Clinician </span>
             {selectedSubmission.clinicianId ? "Assigned" : "Not assigned"}
           </p>
-
           <p>
             <span className="font-semibold">Status </span>
             {selectedSubmission.status}
           </p>
         </div>
+        <button
+          onClick={() => setdeletemodal(true)}
+          className="absolute top-6 right-4 px-3 py-2 text-xs text-red-600  bg-red-200/80 rounded-full hover:bg-red-200"
+        >
+          Delete
+        </button>
       </div>
 
       {/* Question Type Buttons */}
       <div className="relative flex gap-2 flex-wrap mt-2">
-        {Object.entries(groupedAnswers).map(([typeId, data]) => (
-          <button
-            key={typeId}
-            onClick={() => setSelectedType(typeId)}
-            className={`px-4 py-2 rounded-full text-xs font-medium ${
-              selectedType === typeId
-                ? "bg-[#114654] text-white"
-                : "bg-gray-200 text-gray-700"
-            }`}
-          >
-            {data.name}
-          </button>
-        ))}
+        {Object.entries(groupedAnswers).map(([typeId, data]) => {
+          const isExternalType = data.answers.some(
+            (a) => a.variant === "external",
+          );
 
-        <HiOutlineDotsVertical
-          size={18}
-          className="absolute right-2 top-2 cursor-pointer"
-          onClick={() => setShowMenu((prev) => !prev)}
-        />
+          return (
+            <button
+              key={typeId}
+              onClick={() => setSelectedType(typeId)}
+              className={`px-4 py-2 rounded-full text-xs font-medium ${
+                selectedType === typeId
+                  ? "bg-[#114654] text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              {data.name}
+              {isExternalType && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold ml-2">
+                  External
+                </span>
+              )}
+            </button>
+          );
+        })}
+
+       
       </div>
-      {showMenu && (
-        <div className="absolute right-2 top-8 bg-white border rounded shadow-md z-10">
-          <button
-            onClick={() => {
-              setdeletemodal(true);
-              setShowMenu(false);
-            }}
-            className="px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
-          >
-            Delete
-          </button>
+
+      {groupedAnswers[selectedType]?.answers?.some(
+        (a) => a.variant === "external",
+      ) && (
+        <div className="p-3 border rounded-md bg-amber-50 text-xs space-y-1  mb-3">
+          <p>
+            <span className="font-semibold">Reviewer Name </span>
+            {selectedSubmission.reviewer_name || "N/A"}
+          </p>
+          <p>
+            <span className="font-semibold">Occupation </span>
+            {selectedSubmission.reviewer_occupation || "N/A"}
+          </p>
+          <p>
+            <span className="font-semibold">Relation </span>
+            {selectedSubmission.reviewer_relation || "N/A"}
+          </p>
         </div>
       )}
-      <div className="relative  text-sm border rounded-lg p-3 ">
-        {/* Questions & answers for selected type */}
+
+      <div className="relative text-sm border rounded-lg p-3">
+        {/* Questions & Answers */}
         <div className="mt-4 space-y-4 text-xs">
           {selectedType && groupedAnswers[selectedType]?.answers?.length > 0 ? (
-            groupedAnswers[selectedType].answers.map((ans, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 border-b p-4 bg-white"
-              >
-                <div className="flex justify-between items-start w-full">
-                  <p className="font-medium text-gray-800">{ans.question}</p>
-                  <div className="flex gap-2 items-center">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-1"></div>
-                    <p className="text-secondary mt-1">{ans.answer}</p>
+            groupedAnswers[selectedType].answers.map((ans, i) => {
+              const isExternal = ans.variant === "external";
+
+              if (isExternal) {
+                return (
+                  <div
+                    key={i}
+                    className="p-3 border rounded-md bg-blue-50 space-y-1"
+                  >
+                    <p className="font-medium text-gray-800">
+                      Q: {ans.question}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Answer: </span>
+                      {ans.answer}
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 border-b p-4 bg-white"
+                >
+                  <div className="flex justify-between items-start w-full">
+                    <p className="font-medium text-gray-800">{ans.question}</p>
+                    <div className="flex gap-2 items-center">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-1"></div>
+                      <p className="text-secondary mt-1">{ans.answer}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="text-center text-gray-500 border border-gray-300 rounded-xl p-4 bg-white max-w-4xl">
               No answers submitted yet for this question type.
@@ -286,24 +299,36 @@ const OnDemandDetails = () => {
           )}
         </div>
 
-        {/* Summary */}
+        {/* AI Summary */}
+        <div>
+          <h2 className="mt-6 font-semibold mb-3 text-lg">AI Summary</h2>
 
-        <h2 className="mt-6 font-semibold mb-2 text-lg">AI Summary</h2>
-
-        <p className="mt-1 text-gray-700 whitespace-pre-line text-sm">
-          {selectedSubmission.summary
-            ? selectedSubmission.summary.replace(/\*/g, "")
-            : "No summary available."}
-        </p>
+          {selectedType && (
+            <div>
+              <p className="text-sm font-semibold text-[#4B4B4B] mb-1">
+                {selectedType}
+              </p>
+              <p className="text-xs text-gray-500 text-justify whitespace-pre-line">
+                {passedSubmissions
+                  .find(
+                    (item) =>
+                      item.questionType?.trim().toLowerCase() ===
+                      selectedType?.trim().toLowerCase(),
+                  )
+                  ?.summary?.replace(/[*#_`>]+/g, "")
+                  ?.replace(/-{3,}/g, "")
+                  ?.trim() || "No summary available for this section."}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* clinician details */}
-
-      <div className=" text-sm border rounded-lg p-3 ">
+      {/* Clinician Details */}
+      <div className="text-sm border rounded-lg p-3">
         <div className="flex justify-between items-center mb-2">
           <h2 className="font-semibold text-lg">Clinician Details</h2>
 
-          {/* Show assign/reassign button if not approved */}
           {!selectedSubmission.clinician_approved && (
             <button
               onClick={() => setShowClinicianModal(true)}
@@ -314,7 +339,6 @@ const OnDemandDetails = () => {
           )}
         </div>
 
-        {/* Status */}
         <div className="mb-3 p-2 rounded-md bg-gray-100">
           <p className="text-sm">
             <span className="font-semibold">Status </span>
@@ -332,7 +356,6 @@ const OnDemandDetails = () => {
           </p>
         </div>
 
-        {/* Show clinician details if assigned */}
         {clinicianDetails && (
           <div className="space-y-1 mt-2">
             {clinicianDetails.name && (
@@ -341,12 +364,6 @@ const OnDemandDetails = () => {
                 {clinicianDetails.name}
               </p>
             )}
-            {/* {clinicianDetails.email && (
-              <p>
-                <span className="font-semibold">Email </span>
-                {clinicianDetails.email}
-              </p>
-            )} */}
             {clinicianDetails.hcpcTitle && (
               <p>
                 <span className="font-semibold">HCPC Title </span>
@@ -365,9 +382,9 @@ const OnDemandDetails = () => {
         onSuccess={handleAssignSuccess}
       />
 
-      {/* appointments */}
+      {/* Appointments */}
       {matchedAppointment && (
-        <div className=" text-sm mt-6 border rounded-md p-3 ">
+        <div className="text-sm mt-6 border rounded-md p-3">
           <h2 className="font-semibold mb-1 text-lg">Scheduled Appointment</h2>
           <p>
             <span className="font-semibold">Date & Time </span>
