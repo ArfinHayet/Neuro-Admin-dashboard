@@ -350,9 +350,13 @@ const ExternalUserSubmissionPage = () => {
   return (
     <section className="bg-[#114654] min-h-screen flex flex-col">
       {/* Sticky header */}
-      <div className="bg-white flex justify-between items-center py-3 px-6 shadow-md sticky top-0 z-10">
-        <img src={logo} alt="Logo" className="w-[220px]" />
-        <h2 className="font-semibold text-xl">
+      <div className="bg-white flex justify-between items-center  px-3 py-3 lg:px-6 shadow-md sticky top-0 z-10">
+        <img
+          src={logo}
+          alt="Logo"
+          className="lg:w-[220px] w-[80px] md:w-[140px]"
+        />
+        <h2 className="font-semibold text-center md:text-start  text-xs md:text-base lg:text-xl">
           {assessment?.category || assessment?.name || "Assessment Name"} /{" "}
           {questionCategories.find((cat) => cat.id === questiontypeid)?.name ||
             "Question Type"}
@@ -361,7 +365,7 @@ const ExternalUserSubmissionPage = () => {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`px-4 py-2 text-white rounded-md text-sm mr-2 transition ${
+          className={`lg:px-4 lg:py-2  p-2 text-white rounded-md text-xs  lg:text-sm lg:mr-2 transition ${
             canSubmit
               ? "bg-[#114654] hover:bg-[#0d3640] cursor-pointer"
               : "bg-gray-400 cursor-not-allowed"
@@ -372,20 +376,20 @@ const ExternalUserSubmissionPage = () => {
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto flex flex-col items-center gap-4 py-4">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center gap-2 md:gap-4 md:py-4 py-2">
         {/* Show reviewer details */}
         {currentPage === 1 && (
           <>
             {/* Intro Section */}
-            <div className="bg-white w-[80vw] mx-auto p-6 rounded-md text-center">
-              <h2 className="font-semibold text-xl">
+            <div className="bg-white w-[95vw] md:w-[80vw] mx-auto p-4 md:p-6 rounded-md text-center">
+              <h2 className="font-semibold text-base md:text-xl">
                 {assessment?.category || assessment?.name || "Assessment Name"}{" "}
                 /{" "}
                 {questionCategories.find((cat) => cat.id === questiontypeid)
                   ?.name || "Question Type"}
               </h2>
 
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-xs text-wrap md:text-sm text-gray-600 md:leading-relaxed ">
                 {assessment?.description || "No description available."}
               </p>
 
@@ -395,29 +399,31 @@ const ExternalUserSubmissionPage = () => {
             </div>
 
             {/* Reviewer Details */}
-            <div className="bg-white w-[80vw] mx-auto p-6 rounded-md ">
-              <strong>Reviewer Details </strong>
-              <div className="pt-2 pb-5 flex flex-col w-3/5">
+            <div className="bg-white w-[95vw] lg:w-[80vw] mx-auto p-4 md:p-6 rounded-md ">
+              <strong className="text-sm md:text-base">
+                Reviewer Details{" "}
+              </strong>
+              <div className="pt-2 pb-3 md:pb-5 flex flex-col lg:w-3/5">
                 {" "}
                 <span className="text-xs "> Name </span>
-                <span className="p-2 rounded-md border text-sm ">
+                <span className="p-2 rounded-md border text-xs md:text-sm ">
                   {reviewer_name || "N/A"}
                 </span>
               </div>
 
-              <div className="flex flex-col w-3/5 ">
+              <div className="flex flex-col lg:w-3/5 ">
                 {" "}
                 <span className="text-xs">Email</span>{" "}
-                <span className="p-2 border rounded-md text-sm ">
+                <span className="p-2 border rounded-md md:text-sm text-xs">
                   {reviewer_email || "N/A"}
                 </span>{" "}
               </div>
             </div>
 
             {/* Reviewer Inputs */}
-            <div className="bg-white w-[80vw] mx-auto p-6 rounded-md mt-4">
+            <div className="bg-white w-[95vw] md:w-[80vw] mx-auto p-4 md:p-6 rounded-md  md:mt-4">
               <div className="mt-2 flex flex-col gap-2">
-                <label className="" htmlFor="">
+                <label className="text-sm md:text-base " htmlFor="">
                   Your Occupation <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -425,10 +431,10 @@ const ExternalUserSubmissionPage = () => {
                   placeholder="Write Your Occupation"
                   value={reviewer_occupation}
                   onChange={(e) => setReviewerOccupation(e.target.value)}
-                  className="w-3/5 border-b  px-3 py-2 text-sm"
+                  className="md:w-3/5 border-b  px-3 py-2 text-xs md:text-sm"
                 />
 
-                <label className="mt-2" htmlFor="">
+                <label className="text-sm md:text-base mt-2" htmlFor="">
                   Your Relation to Patient{" "}
                   <span className="text-red-500">*</span>
                 </label>
@@ -437,7 +443,7 @@ const ExternalUserSubmissionPage = () => {
                   placeholder="Write Your Relation with Patient"
                   value={reviewer_relation}
                   onChange={(e) => setReviewerRelation(e.target.value)}
-                  className="w-3/5 border-b  px-3 py-2 text-sm"
+                  className="md:w-3/5 border-b  px-3 py-2 text-xs md:text-sm"
                 />
               </div>
             </div>
@@ -445,7 +451,7 @@ const ExternalUserSubmissionPage = () => {
         )}
 
         {/* Page indicator */}
-        <div className="bg-white w-[80vw] mx-auto p-4 rounded-md text-center">
+        <div className="bg-white w-[95vw] md:w-[80vw] mx-auto p-4 rounded-md text-center">
           <p className="text-sm font-medium text-gray-700">
             Page {currentPage} of {totalPages} | Questions {startIndex + 1} -{" "}
             {Math.min(endIndex, questions.length)} of {questions.length}
@@ -460,7 +466,7 @@ const ExternalUserSubmissionPage = () => {
               errors[q.id] ? "border-2 border-red-500" : ""
             }`}
           >
-            <p className=" text-gray-800 mb-3 lg:mb-4">
+            <p className="text-sm md:text-base xl:text-lg  text-gray-800 mb-3 lg:mb-4">
               {startIndex + index + 1}. {q.questions}{" "}
               <span className="text-red-500">*</span>
             </p>
@@ -471,7 +477,7 @@ const ExternalUserSubmissionPage = () => {
                 {q.options?.map((option, idx) => (
                   <label
                     key={idx}
-                    className="flex items-center gap-2 text-gray-700 cursor-pointer text-sm"
+                    className="flex items-center gap-2 text-gray-700 cursor-pointer text-xs md:text-sm xl:text-base "
                   >
                     <input
                       type="radio"
@@ -506,11 +512,11 @@ const ExternalUserSubmissionPage = () => {
         ))}
 
         {/* Pagination buttons */}
-        <div className="bg-white w-[80vw] mx-auto p-6 rounded-md flex justify-between items-center">
+        <div className="bg-white w-[95vw] md:w-[80vw] mx-auto  p-2 md:p-6 rounded-md flex justify-between items-center">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition ${
+            className={`px-6 py-2 rounded-md text-xs md:text-sm font-medium transition ${
               currentPage === 1
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-[#114654] text-white hover:bg-[#0d3640] cursor-pointer"
@@ -526,7 +532,7 @@ const ExternalUserSubmissionPage = () => {
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            className={`px-6 py-2 rounded-md text-sm font-medium transition ${
+            className={`px-6 py-2 rounded-md text-xs md:text-sm font-medium transition ${
               currentPage === totalPages
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-[#114654] text-white hover:bg-[#0d3640] cursor-pointer"

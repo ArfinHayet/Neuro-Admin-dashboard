@@ -377,13 +377,13 @@ const Dashboard = () => {
         {/* Middle Column */}
         <div className="space-y-4">
           {/* Top Clinicians by Submissions in 30 days */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[35vh]">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 h-[35vh] overflow-hidden ">
             <h2 className="font-semibold mb-2 text-sm">Top Clinicians</h2>
 
             {topClinicians.length === 0 ? (
               <p className="text-gray-500">No clinician submissions found.</p>
             ) : (
-              <ul className="space-y-2 h-[400px] overflow-y-auto">
+              <ul className="space-y-2 h-[210px] overflow-y-auto ">
                 {topClinicians.map((entry, index) => (
                   <li
                     key={index}
@@ -437,7 +437,7 @@ const Dashboard = () => {
                 View All →
               </button>
             </div>
-            <div className="space-y-2 overflow-y-auto h-[300px]">
+            <div className="space-y-2 overflow-y-auto h-[200px]">
               {onDemandAssessmentsData.map((assessment) => (
                 <div
                   key={assessment.id}
